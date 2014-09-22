@@ -1,6 +1,8 @@
 #ifndef PID_PARAMETERS_H
 #define PID_PARAMETERS_H
 
+// TODO : all of it.
+
 class pid_parameters
 {
 
@@ -9,6 +11,7 @@ pid_parameters()
 {
 
 }
+
 
 void set_agg_param(double kp, double ki, double kd)
 {
