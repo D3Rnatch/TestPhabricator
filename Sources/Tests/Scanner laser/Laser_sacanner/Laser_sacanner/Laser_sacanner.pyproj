@@ -29,6 +29,9 @@
     <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\2.7" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Calibrate_depth.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="camera_calibration.py">
       <SubType>Code</SubType>
     </Compile>
