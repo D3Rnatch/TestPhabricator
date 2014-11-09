@@ -1,0 +1,7 @@
+Start Camera...
+Camera OK.
+Take the target to 50cm...U1 = 395
+Take the target to 150cm...U2 = 236
+d = 1000
+k = 219.1
+N = 166950.0
