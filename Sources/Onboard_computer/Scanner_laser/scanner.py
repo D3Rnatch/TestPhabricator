@@ -122,16 +122,11 @@ class Scanner:
     # Load the calibration coefs
     def load_configs(self):
         file = open("scan_config.txt", "r")
-        self.x = (file.readline())
-        print str(self.x)
+        self.x = int(file.readline())
         self.y = int(file.readline())
-        print str(self.y)
         self.d = float(file.readline())
-        print str(self.d)
         self.k = float(file.readline())
-        print str(self.k)
         self.N = float(file.readline())
-        print str(self.N)
         file.close()
 
     # Save calibration coefs
