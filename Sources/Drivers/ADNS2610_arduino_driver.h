@@ -1,16 +1,10 @@
+#define SDIO 50
+#define SCLK 52
+//#define SDIO 3
+//#define SCLK 2
 
-// HIGH LEVEL CONFIGURATION
-
-// Threshold Filter
-#define TRESHOLD_MAX 30
-#define TRESHOLD_MIN -30
-
-
-/// LOW LEVEL CONFIGURATION
-//#define SDIO 50
-//#define SCLK 52
-#define SDIO 3
-#define SCLK 2
+#define TRESHOLD_MIN -20
+#define TRESHOLD_MAX 20
 
 #define DLEDG 9
 #define DLEDR 10
@@ -29,6 +23,7 @@ const byte maskNoSleep  = 0x01;
 const byte maskPID      = 0xE0;
 const byte regDeltaX    = 0x02;
 const byte regDeltaY    = 0x03;
+const byte regSqual     = 0x04;
 
 void mouseInit(void);
 void dumpDiag(void);
@@ -37,13 +32,35 @@ byte readRegister(byte addr);
 void readFrame(byte *arr);
 void flash(byte pin, byte nTimes);
 void flipLED(void);
+
+// HIGH LEVEL FUNCTIONS
 int getTrueValue(byte data);
 int TresholdFilter(int data);
 int getFilteredValueY();
 int getFilteredValueX();
+int getSqual();
 
 void mouseInit(void)
 {
+	// pins init...
+  pinMode(SCLK, OUTPUT);
+  pinMode(SDIO, OUTPUT); 
+
+  pinMode(DLEDY, OUTPUT);
+  pinMode(DLEDR, OUTPUT);
+  pinMode(DLEDG, OUTPUT);
+  pinMode(DLEDPERF, OUTPUT);
+
+  flash(DLEDY, 1);
+  flash(DLEDR, 1);
+  flash(DLEDG, 1);
+  flash(DLEDPERF, 1);
+
+  flop = false;
+
+  delayMicroseconds(5);
+  // MOUSE REAL INIT 
+  
   digitalWrite(SCLK, HIGH);
   delayMicroseconds(5);
   digitalWrite(SCLK, LOW);
@@ -51,6 +68,8 @@ void mouseInit(void)
   digitalWrite(SCLK, HIGH);
   delay(1025);
   writeRegister(regConfig, maskNoSleep); //Force the mouse to be always on.
+  
+  dumpDiag();
 }
 
 void dumpDiag(void)
@@ -179,18 +198,17 @@ void flipLED(void)
   digitalWrite(DLEDY, flop ? HIGH : LOW);
 }
 
-
 /// HIGH LEVEL PROCESSES
 
 // Returns DeltaX value using the ThresholdFilter
 int getFilteredValueX()
 {
-	return TresholdFilter(getTrueValue(readRegister(regDeltaX)));
+	return TresholdFilter(getTrueValue((int)readRegister(regDeltaX)));
 }
 
 int getFilteredValueY()
 {
-	return TresholdFilter(getTrueValue(readRegister(regDeltaY)));
+	return TresholdFilter(getTrueValue((int)readRegister(regDeltaY)));
 }
 
 // Allows negative values
@@ -205,7 +223,7 @@ int getTrueValue(byte data)
 
 int TresholdFilter(int data)
 {
-	if(data <= TRESHOLD_MAX || data >= TRESHOLD_MIN)
+	if(data <= TRESHOLD_MAX && data >= TRESHOLD_MIN)
 		return 0; 
 	else
 	{
@@ -214,4 +232,9 @@ int TresholdFilter(int data)
 		else
 			return (data - TRESHOLD_MAX);
 	}
+}
+
+int getSqual ()
+{
+   return (int)readRegister(regSqual);  
 }
