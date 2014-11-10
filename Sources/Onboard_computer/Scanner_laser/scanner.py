@@ -59,7 +59,7 @@ class Scanner:
 
     # Get the picture
     def take_picture(self):
-        stream = picamera.array.PiRBGArray(self.camera)
+        stream = picamera.array.PiRGBArray(self.camera)
         self.camera.capture(stream, format='bgr', use_video_port=True)
         self.image = stream.array
 
