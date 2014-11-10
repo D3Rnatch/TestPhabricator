@@ -116,7 +116,7 @@ class Scanner:
         self.take_picture()
         self.make_mask()
         u = self.get_U()
-        dist = ((self.N)/((moy*1.4)-self.k))/10
+        dist = ((self.N)/((u*1.4)-self.k))/10
         return dist
 
     # Load the calibration coefs
