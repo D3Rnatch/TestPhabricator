@@ -44,7 +44,7 @@ class Scanner:
     def set_resolution(self, x, y):
         self.x = x
         self.y = y
-        self.half = round(y * 0.5)
+        self.half = round(y * 0.45)
 
     # Start everything we need to capture photos
     def start_module(self):
@@ -62,12 +62,10 @@ class Scanner:
         stream = picamera.array.PiRGBArray(self.camera)
         self.camera.capture(stream, format='bgr', use_video_port=True)
         self.image = stream.array
-	cv2.imwrite("pic.jpg", self.image)
 
     # build the mask
     def make_mask(self):
         self.mask = cv2.inRange(self.image, self.lower_red, self.upper_red)
-	cv2.imwrite("mask.jpg", self.mask)
 
     # Get U (position in image)
     def get_U(self):
@@ -128,15 +126,16 @@ class Scanner:
         self.d = float(file.readline())
         self.k = float(file.readline())
         self.N = float(file.readline())
+	self.half = round(self.y * 0.45)
         file.close()
 	print ""
-	print "Loaded values :"
+	print "Loaded scanner values :"
 	print "\tx -> " + str(self.x)
 	print "\ty -> " + str(self.y)
 	print "\td -> " + str(self.d)
 	print "\tk -> " + str(self.k)
 	print "\tN -> " + str(self.N)
-	print "\thalf = " + str(self.y * 0.45)
+	print "\thalf = " + str(round(self.y * 0.45))
 
     # Save calibration coefs
     # File format :
