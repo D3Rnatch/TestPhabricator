@@ -54,7 +54,7 @@ class Scanner:
         self.camera.awb_gains = (4, 2)
 
         # Init mask threshold
-        self.lower_red = np.array([0, 0, 90])
+        self.lower_red = np.array([0, 0, 100])
         self.upper_red = np.array([255, 255, 255])
 
     # Get the picture
