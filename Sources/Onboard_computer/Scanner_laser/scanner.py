@@ -80,7 +80,7 @@ class Scanner:
                 pos = pos + j
         if compteur != 0:
             u = pos/compteur
-        print Str(u) + '\n'
+        print str(u) + '\n'
         return u
 
     # Calibrate the scanner
