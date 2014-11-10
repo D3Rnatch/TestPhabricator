@@ -3,7 +3,7 @@ from scanner import Scanner
 
 # Load the module
 s = Scanner()
-s.set_resolution(640, 480)
+s.set_resolution(1280, 720)
 s.start_module()
 s.calibration()
 exit()
