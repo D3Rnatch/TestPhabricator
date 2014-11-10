@@ -2,7 +2,7 @@
 from scanner import Scanner
 
 # Load the module
-s = Scanner.Scanner()
+s = Scanner()
 s.load_configs()
 s.start_module()
 # Scan
