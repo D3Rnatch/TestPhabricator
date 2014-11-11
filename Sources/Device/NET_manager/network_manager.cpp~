@@ -43,7 +43,7 @@
 			// TO BE IMPLEMENTED
 		}
 		
-		void Network_manager :: write_data_to_buffer(char *b, int s)
+		void Network_manager :: write_data_to_buffer()
 		{
 			// TO BE IMPLEMENTED
 		}

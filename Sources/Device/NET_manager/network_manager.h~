@@ -29,7 +29,7 @@ class Network_manager
 		void send_data_to_user(char);
 	
 		char read_data_from_buffer();
-		void write_data_to_buffer(char *, int);
+		void write_data_to_buffer(char);
 	
 	private :
 
