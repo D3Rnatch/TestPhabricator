@@ -1,73 +1,88 @@
-# Import some libs
+## @file Scanner.py
+#  @brief Scanner laser module.
+#  @author Loïc Dalloz
+#  @version 1.0
+#
 import picamera
 import picamera.array
 import cv2
 import numpy as np
 
+## Scanner laser module.
+# Fields :
+#   - self.x         => x resolution
+#   - self.y         => y resolution
+#   - self.half      => half of the image (where the distance is calculated in the plan
+#   - self.camera    => THE camera !
+#   - self.image     => Where the pictures are stored
+#   - self.mask      => Where the mask is located
+#   - self.upper_red => Max color (for the mask)
+#   - self.lower_red => Min color (for the mask)
+#   - self.d        |
+#   - self.k        |=> Scanner calibration coefs
+#   - self.N        |
+#
+# Usages :
+#   Calibration :
+#       s = Scanner.Scanner()
+#       s.set_resolution(640, 480)
+#       s.start_module()
+#       s.calibration()
+#       exit()
+#
+#   Scanning :
+#       s = Scanner.Scanner()
+#       s.load_configs()
+#       s.start_module()
+#       while 1:
+#           print Str(s.get_plan_distance())
+#       exit()
+#
 class Scanner:
-    # Create the class
-    # Fields :
-    #   - self.x         => x resolution
-    #   - self.y         => y resolution
-    #   - self.half      => half of the image (where the distance is calculated in the plan
-    #   - self.camera    => THE camera !
-    #   - self.image     => Where the pictures are stored
-    #   - self.mask      => Where the mask is located
-    #   - self.upper_red => Max color (for the mask)
-    #   - self.lower_red => Min color (for the mask)
-    #   - self.d        |
-    #   - self.k        |=> Scanner calibration coefs
-    #   - self.N        |
-    #
-    # Usages :
-    #   Calibration :
-    #       s = Scanner.Scanner()
-    #       s.set_resolution(640, 480)
-    #       s.start_module()
-    #       s.calibration()
-    #       exit()
-    #
-    #   Scanning :
-    #       s = Scanner.Scanner()
-    #       s.load_configs()
-    #       s.start_module()
-    #       while 1:
-    #           print Str(s.get_plan_distance())
-    #       exit()
-    #
+    ## Constructor.
+    #  @param self The object pointer.
     def __init__(self):
         self.x = 0
         self.y = 0
         self.half = 0
 
-    # Set the camera resolution
+    ## Set the camera resolution.
+    #  @param self The object pointer.
+    #  @param x The x resolution.
+    #  @param y The y resolution.
     def set_resolution(self, x, y):
         self.x = x
         self.y = y
         self.half = round(y * 0.45)
 
-    # Start everything we need to capture photos
+    ## Start everything we need to capture photos.
+    #  @param self The object pointer.
     def start_module(self):
-        # Start the camera
+        # Start the camera.
         self.camera = picamera.PiCamera()
         self.camera.resolution = (self.x, self.y)
         self.camera.awb_gains = (4, 2)
 
-        # Init mask threshold
+        # Init mask threshold.
         self.lower_red = np.array([0, 0, 120])
         self.upper_red = np.array([255, 255, 255])
 
-    # Get the picture
+    ##  Take a picture.
+    #   @param self The object pointer.
     def take_picture(self):
         stream = picamera.array.PiRGBArray(self.camera)
         self.camera.capture(stream, format='bgr', use_video_port=True)
         self.image = stream.array
 
-    # build the mask
+    ## build the mask.
+    #  @param self The object pointer.
     def make_mask(self):
         self.mask = cv2.inRange(self.image, self.lower_red, self.upper_red)
 
-    # Get U (position in image)
+    ## Get U (position of the laser in image)
+    #  @param self The object pointer
+    #  @return The position of the laser (in pixel)
+    #  Find the position of the laser on the self.half row of the image.
     def get_U(self):
         rows, col = self.mask.shape
         compteur = 0
@@ -82,7 +97,9 @@ class Scanner:
             u = pos/compteur
         return u
 
-    # Calibrate the scanner
+    ## Calibrate the scanner
+    #  @param self The object pointer.
+    #  Calibrate the scanner and store le calibration coeffs in a file "scan_config.txt"
     def calibration(self):
         print " "
         print " ________________________ "
@@ -110,7 +127,10 @@ class Scanner:
         print "Saving..."
         self.save_configs()
 
-    # Get the distance (in cm)
+    ## Get the distance (in cm)
+    #  @param self The object pointer.
+    #  @return The computed distance in the plan (in cm).
+    #  The distance is calculated with the coeffs stored in the file scan_config.txt.
     def get_plan_distance(self):
         self.take_picture()
         self.make_mask()
@@ -118,7 +138,8 @@ class Scanner:
         dist = (self.N/((u*1.4)-self.k))/10
         return dist
 
-    # Load the calibration coefs
+    ## Load the calibration coefs
+    #  @param self The object pointer.
     def load_configs(self):
         file = open("scan_config.txt", "r")
         self.x = int(file.readline())
@@ -137,7 +158,8 @@ class Scanner:
 	print "\tN -> " + str(self.N)
 	print "\thalf = " + str(round(self.y * 0.45))
 
-    # Save calibration coefs
+    ## Save calibration coefs
+    #  @param The object pointer.
     # File format :
     #   ________________
     #   |x resolution   |
