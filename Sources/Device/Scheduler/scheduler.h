@@ -7,6 +7,8 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
+#include "Timer.h"
+
 #define DEFAULT_TIME 13
 
 // TODO : Mettre en place un temps statistique de tour de la boucle program : 
@@ -39,6 +41,9 @@ class Scheduler
 		*
 		*/
 		void regulate_loop();
+		
+		/// ATTACH EVENTS ZONE
+		// Following functions let the user call functions at certain loop time.
 		
 	private :
 		long last_loop_time;
