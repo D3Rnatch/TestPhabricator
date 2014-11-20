@@ -81,6 +81,7 @@ void loop()
 	// Updates motor rate speed...
 	controller.motor->run_the_magic();
 
+	controller.scheduler->regulate_loop();
 }
 
 

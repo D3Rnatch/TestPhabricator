@@ -49,6 +49,7 @@ void setup()
 	#endif
 }
 
+
 ///// LOOP IS CONSTRUCTED AS FOLLOW :
 /*
 	Time :
@@ -57,7 +58,6 @@ Div1 : Motor Update : we need to continuously reset the motor process
 Div2 : PID computation (every 24 ms) : ensures stability
 Div1 : Network communication : send and receive orders. Ensures safety. 
 */
-
 void loop()
 {
 	// Network receivings..
