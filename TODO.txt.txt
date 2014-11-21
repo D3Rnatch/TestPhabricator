@@ -1,0 +1,5 @@
+TODO onboard PC :
+	- Logs class
+	- test PWM pour servo sur la pi
+	- Map
+	- Slam
