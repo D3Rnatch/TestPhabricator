@@ -46,15 +46,15 @@ public :
 
 	private :
 
-double *input[3];
-double *output[3];
-double *setpoint[3];
+		double *input[3];
+		double *output[3];
+		double *setpoint[3];
 
-double Ki[3];
-double Kp[3];
-double Kd[3];
+		double Ki[3];
+		double Kp[3];
+		double Kd[3];
 
-PID *pid_array[3];
+		PID *pid_array[3];
 };
 
 

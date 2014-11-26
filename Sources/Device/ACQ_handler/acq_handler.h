@@ -2,6 +2,7 @@
 #ifndef ACQ_HANDLER_H
 #define ACQ_HANDLER_H
 
+#include "math.h"
 
 #include "ADNS2610_arduino_driver.h"
 #include "MPU6050_arduino_driver.h"
@@ -30,8 +31,11 @@ class ACQ_handler
 		// Returns the distance since last acq in cm.
 		double get_MoveX();
 		double get_MoveY();
+
 		// Returns the exact distance since last acq in cm
-		double get_MoveXY();
+		double get_MoveXY(); // getR
+		double get_MoveAngle(); // getO
+		void update_values();
 
 		// For lib PID synchronization.
 		int delta_x_adns; // Mouse X speed measurement (RAW)
@@ -39,9 +43,10 @@ class ACQ_handler
 		int g_z_mpu; // Counter reaction of sustentation's EDF
 
 	private :
-		double dist_since_last_acq; // Distance since last acquisition
-		MPU6050 *mpu;
-		ADNS2610 *adns;
+		double actual_r; // r
+		double actual_theta; // deg
+		double last_x;
+		double last_y; 
 };
 
 
