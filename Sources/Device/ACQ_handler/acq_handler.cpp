@@ -4,7 +4,10 @@
 	ACQ_handler :: ACQ_handler()
 	{
 		mouseInit(); // Démarrage du capteur optique.
-		mpuInit(); // Démarrage du G sensor.	
+		mpuInit(); // Démarrage du G sensor
+		this->delta_x_adns = this->delta_y_adns = 0;
+		this->g_z_mpu = 0;
+		this->actual_r = this->actual_theta = last_x = last_y = 0.0;		
 	}
 
 	void ACQ_handler :: run_the_magic()
@@ -56,3 +59,4 @@
 	{
 		return this->last_y;
 	}
+

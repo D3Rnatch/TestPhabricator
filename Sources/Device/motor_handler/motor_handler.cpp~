@@ -36,7 +36,7 @@
 	{
 		if(a < 5 && a >= 0)
 		{
-			if(this->activation_matrix[a]) {
+			if(this->activation_matrix[a]){
 				int v = map(this->power_matrix[a], 0, 100, this->min, this->max);
 				this->motor_array[a].write(v);
 			}
