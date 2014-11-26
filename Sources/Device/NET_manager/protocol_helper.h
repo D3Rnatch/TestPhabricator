@@ -30,7 +30,7 @@ typedef struct recept_encap
 }t_recept_encap;
 
 // ========================================================================
-//		SENDING PROTOCOL HELPER
+//		SENDING PROTOCOL HELPER (arduino side)
 //	Features :
 //		-> Ready Frame
 //		-> Data Frame
@@ -56,6 +56,24 @@ t_encap encap_ready();
 t_encap encap_battery_data(byte, byte);
 
 // ========================================================================
+//		EXTRACTION PROTOCOL HELPER (Arduino side)
+//	Features :
+//		-> State & Start Frame id : 0
+//		-> Stop Frame : id 1
+//		-> Move Frame : id 2
+//		-> Power Frame : id 3
+//		-> Point Frame : id 4
+//	/!\ : Frame size = 5 bytes
+// ========================================================================
+
+/**
+*	\brief extract_data, stores every bytes into an encap type variable
+*	\param frame : array of 5 bytes aka a frame.
+*/
+t_recept_encap extract_data(byte*frame);
+
+
+// ========================================================================
 //		ENCAPSULATION PROTOCOL HELPER (Rasp side)
 //	Features :
 //		-> State & Start Frame id : 0
@@ -74,24 +92,16 @@ t_encap encap_battery_data(byte, byte);
 */
 t_encap encap_special_frames(uint8_t, byte*, uint8_t);
 
+
 // ========================================================================
-//		EXTRACTION PROTOCOL HELPER
+//		EXTRACTION PROTOCOL HELPER (Raspberry PI side)
 //	Features :
-//		-> State & Start Frame id : 0
-//		-> Stop Frame : id 1
-//		-> Move Frame : id 2
-//		-> Power Frame : id 3
-//		-> Point Frame : id 4
+//		-> Ready Frame; id 0
+//		-> Data Frame; id 1
+//		-> Battery Status Frame; id 2
 //	/!\ : Frame size = 5 bytes
 // ========================================================================
-
-/**
-*	\brief extract_data, stores every bytes into an encap type variable
-*	\param frame : array of 5 bytes aka a frame.
-*/
-t_recept_encap extract_data(byte*frame);
-
-
-
+// # TODO 
+t_recept_encap extract_data_computer(byte *frame); 
 
 #endif
