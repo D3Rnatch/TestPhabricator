@@ -9,7 +9,7 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind(('localhost', 5000))
 
 # init serial connection
-ser = serial.Serial('/dev/ttyACM1', 9600)
+ser = serial.Serial('/dev/ttyACM0', 9600)
 
 # waiting the connection
 s.listen(1)

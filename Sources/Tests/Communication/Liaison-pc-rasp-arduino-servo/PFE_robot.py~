@@ -51,9 +51,15 @@ while(1):
 
 			# Send them to the arduino
 			sending_data = ii * 10
-			if sending_data > 180:
-				sending_data = 180
+			#if sending_data > 60:
+			#	sending_data = 60
+			#if sending_data < 20:
+			#	sending_data = 20
+
 			print str(sending_data)
 			ser.write(str(sending_data) + '\n')
-			ser.readline()
- 
+			#print "wait ln\n"
+			print ser.readline()
+			#time.sleep(0.05)
+			#print "wait ended\n"
+

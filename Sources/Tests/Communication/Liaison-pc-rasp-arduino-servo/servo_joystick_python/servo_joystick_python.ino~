@@ -21,7 +21,7 @@ void arm(){
 
 void setup(){
     
-    escenter.attach(2);
+    escenter.attach(10);
     arm();
     Serial.begin(9600);
     
