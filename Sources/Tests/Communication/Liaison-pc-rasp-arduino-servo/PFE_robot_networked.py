@@ -5,15 +5,17 @@ import time
 import os
 import sys
 import socket
-import network_manager
+
+from network_manager import *
 
 # init socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind(('localhost', 5000))
 
 # init serial connection
-net = Network_Manager('/dev/ttyACM0', 9600)
-
+net = Network_Manager("/dev/ttyACM0",9600)
+#	hand = net.read()
+	
 
 # waiting the connection
 s.listen(1)
@@ -54,14 +56,31 @@ while(1):
 			print '--------------------------------------------------------------   ---'
 
 			# Send them to the arduino
-			sending_data = ii * 10
-			#if sending_data > 60:
-			#	sending_data = 60
-			#if sending_data < 20:
-			#	sending_data = 20
-
-			print str(sending_data)
-			ser.write(str(sending_data) + '\n')
+			data1 = ii * 10
+			data2 = jj * 10
+			data3 = vvv * 10
+			
+			if data1 >= 0 :
+				byte1 = data1
+				byte2 = data1
+			else :
+				byte2 = data1
+				byte3 = data1
+				
+			if data2 >= 0 :
+				byte1 = data2
+				byte2 = data2
+			else :
+				byte4 = data2
+				byte3 = data2
+			
+			byte5 = 254
+			
+			frame = net.create_data_frame(2, byte1, byte2, byte3, byte4, byte5)
+			
+			print str(frame)
+			net.send(str(frame))
+			
 			#print "wait ln\n"
 			print ser.readline()
 			#time.sleep(0.05)

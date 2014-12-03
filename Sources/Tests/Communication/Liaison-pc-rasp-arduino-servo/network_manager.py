@@ -3,11 +3,12 @@
 # Last Modified : D3Rnatch
 
 import serial
+
 from array import array
 
 class Network_Manager :
 	
-	def __init__ (port,baud) :
+	def __init__ (self,port,baud) :
 		# We try the opening of the interface
 		try :
 			ser = serial.Serial(port,baud)
@@ -18,7 +19,7 @@ class Network_Manager :
 	
 	# \brief send : sends a frame over usb port
 	# The frame is a 5 bytes long Id + data, folowed of a ending byte ('\n')
-	def send(frame) :
+	def send(self,frame) :
 		try :
 			ser.write(frame + '\n')
 	
@@ -28,7 +29,7 @@ class Network_Manager :
 	# \brief read : reads a frame over usb port
 	# The frame is a 5 bytes long id + data, followed of an ending byte '\n'
 	# See frames creation functions for further detail.
-	def read() :
+	def read(self) :
 		try : 
 			val = ser.readline()
 		except : 
@@ -41,7 +42,7 @@ class Network_Manager :
 	# \param id : frame id type. See NETWORK_PROTOCOL.txt file.
 	# \param p1 : parameter 1
 	# \param p2 to p5 are identical.
-	def create_data_frame (id,p1,p2,p3,p4,p5) :
+	def create_data_frame (self,id,p1,p2,p3,p4,p5) :
 		# creating the frame
 		frame = array('c')
 		
