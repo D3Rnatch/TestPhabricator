@@ -1,15 +1,19 @@
+# This file permlits the test in manual mode of the robot
+# Not yet finished.
+
 import time
 import os
 import sys
 import socket
-import serial
+import network_manager
 
 # init socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind(('localhost', 5000))
 
 # init serial connection
-ser = serial.Serial('/dev/ttyACM0', 9600)
+net = Network_Manager('/dev/ttyACM0', 9600)
+
 
 # waiting the connection
 s.listen(1)
