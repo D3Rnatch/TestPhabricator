@@ -26,7 +26,7 @@ t_encap encap_ready()
 {
 	t_encap t;
 
-	t->array[0] = (byte)1;
+	t->array[0] = (byte)0;
 	t->array[1] = 0;
 	t->array[2] = 0;
 	t->array[3] = 0;
@@ -89,7 +89,7 @@ t_frame_bytes extract_data_bytes(byte *)
 	return extract;
 }
 
-t_frame_doubles extract_data_doubles(byte *)
+t_frame_doubles extract_data_doubles(byte *frame)
 {
 	t_frame_bytes extract;
 	extract.type = frame[0];

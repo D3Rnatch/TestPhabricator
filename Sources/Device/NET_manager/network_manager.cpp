@@ -5,7 +5,7 @@
 		Network_manager::Network_manager(int baud)
 		{
 			Serial.begin(baud);
-			Serial.fflush();
+			Serial.flush();
 			Serial.setTimeout(TIMEOUT); // See .h for details
 			this->tmp_read_status = 0;
 			this->tmp_write_status = 0;

@@ -26,7 +26,7 @@ t_encap encap_ready()
 {
 	t_encap t;
 
-	t->array[0] = (byte)1;
+	t->array[0] = (byte)0;
 	t->array[1] = 0;
 	t->array[2] = 0;
 	t->array[3] = 0;
@@ -61,7 +61,7 @@ uint8_t get_frame_type(byte *frame)
 	return (utin8_t)frame[0];
 }
 
-t_frame_bytes extract_data_bytes(byte *)
+t_frame_bytes extract_data_bytes(byte *frame)
 {
 	t_frame_bytes extract;
 	extract.type = frame[0];
