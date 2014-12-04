@@ -1,0 +1,174 @@
+This file describe the differents protocols used on this project.
+
+I. Overall scheme
+
++---------+		       +--------------+			 +----------------+
+| Arduino | <---- Serial ----> | Raspberry Pi | <---- Wifi ----> | Ground station |
++---------+		       +--------------+			 +----------------+
+
+II. Serial protocol
+
+	
+	Frame organization :
+	
+		+-----------------+
+		|ID|--|--|--|--|--|
+		+-----------------+
+	Byte :   0  1  2  3  4  5
+	ID corresponds to the frame type.	
+
+
+	1) Raspberry Pi sending to the Arduino
+	Raspberry Pi will send 5 different frames to the Arduino. Each frame is 5 bytes long !
+	Note : a byte is equivalent to :
+		1/2 double
+		1/2 integer
+		1 uint8_t
+		1/2 uint16_t
+		1 char
+	Depending on the frame type those element will be chosen.
+	(See protocol_helper.h for more details)
+
+	Frames description :
+		-> State & Start Frame; id : 0
+			St : state(0;1;2;3)
+				state 0 : manual control
+				state 1 : manual control and stabilization PID
+				state 2 : autonomous mode
+			On : start value (0;1)
+			+-----------------+
+			|ID|St|On|--|--|--|
+			+-----------------+
+		Byte :   0  1  2  3  4  5
+		
+		-> Stop Frame; id 1
+
+			St : stop(not 0)
+			+-----------------+
+			|ID|St|--|--|--|--|
+			+-----------------+
+		Byte :   0  1  2  3  4  5
+
+		-> Move Frame; id 2
+
+			frame element is an uint8_t from [0;180]
+			Activates motors and sets thrust.
+			+-----------------+
+			|ID|l1|l2|l3|l4|h1|
+			+-----------------+
+		Byte :   0  1  2  3  4  5
+		
+		-> Power Frame; id 3
+
+			frame elements are uint8_t types on [0;180]
+			Activates motors and sets thrust.
+			+-----------------+
+			|ID|l1|l2|l3|l4|h1|
+			+-----------------+
+		Byte :   0  1  2  3  4  5
+
+		-> Point Frame; id 4
+
+			Point frame contains a Xcoord and a Ycoord on 2 uint16_t types.
+			+-----------------+
+			|ID|X1|X2|Y1|Y2|--|
+			+-----------------+
+		Byte :   0  1  2  3  4  5
+	
+	2) Arduino to the Raspberry Pi
+
+	Arduino sends to the raspberry the following frames :
+		-> Ready Frame; id 0
+
+			RD : different from 0
+			ER : Error number
+			+-----------------+
+			|ID|RD|ER|--|--|--|
+			+-----------------+
+		Byte :   0  1  2  3  4  5						
+			
+		-> Data Frame; id 1
+
+			DX : Delta X
+			DY : Delta Y
+			GZ : Gyro Z
+			+-----------------+
+			|ID|DX|DY|GZ|--|--|
+			+-----------------+
+		Byte :   0  1  2  3  4  5
+
+		-> Battery Status Frame; id 2
+
+			B1 : battery data
+			B2 : battery data
+			+-----------------+
+			|ID|B1|B1|B2|B2|--|
+			+-----------------+
+		Byte :   0  1  2  3  4  5
+
+III. Wifi protocol
+
+	1) Ground station to Raspberry Pi
+	
+	The ground station should send the position of the joystick as int in a JSON format :
+	
+	X : X acceleration
+	Y : y acceleration
+	T : levitation power
+
+	The ground station can also send some custom messages as "start", "stop", etc.
+
+	Example in JSON :
+	
+	{
+		"robot":{
+			"X":X_value,
+			"Y":Y_value,
+			"T":levitation_value
+		}
+		"message":{
+			"type":"[type of the message]",
+			"content":"[message content]"
+		}
+	}
+
+	2) Raspberry Pi to Grund Station
+
+	The raspberry pi should send the position of the robot and an image (in bytes) associated with the 
+	scanner's angle all formated in JSON. Infos needed :
+	
+	X position
+	Y position
+	rotation angle
+	batteries state
+	scanner angle
+	scanner image
+
+	The robot can also send some custom messages as "ready", acks...
+	
+	JSON message example (to be completed):
+	
+	{
+		"robot":{
+			"X":X_position,
+			"Y":Y_position,
+			"R":rotation,
+			"batteries":[
+				{"batterie":batterie_index, "value":batterie_state},
+				{"batterie":batterie_index, "value":batterie_state}
+			]
+		}
+		"scanner":{
+			"angle":scanner_angle,
+			"image":image_in_binary_state
+		}
+		"message":{
+			"type":"[message type]",
+			"content":"[content of the message]"
+		}
+	}
+
+
+	
+
+--- EOF ---
