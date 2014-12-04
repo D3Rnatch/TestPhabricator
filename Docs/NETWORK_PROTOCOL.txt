@@ -125,7 +125,7 @@ III. Wifi protocol
 			"X":X_value,
 			"Y":Y_value,
 			"T":levitation_value
-		}
+		},
 		"message":{
 			"type":"[type of the message]",
 			"content":"[message content]"
@@ -157,18 +157,15 @@ III. Wifi protocol
 				{"batterie":batterie_index, "value":batterie_state},
 				{"batterie":batterie_index, "value":batterie_state}
 			]
-		}
+		},
 		"scanner":{
 			"angle":scanner_angle,
 			"image":image_in_binary_state
-		}
+		},
 		"message":{
 			"type":"[message type]",
 			"content":"[content of the message]"
 		}
 	}
-
-
-	
 
 --- EOF ---
