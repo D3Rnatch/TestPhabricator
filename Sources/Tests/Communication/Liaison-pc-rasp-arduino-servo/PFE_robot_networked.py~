@@ -24,12 +24,11 @@ while(not end) :
 	hand = net.read()
 	if hand.pop(0) == '0' :
 		end = 1
-	else :
-		print 'Waiting for Autopilot check Hands'
 
 # Sending start frame and manual state
 frame = net.create_data_frame(0,0,1,0,0)
 net.write(str(frame))
+
 
 # waiting the connection
 s.listen(1)

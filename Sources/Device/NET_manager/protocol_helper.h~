@@ -30,6 +30,30 @@ typedef struct recept_encap
 }t_recept_encap;
 
 // ========================================================================
+//		FRAME DEFINITION ZONE
+// This is totally temporary, waiting to find a better solution to c++ 
+// void * compilers' problem.
+// ========================================================================
+ 
+/* This defines an unsigned integer 8 bits composed frame.
+// (corresponding to ID : 0,1,2 & 3)
+*/
+typedef struct recept_frame_bytes
+{
+	uint8_t type;
+	uint8_t array[5];
+}t_frame_bytes;
+
+/* This defines a double composed frame.
+// (corresponds to ID : 4)
+*/
+typedef struct recept_frame_doubles
+{
+	uint8_t type;
+	double array[2];
+}t_frame_doubles;
+
+// ========================================================================
 //		SENDING PROTOCOL HELPER (arduino side)
 //	Features :
 //		-> Ready Frame
@@ -101,6 +125,13 @@ t_encap encap_special_frames(uint8_t, byte*, uint8_t);
 //		-> Battery Status Frame; id 2
 //	/!\ : Frame size = 5 bytes
 // ========================================================================
+// # TODO 
+// t_recept_encap extract_data_computer(byte *frame); 
 
+uint8_t get_frame_type(byte *frame);
+
+t_frame_bytes extract_data_bytes(byte *frame);
+
+t_frame_doubles extract_data_doubles(byte *frame);
 
 #endif

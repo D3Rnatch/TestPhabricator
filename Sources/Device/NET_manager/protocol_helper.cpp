@@ -56,6 +56,55 @@ t_encap encap_battery_data(byte b1, byte b2)
 *	\brief extract_data, stores every bytes into an encap type variable
 *	\param frame : array of 5 bytes aka a frame.
 */
+uint8_t get_frame_type(byte *frame)
+{
+	return (utin8_t)frame[0];
+}
+
+t_frame_bytes extract_data_bytes(byte *)
+{
+	t_frame_bytes extract;
+	extract.type = frame[0];
+	extract.array[0] = frame[0];
+	switch(frame_type)
+	{
+		case 0 : // State and Start frame !
+			// Typages et initialisations 
+			extract.array[2] = (uint8_t)frame[2]; // Start 
+			extract.array[1] = (uint8_t)frame[1]; // State
+		break;
+		case 1 : // Stop signal frame
+			extract.array[1] = (uint8_t)frame[1];
+		break;
+		case 2 : // Move frame
+			for(uint8_t i=1;i<5;i++)
+				extract.array[i] = (uint8_t)frame[i];
+		break;
+		case 3 : // Power frame
+			for(uint8_t i=1;i<5;i++)
+				extract.array[i] = (uint8_t)frame[i];
+		break;
+	}
+
+	return extract;
+}
+
+t_frame_doubles extract_data_doubles(byte *frame)
+{
+	t_frame_bytes extract;
+	extract.type = frame[0];
+	// Point frame
+	uint16_t t = frame[1] << 8;
+	t = t | frame[2];
+	extract.array[0] = (double)t;
+	t = frame[2] << 8; 
+	t |= frame[3];
+	extract.array[1] = (double)t;
+	return extract;
+}
+
+
+/*
 t_recept_encap extract_data(byte*frame)
 {
 	// STEP 1 : extraction de l'ID
@@ -107,7 +156,7 @@ t_recept_encap extract_data(byte*frame)
 	encap.type = frame_type;
 	encap.Elements = elem;
 	encap.data = array;	
-}
+}*/
 
 
 
