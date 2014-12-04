@@ -7,7 +7,7 @@ folders :
   - Scanner_laser : everything related to the scanning.
 
 Files :
-  - robot.py : main program.
+  - robot.py : robot object (main object).
 	
 Those sources are all for the onboard computer (raspberry pi).
 We will maybe change it to C++ if python is too slow.
