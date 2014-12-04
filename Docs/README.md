@@ -4,10 +4,13 @@ This folder contains every official documentation we use for the project develop
 Everything presented here must stay at its last version.
 
 Folders:
+  
   None: so far.
   
 Files:
+  
   NETWORK_PROTOCOL.txt: Communications protocols description.
+  
   Folder_readme_template.txt: Readme template to use (as possible) for each folders.
   
   
