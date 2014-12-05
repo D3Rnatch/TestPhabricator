@@ -89,8 +89,8 @@ class Scanner:
         #compteur = 0
         #pos = 0
         #u = 0
-        list = [j for j in xrange(col) if self.mask.item(self.half, j)==255]
-        return np.mean(list)
+        liste = [j for j in xrange(col) if self.mask.item(self.half, j)==255]
+        return np.mean(liste)
         #for j in xrange(col):
         #    k = self.mask.item(self.half, j)
         #    if k == 255:
