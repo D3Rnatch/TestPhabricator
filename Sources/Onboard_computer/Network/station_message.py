@@ -30,7 +30,7 @@ class messages_sol:
     #  @see encode_image()
     #  @return The message string ready to be sent.
     def build_message(self, position, robot_angle, batteries_state, scanner_angle, image):
-        message_string = '{"robot":{"X":' + str(position[0]) + ',"Y":' + str(position[1]) + ',"R":' + str(robot_angle) + ',"batteries":[{"batterie":1, "value":' + str(batteries_state[0]) + '},{"batterie":2, "value":' + str(batteries_state[1]) + '}]},"scanner":{"angle":' + str(scanner_angle) + ',"image":' + str(image) + '},"message": {"type":"' + str(self.my_message_type) + '","content":"' + str(self.my_message_content) + '"}}'
+        message_string = "{\"robot\":{\"X\":%s,\"Y\":%s,\"R\":%s,\"batteries\":[{\"batterie\":1, \"value\":%s},{\"batterie\":2, \"value\":%s}]},\"scanner\":{\"angle\":%s,\"image\":%s},\"message\": {\"type\":\"%s\",\"content\":\"%s\"}}" % (str(position[0]), str(position[1]), str(robot_angle), str(batteries_state[0]), str(batteries_state[1]), str(scanner_angle), str(image), str(self.my_message_type), str(self.my_message_content))
         return json.dumps(message_string)
 
     ## Add a custom message to the next message creation.

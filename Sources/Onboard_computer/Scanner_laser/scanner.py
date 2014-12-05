@@ -1,6 +1,6 @@
 ## @file Scanner.py
 #  @brief Scanner laser module.
-#  @author Loïc Dalloz
+#  @author Loic Dalloz
 #  @version 1.0
 #
 import picamera
@@ -86,17 +86,19 @@ class Scanner:
     #  Find the position of the laser on the self.half row of the image.
     def get_U(self):
         rows, col = self.mask.shape
-        compteur = 0
-        pos = 0
-        u = 0
-        for j in xrange(col):
-            k = self.mask.item(self.half, j)
-            if k == 255:
-                compteur = compteur + 1
-                pos = pos + j
-        if compteur != 0:
-            u = pos/compteur
-        return u
+        #compteur = 0
+        #pos = 0
+        #u = 0
+        list = [j for j in xrange(col) if self.mask.item(self.half, j)==255]
+        return np.mean(list)
+        #for j in xrange(col):
+        #    k = self.mask.item(self.half, j)
+        #    if k == 255:
+        #        compteur = compteur + 1
+        #        pos = pos + j
+        #if compteur != 0:
+        #    u = pos/compteur
+        #return u
 
     ## Calibrate the scanner
     #  @param self The object pointer.
