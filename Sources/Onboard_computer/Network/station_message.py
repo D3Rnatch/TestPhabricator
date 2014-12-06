@@ -30,7 +30,7 @@ class messages_sol:
     #  @see encode_image()
     #  @return The message string ready to be sent.
     def build_message(self, position, robot_angle, batteries_state, scanner_angle, image):
-        message_string = "{\"robot\":{\"X\":%s,\"Y\":%s,\"R\":%s,\"batteries\":[{\"batterie\":1, \"value\":%s},{\"batterie\":2, \"value\":%s}]},\"scanner\":{\"angle\":%s,\"image\":%s},\"message\": {\"type\":\"%s\",\"content\":\"%s\"}}" % (str(position[0]), str(position[1]), str(robot_angle), str(batteries_state[0]), str(batteries_state[1]), str(scanner_angle), str(image), str(self.my_message_type), str(self.my_message_content))
+        message_string = "{\"robot\":{\"X\":%s,\"Y\":%s,\"R\":%s,\"batteries\":[{\"batterie\":1, \"value\":%s},{\"batterie\":2, \"value\":%s}]},\"scanner\":{\"angle\":%s,\"image\":%s},\"message\": {\"type\":\"%s\",\"content\":\"%s\"}}\n" % (str(position[0]), str(position[1]), str(robot_angle), str(batteries_state[0]), str(batteries_state[1]), str(scanner_angle), str(image), str(self.my_message_type), str(self.my_message_content))
         self.my_message_content = ""
         self.my_message_type = ""
         return json.dumps(message_string)
@@ -57,11 +57,22 @@ class messages_sol:
     #  @return (X, Y, T, message_type, message_content).
     def decode_message(self, message):
         decoded_message = json.loads(message)
-        robot_x = decoded_message['robot']['X']
-        robot_y = decoded_message['robot']['Y']
-        robot_t = decoded_message['robot']['T']
+        try:
+            robot_x = decoded_message['robot']['X']
+            robot_y = decoded_message['robot']['Y']
+            robot_t = decoded_message['robot']['T']
+        except Exception, e:
+            print "Error : missing %s in received message.\n\tEvery values in robot set to 0.\n\n" % (e)
+            robot_x = 0
+            robot_y = 0
+            robot_t = 0
 
-        message_type = decoded_message['message']['type']
-        message_content = decoded_message['message']['content']
-
+        try:
+            message_type = decoded_message['message']['type']
+            message_content = decoded_message['message']['content']
+        except Exception, e:
+            print "Error : missing %s in received message.\n\tEmpty message.\n\n" % (e)
+            message_type = ""
+            message_content = ""
+       
         return (robot_x, robot_y, robot_t, message_type, message_content)

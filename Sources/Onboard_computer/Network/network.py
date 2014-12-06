@@ -45,7 +45,8 @@ class network:
                 if s != self.listenner:
                     s.send(message)
             except Exception, e:
-                print 'Error while sending to client :\n\t', e, '\n\n'
+                print 'Error while sending to client :\n\t', e, '\nReseting the connection...\n'
+                self.clients.remove(s)
 
     ## Check for some data.
     #  @param self The object pointer.
@@ -76,6 +77,7 @@ class network:
                         return_value = data
                     else:
                         self.clients.remove(s)
+                        s.close()
                 except Exception, e:
                     print 'Error while trying to read data from available socket :\n\t', e, '\n\n'
 
@@ -86,3 +88,13 @@ class network:
     def close(self):
         for s in self.clients:
             s.close()
+
+    ## Check if the station is connected.
+    #  @param self The object pointer.
+    #  @return True if connected else False.
+    def is_connected(self):
+        for s in self.clients:
+            if s == self.listenner:
+                return true
+        return false
+
