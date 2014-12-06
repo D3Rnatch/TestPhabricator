@@ -135,22 +135,10 @@ class Scanner:
     #  @return The computed distance in the plan (in cm).
     #  The distance is calculated with the coeffs stored in the file scan_config.txt.
     def get_plan_distance(self):
-        print "start loop"
-        temp = time.clock()
-        total = temp
         self.take_picture()
-        temp2 = time.clock()
-        print "Take picture = ", temp2 - temp
         self.make_mask()
-        temp = time.clock()
-        print "Make mask = ", temp - temp2
         u = self.get_U()
-        temp2 = time.clock()
-        print "GetU = ", temp2 - temp
         dist = (self.N/((u*1.4)-self.k))/10
-        temp = time.clock()
-        print "Copute distance = ", temp - temp2
-        print "Total = ", temp - total
         return dist
 
     ## Load the calibration coefs
