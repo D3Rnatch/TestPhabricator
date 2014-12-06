@@ -59,7 +59,7 @@ class Robot:
         # Send the infos to the base station
         #self.json_module.add_custom_message("Info", "Everything ok !")
         if need_to_send == True:
-            self.net_module.send_to_base(self.json_module.build_message((self.x, self.y), self.tetha, (50, 50), 30, "test image string"))
+            self.net_module.send_to_base(self.json_module.build_message((self.x, self.y), self.tetha, (50, 50), 30, ""))
             need_to_send = False
 
         return return_value

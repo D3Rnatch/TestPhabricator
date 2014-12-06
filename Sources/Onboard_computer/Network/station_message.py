@@ -1,7 +1,7 @@
 ## @file station_message.py
 #  @brief JSON messages for the station.
 #  @author Loic Dalloz.
-#  @version 1.0
+#  @version 1.1
 #
 import json
 import base64
@@ -30,7 +30,18 @@ class messages_sol:
     #  @see encode_image()
     #  @return The message string ready to be sent.
     def build_message(self, position, robot_angle, batteries_state, scanner_angle, image):
-        message_string = "{\"robot\":{\"X\":%s,\"Y\":%s,\"R\":%s,\"batteries\":[{\"batterie\":1, \"value\":%s},{\"batterie\":2, \"value\":%s}]},\"scanner\":{\"angle\":%s,\"image\":%s},\"message\": {\"type\":\"%s\",\"content\":\"%s\"}}\n" % (str(position[0]), str(position[1]), str(robot_angle), str(batteries_state[0]), str(batteries_state[1]), str(scanner_angle), str(image), str(self.my_message_type), str(self.my_message_content))
+
+        if image != "":
+            scanner_message = ",\"scanner\":{\"angle\":%s,\"image\":%s}" % (str(scanner_angle), str(image))
+        else:
+            scanner_message = ""
+
+        if self.my_message_type != "":
+            custom_message = ",\"message\": {\"type\":\"%s\",\"content\":\"%s\"}" % (str(self.my_message_type), str(self.my_message_content))
+        else:
+            custom_message = ""
+        message_string = "{\"robot\":{\"X\":%s,\"Y\":%s,\"R\":%s,\"batteries\":[{\"batterie\":1, \"value\":%s},{\"batterie\":2, \"value\":%s}]}%s%s}" % (str(position[0]), str(position[1]), str(robot_angle), str(batteries_state[0]), str(batteries_state[1]),scanner_message, custom_message)
+        
         self.my_message_content = ""
         self.my_message_type = ""
         return json.dumps(message_string)
