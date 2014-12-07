@@ -9,6 +9,7 @@ folders :
 
 Files :
   - robot.py : robot object (main object).
+  - main.py : main program.
 	
 Those sources are all for the onboard computer (raspberry pi).
 
