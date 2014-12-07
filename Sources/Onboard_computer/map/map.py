@@ -35,15 +35,26 @@ class map:
     def save(self, file_name):
         save_file = open(file_name, "w")
         rows, cols = self.map.shape
+
+        for j in xrange(0, cols+2):
+            save_file.write("-")
+
+        save_file.write("\n")
+
         for i in xrange(0, rows):
+            save_file.write("|")
             for j in xrange(0, cols):
                 if self.map.item(i, j) >= 10:
                     save_file.write("x")
                 else:
                     save_file.write(" ")
-
-            save_file.write("\n")
-
+                    
+            save_file.write("|\n")
+                    
+        for j in xrange(0, cols+2):
+            save_file.write("-")
+    
+        save_file.write("\n")
         save_file.write("EOF\n")
 
     ## Destroy averything.
