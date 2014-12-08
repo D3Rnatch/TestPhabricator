@@ -67,8 +67,12 @@ class messages_sol:
     #  @param message The received string.
     #  @return (X, Y, T, message_type, message_content).
     def decode_message(self, message):
-        decoded_message = json.loads(message)
-        try:
+	try:
+            decoded_message = json.loads(message)
+	except Exception, e:
+	    print "Error while trying to load JSON : \n\t%s\n\n\tmessage :\n\t%s\n\n" % (e, message)
+        
+	try:
             robot_x = decoded_message['robot']['X']
             robot_y = decoded_message['robot']['Y']
             robot_t = decoded_message['robot']['T']
