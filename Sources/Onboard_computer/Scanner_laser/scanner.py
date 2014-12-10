@@ -76,11 +76,29 @@ class Scanner:
         # Init resolution
         self.x = int(self.cap.get(4))
         self.y = int(self.cap.get(3))
-        self.half = round(self.y * 0.63)
+        self.half = round(self.y * 0.5)
 
     ##  Take a picture.
     #   @param self The object pointer.
     def take_picture(self):
+        ret, self.image = self.cap.read()
+        while ret == False:
+            ret, self.image = self.cap.read()
+        ret, self.image = self.cap.read()
+        while ret == False:
+            ret, self.image = self.cap.read()
+        ret, self.image = self.cap.read()
+        while ret == False:
+            ret, self.image = self.cap.read()
+        ret, self.image = self.cap.read()
+        while ret == False:
+            ret, self.image = self.cap.read()
+        ret, self.image = self.cap.read()
+        while ret == False:
+            ret, self.image = self.cap.read()
+        ret, self.image = self.cap.read()
+        while ret == False:
+            ret, self.image = self.cap.read()
         ret, self.image = self.cap.read()
         while ret == False:
             ret, self.image = self.cap.read()
@@ -112,17 +130,17 @@ class Scanner:
         raw_input("Bring the target to 50cm of the camera then press ENTER...")
         print "Calibrating 50cm..."
         self.take_picture()
-        self.take_picture()
         self.make_mask()
         u1 = self.get_U()
+	cv2.line(self.image, (0, int(self.half)), (int(self.y), int(self.half)), (255, 255, 255), 1) 
 	cv2.imwrite("50cm.png", self.image)
 	print "u = %s" % (str(u1))
         raw_input("Bring the target to 150cm of the camera then press ENTER...")
         print "Calibrating 150cm..."
         self.take_picture()
-        self.take_picture()
         self.make_mask()
         u2 = self.get_U()
+	cv2.line(self.image, (0, int(self.half)), (int(self.y), int(self.half)), (255, 255, 255), 1) 
 	cv2.imwrite("150cm.png", self.image)
 	print "u = %s" % (str(u2))
         print "computing coefs..."
@@ -141,7 +159,6 @@ class Scanner:
     #  @return The computed distance in the plan (in cm).
     #  The distance is calculated with the coeffs stored in the file scan_config.txt.
     def get_plan_distance(self):
-        self.take_picture()
         self.take_picture()
         self.make_mask()
         u = self.get_U()
