@@ -76,7 +76,7 @@ class Scanner:
         # Init resolution
         self.x = int(self.cap.get(4))
         self.y = int(self.cap.get(3))
-        self.half = round(self.y * 0.50)
+        self.half = round(self.y * 0.63)
 
     ##  Take a picture.
     #   @param self The object pointer.
@@ -115,12 +115,16 @@ class Scanner:
         self.take_picture()
         self.make_mask()
         u1 = self.get_U()
+	cv2.imwrite("50cm.png", self.image)
+	print "u = %s" % (str(u1))
         raw_input("Bring the target to 150cm of the camera then press ENTER...")
         print "Calibrating 150cm..."
         self.take_picture()
         self.take_picture()
         self.make_mask()
         u2 = self.get_U()
+	cv2.imwrite("150cm.png", self.image)
+	print "u = %s" % (str(u2))
         print "computing coefs..."
         self.d = 1500 - 500
         self.k = (u2*1.4)*1.5 - (u1*1.4)*0.5
