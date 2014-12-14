@@ -34,8 +34,8 @@ while(not end) :
 		print 'It is a check hand status'
 
 # Sending start frame and manual state
-frame = net.create_data_frame(0,0,1,0,0,0)
-net.write(str(frame))
+frame = net.create_packed_data_frame(chr(0),chr(0),chr(1),chr(0),chr(0),chr(0))
+net.send(str(frame))
 
 # Trying to get response :
 frame = net.read_unpack()
@@ -83,7 +83,11 @@ while(1):
 			data1 = ii * 10
 			data2 = jj * 10
 			data3 = vvv * 10
-			
+			byte1 = 0
+			byte2 = 0
+			byte3 = 0
+			byte4 = 0		
+
 			if data1 >= 0 :
 				byte1 = data3
 				byte2 = data3
@@ -100,12 +104,13 @@ while(1):
 			
 			byte5 = 254
 			
-			frame = net.create_data_frame(2, byte1, byte2, byte3, byte4, byte5)
+			frame = net.create_packed_data_frame(chr(2), chr(byte1), chr(byte2), chr(byte3), chr(byte4), chr(byte5))
 			
-			print str(frame)
-			net.send(str(frame))
+			print 'Sending Frame : ' + str(frame)
+			# net.send(str(frame))
 			
-			#print "wait ln\n"
-			print ser.readline()
+			# Trying to get response :
+			# frame = net.read_unpack()
+			# print 'New raw data : ' + str(frame)
 			#time.sleep(0.05)
 			#print "wait ended\n"

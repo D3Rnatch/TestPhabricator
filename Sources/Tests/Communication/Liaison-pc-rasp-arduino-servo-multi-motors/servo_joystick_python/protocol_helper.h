@@ -9,8 +9,6 @@
 
 #include <Arduino.h>
 
-#define MAX_FRAME_SIZE 5
-
 /*
 	Frame structure :
 	ID|- |- |- |- |- |

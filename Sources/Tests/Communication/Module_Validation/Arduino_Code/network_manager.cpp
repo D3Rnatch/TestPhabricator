@@ -19,16 +19,6 @@
     			char value[7];
     			Serial.readBytes(value,7);
     			this->last_extraction = extract_data_bytes((byte*)value);
-
-			// Writing on buffer :
-			for(int i=0;i<10;i++) {
-				if(this->encapsulation_stack[i].array[0] != 255) {
-					for(int j = 0;j<MAX_FRAME_SIZE;j++)				
-						Serial.print(this->encapsulation_stack[i].array[i]);
-						Serial.println();					
-						this->encapsulation_stack[i].array[0] = 255;
-				}
-			}
 		}
 		
 	int Network_manager :: get_last_frame_id()
@@ -48,6 +38,18 @@
 	
 	void Network_manager :: send(byte b0,byte b1,byte b2,byte b3,byte b4,byte b5)
 	{
-		// finding an unused space on buffer...
+		this->encapsulation_stack[0].array[0] = b0;
+		this->encapsulation_stack[0].array[1] = b1;
+		this->encapsulation_stack[0].array[2] = b2;
+		this->encapsulation_stack[0].array[3] = b3;
+		this->encapsulation_stack[0].array[4] = b4;
+		for(int i=0;i<5;i++) {
+			Serial.print(this->encapsulation_stack[0].array[i]);
+			//Serial.print(":"); 
+		}
+		Serial.print("\n");
 	}
+
+
+
 

@@ -7,63 +7,49 @@
 			Serial.begin(baud);
 			Serial.flush();
 			Serial.setTimeout(TIMEOUT); // See .h for details
-			this->tmp_read_status = 0;
-			this->tmp_write_status = 0;
-			#ifdef DBG
-				this->send_dbg_message_to_computer("Ok. Network initialised.");
-			#endif
+			this->last_extraction.type = -1;
+			for(int i=0;i<10;i++)
+				this->encapsulation_stack[i].array[0] = 255;
 		}
 	
 		void Network_manager :: run_the_magic()
 		{
 			// Reading data :
-			this->tmp_read_status = 0;
-			Serial.readBytesUntil('\n',this->tmp_read, 64);
-			for(int i=0;i<64;i++){
-				if(this->tmp_read[i] != '\0')
-					this->tmp_read_status += 1;
-				else
-					break;
-			}
-			
-			// write Data :
-			if(this->tmp_write_status != 0)
-			{
-				for(int i=0; i<this->tmp_write_status; i++)
-				{
-					this->send_data_to_computer(this->tmp_write[i])
-					this->tmp_write[i] = '\0';
-				}
-				this->tmp_write_status = 0;
-			}
+			Serial.flush();
+    			char value[7];
+    			Serial.readBytes(value,7);
+    			this->last_extraction = extract_data_bytes((byte*)value);
 		}
 		
-		char Network_manager :: read_data_from_buffer()
-		{
-			// TO BE IMPLEMENTED
-		}
+	int Network_manager :: get_last_frame_id()
+	{
+		return this->last_extraction.type;	
+	}
 		
-		void Network_manager :: write_data_to_buffer(char *b, int s)
-		{
-			// TO BE IMPLEMENTED
-		}
+	/**
+	*	\brief get_array : returns data frame array
+	*	\return uint8_t : contains 6 items.
+	*
+	*/
+	uint8_t * Network_manager :: get_array()
+	{
+		return this->last_extraction.array;	
+	}
 	
-		void Network_manager :: send_dbg_message_to_computer(char * t)
-		{
-			Serial.println(t);
+	void Network_manager :: send(byte b0,byte b1,byte b2,byte b3,byte b4,byte b5)
+	{
+		this->encapsulation_stack[0].array[0] = b0;
+		this->encapsulation_stack[0].array[1] = b1;
+		this->encapsulation_stack[0].array[2] = b2;
+		this->encapsulation_stack[0].array[3] = b3;
+		this->encapsulation_stack[0].array[4] = b4;
+		for(int i=0;i<5;i++) {
+			Serial.print(this->encapsulation_stack[0].array[i]);
+			//Serial.print(":"); 
 		}
-		
-		void Network_manager :: send_dbg_message_to_user()
-		{
-			// TO BE IMPLEMENTED
-		}
-		
-		void Network_manager :: send_data_to_computer(char v)
-		{
-			// TO BE IMPLEMENTED
-		}
-		
-		void Network_manager :: send_data_to_user(char i)
-		{
-			// TO BE IMPLEMENTED
-		}
+		Serial.println("");
+	}
+
+
+
+

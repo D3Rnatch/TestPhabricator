@@ -3,8 +3,9 @@
 # Last Modified : D3Rnatch
 
 import serial
-
+import sys
 from array import array
+from struct import *
 
 class Network_Manager :
 	
@@ -32,12 +33,31 @@ class Network_Manager :
 	# \return Returns a list of 5 bytes 
 	def read(self) :
 		val = self.ser.readline()
-		test = array('B',val)
+		# test = array('B',val)
 			
 		# print str(' Read line is : ' + ret) 
-		return test
+		return val
 
-	def red_line(self) :
+	# We assume the reading shit is always same god damn size
+	def read_unpack(self) :
+		val = self.ser.readline()
+		size = sys.getsizeof(val)
+		st = ''
+		#print 'DBG : size is : ' + str(size)
+		stt = ''
+		for i in range(0,size/8) :
+			st = st + 'c'
+			stt += val[i]		
+		#print 'DBG : ' + st
+		frame = unpack(st,stt)
+		
+		#print 'Reading incomming frame : ' + str(frame)
+		#print 'ID is ' + frame[0]
+		
+		return frame
+
+
+	def read_line(self) :
 		return self.ser.readline()
 	
 	# \brief create_movement_frame : creates a frame according 
@@ -61,4 +81,12 @@ class Network_Manager :
 
 		# At end, when ready we return the present frame.
 		return frame
+
+	def create_packed_data_frame (self,idd,p1,p2,p3,p4,p5) :
+		frame = pack('cccccc',idd,p1,p2,p3,p4,p5)
+		
+		#print 'Encaped Data : ' + frame
+
+		return frame
+
 		

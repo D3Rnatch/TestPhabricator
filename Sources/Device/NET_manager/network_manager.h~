@@ -5,13 +5,15 @@
 */
 
 
-// /!\ Mostly needs to be implemented.
-
 #ifndef NETWORK_MANAGER_H
 #define NETWORK_MANAGER_H
 
+#include "protocol_helper.h"
+
 // PARAMETER NON SETTABLE
 #define TIMEOUT 5 // 5 ms timeout time
+
+#define W_BUFFER_SIZE 10
 
 #define DBG
 //#define RELEASE
@@ -20,24 +22,28 @@ class Network_manager
 {
 	public :
 		Network_manager(int);
-	
+		
+		/**
+		*	\brief run_the_magic : updates read/write data
+		*		Writes current writtable frames
+		*		 & reads usb entry.
+		*/
 		void run_the_magic();
-	
-		void send_dbg_message_to_computer(char *);
-		void send_dbg_message_to_user(char *);
-		void send_data_to_computer(char);
-		void send_data_to_user(char);
-	
-		char read_data_from_buffer();
-		void write_data_to_buffer(char);
+		
+		int get_last_frame_id();
+		
+		/**
+		*	\brief get_array : returns data frame array
+		*	\return uint8_t : contains 6 items.
+		*
+		*/
+		uint8_t * get_array();
+
+		void send(byte,byte,byte,byte,byte,byte);
 	
 	private :
-
-	// This is mainly usefull in case of high communication level.
-	char tmp_read[64] ; // Reading FILE : stores every entry information from computer.
-	int tmp_read_status;
-	char tmp_write[64]; // Writing FILE : stores every information to be sent to computer.
-	int tmp_write_status;
+		t_frame_bytes last_extraction;
+		t_encap encapsulation_stack[10];	
 };
 
 #endif

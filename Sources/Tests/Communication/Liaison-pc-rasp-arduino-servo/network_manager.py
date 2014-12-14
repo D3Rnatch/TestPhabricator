@@ -36,6 +36,9 @@ class Network_Manager :
 			
 		# print str(' Read line is : ' + ret) 
 		return test
+
+	def read_line(self) :
+		return self.ser.readline()
 	
 	# \brief create_movement_frame : creates a frame according 
 	# to the protocol_helper file on github repository and parameters.

@@ -20,26 +20,16 @@ except :
 
 
 # We wait for Autopilot to complete its loading...
-end = 0
 while(not end) :
 	hand = net.read()
-	# if hand.pop(0) == '0' :
-	# 	end = 1
-	# else :
-	print 'Waiting for Autopilot check Hands'
-	print str(hand)
-	print 'Erf : ' + str(hand[0])
-	if hand[0] == 0 :
+	if hand.pop(0) == '0' :
 		end = 1
-		print 'It is a check hand status'
+	else :
+		print 'Waiting for Autopilot check Hands'
 
 # Sending start frame and manual state
-frame = net.create_data_frame(0,0,1,0,0,0)
+frame = net.create_data_frame(0,0,1,0,0)
 net.write(str(frame))
-
-# Trying to get response :
-frame = net.read_unpack()
-print 'New raw data : ' + str(frame)
 
 # waiting the connection
 s.listen(1)
@@ -85,18 +75,18 @@ while(1):
 			data3 = vvv * 10
 			
 			if data1 >= 0 :
-				byte1 = data3
-				byte2 = data3
+				byte1 = data1
+				byte2 = data1
 			else :
-				byte2 = data3
-				byte3 = data3
+				byte2 = data1
+				byte3 = data1
 				
 			if data2 >= 0 :
-				byte1 = data3
-				byte2 = data3
+				byte1 = data2
+				byte2 = data2
 			else :
-				byte4 = data3
-				byte3 = data3
+				byte4 = data2
+				byte3 = data2
 			
 			byte5 = 254
 			

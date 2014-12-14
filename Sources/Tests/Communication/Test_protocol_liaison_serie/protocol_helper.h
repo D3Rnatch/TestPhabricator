@@ -9,8 +9,6 @@
 
 #include <Arduino.h>
 
-#define MAX_FRAME_SIZE 5
-
 /*
 	Frame structure :
 	ID|- |- |- |- |- |
@@ -26,6 +24,13 @@ typedef struct send_encap
 	byte array[5];
 }t_encap;
 
+typedef struct recept_encap
+{
+	uint8_t type; // Frame ID and type
+	void * data; // Elements Array
+	uint8_t Elements; // Number elements
+}t_recept_encap;
+
 // ========================================================================
 //		FRAME DEFINITION ZONE
 // This is totally temporary, waiting to find a better solution to c++ 
@@ -38,7 +43,7 @@ typedef struct send_encap
 typedef struct recept_frame_bytes
 {
 	uint8_t type;
-	uint8_t array[6];
+	uint8_t array[5];
 }t_frame_bytes;
 
 /* This defines a double composed frame.
@@ -91,7 +96,7 @@ t_encap encap_battery_data(byte, byte);
 *	\brief extract_data, stores every bytes into an encap type variable
 *	\param frame : array of 5 bytes aka a frame.
 */
-// t_recept_encap extract_data(byte*frame);
+t_recept_encap extract_data(byte*frame);
 
 
 // ========================================================================
@@ -108,8 +113,7 @@ t_encap encap_battery_data(byte, byte);
 /**
 *	\brief encap_special_frames : encaps raspberry side frames
 *	\param uint8_t : frame type wanted
-*	\param byte *  : Array of values
-*	\param uint8_t :
+*	\param byte *  : 
 * 	################################### TODO
 */
 t_encap encap_special_frames(uint8_t, byte*, uint8_t);
@@ -123,26 +127,13 @@ t_encap encap_special_frames(uint8_t, byte*, uint8_t);
 //		-> Battery Status Frame; id 2
 //	/!\ : Frame size = 5 bytes
 // ========================================================================
+// # TODO 
+// t_recept_encap extract_data_computer(byte *frame); 
 
-/**
-* 	\brief get_frame_type : returns frame read id (integer)
-*	\param byte * : the read frame.
-*	\return uint8_t : unsigned short int.
-*/
 uint8_t get_frame_type(byte *);
 
-/**
-*	\brief extract_data_bytes : extracts and concatenates values for id [0;4]
-*	\param byte * : raw input data
-*	\param t_frame_bytes : extraction frame
-*/
 t_frame_bytes extract_data_bytes(byte *);
 
-/**
-*	\brief extract_data_doubles : extracts and concatenates values for id 5
-*	\param byte * : raw input data
-*	\param t_frame_bytes : extraction frame (double types)
-*/
 t_frame_doubles extract_data_doubles(byte *);
 
 #endif

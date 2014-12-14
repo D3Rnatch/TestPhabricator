@@ -1,22 +1,22 @@
-# This file permlits the test in manual mode of the robot
-# Not yet finished.
-
 import time
 import os
 import sys
 import socket
-
+import serial
 from network_manager import *
 
 # init socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind(('localhost', 5000))
 
+raw_input 'Please Press Enter to connect to Robot'
+
 # init serial connection
 try :
 	net = Network_Manager("/dev/ttyACM0",9600)
 except :
 	print 'Please connect an arduino.'
+	exit()
 
 
 # We wait for Autopilot to complete its loading...
@@ -32,14 +32,6 @@ while(not end) :
 	if hand[0] == 0 :
 		end = 1
 		print 'It is a check hand status'
-
-# Sending start frame and manual state
-frame = net.create_data_frame(0,0,1,0,0,0)
-net.write(str(frame))
-
-# Trying to get response :
-frame = net.read_unpack()
-print 'New raw data : ' + str(frame)
 
 # waiting the connection
 s.listen(1)
@@ -80,31 +72,14 @@ while(1):
 			print '--------------------------------------------------------------   ---'
 
 			# Send them to the arduino
-			data1 = ii * 10
-			data2 = jj * 10
-			data3 = vvv * 10
-			
-			if data1 >= 0 :
-				byte1 = data3
-				byte2 = data3
-			else :
-				byte2 = data3
-				byte3 = data3
-				
-			if data2 >= 0 :
-				byte1 = data3
-				byte2 = data3
-			else :
-				byte4 = data3
-				byte3 = data3
-			
-			byte5 = 254
-			
-			frame = net.create_data_frame(2, byte1, byte2, byte3, byte4, byte5)
-			
-			print str(frame)
-			net.send(str(frame))
-			
+			sending_data = ii * 10
+			#if sending_data > 60:
+			#	sending_data = 60
+			#if sending_data < 20:
+			#	sending_data = 20
+
+			print str(sending_data)
+			ser.write(str(sending_data) + '\n')
 			#print "wait ln\n"
 			print ser.readline()
 			#time.sleep(0.05)
