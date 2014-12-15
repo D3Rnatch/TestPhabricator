@@ -6,7 +6,7 @@ import serial
 import sys
 from array import *
 
-class Network_Manager :
+class Serial_Manager :
 	
 	def __init__ (self,port,baud) :
 		# We try the opening of the interface
