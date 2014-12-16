@@ -6,6 +6,7 @@ folders :
   - network : everything related to the communication with the base station.
   - Scanner_laser : everything related to the scanning.
   - map : everything related to the map (FastSLAM and other).
+  - logs : log manager module.
 
 Files :
   - robot.py : robot object (main object).

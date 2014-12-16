@@ -8,6 +8,7 @@ import os
 
 from network.network import network
 from network.station_message import messages_sol
+from logs.logManager import logManager
 
 ## Robot module.
 #  Fields :
@@ -21,6 +22,8 @@ from network.station_message import messages_sol
 #       - self.is_running      => running state.
 #       - self.need_to_send => if sending a message to the base is needed.
 #
+#	- self.logs => log manager object
+#
 class Robot:
     ## Constructor.
     #  @param self The object pointer.
@@ -28,15 +31,23 @@ class Robot:
         self.x = 0
         self.y = 0
         self.tetha = 0
+	self.logs = logManager()
+	self.logs.set_name("system")
 
     ## Start routine for the robot.
     #  @param self The object pointer.
     def start_routine(self):
+	self.logs.write_log("Start routine.")
+	self.logs.write_log("Start network manager.")
         self.net_module = network(5000)
         self.net_module.start()
+	self.logs.write_log("Start json parser manager.")
         self.json_module = messages_sol()
+	self.logs.write_log("Start some variables.")
         self.is_running = True
         self.need_to_send = False
+	self.logs.write_log("End start routine.")
+
         
     ## Run the main program.
     #  @param self The object pointer.
@@ -62,7 +73,11 @@ class Robot:
     ## Stop routine.
     #  @param self The object pointer.
     def stop_routine(self):
+	self.logs.write_log("Stop routine.")
+	self.logs.write_log("Stop network module.")
         self.net_module.close()
+	self.logs.write_log("Stop.")
+	
 
     ## Customs messages manager.
     #  @param self The object pointer.
