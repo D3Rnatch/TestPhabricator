@@ -1,9 +1,12 @@
 	************************
-	****    20:49:34    ****
+	****    20:55:00    ****
 	************************
 
-[20:49:34] => Start routine.
-[20:49:34] => Start network manager.
-[20:49:34] => Start json parser manager.
-[20:49:34] => Start some variables.
-[20:49:34] => End start routine.
+[20:55:00] => Start routine.
+[20:55:00] => Start network manager.
+[20:55:00] => Start json parser manager.
+[20:55:00] => Start some variables.
+[20:55:00] => End start routine.
+[20:55:21] => Stop routine.
+[20:55:21] => Stop network module.
+[20:55:21] => Stop.

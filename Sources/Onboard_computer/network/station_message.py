@@ -86,7 +86,7 @@ class messages_sol:
             message_type = decoded_message['message']['type']
             message_content = decoded_message['message']['content']
         except Exception, e:
-            print "Error : missing %s in received message.\n\tEmpty message.\n\n" % (e)
+            #print "Error : missing %s in received message.\n\tEmpty message.\n\n" % (e)
             message_type = ""
             message_content = ""
        
