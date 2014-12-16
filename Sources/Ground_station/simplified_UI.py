@@ -37,6 +37,10 @@ robot_z = 0
 connected = False
 compteur = 250
 recv_data = ""
+recv_message_type = ""
+recv_message = ""
+send_message_type = ""
+send_message = ""
 
 # Run the app
 while (1):
@@ -66,12 +70,18 @@ while (1):
 			try:
 				s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 				s.connect((args.address, 5000)) 
+				send_message = "hello"
+				send_message_type = "system"
 			except:
 				print 'Error while connecting ! '
 			connected = True
 		else:
 			s.close()
 			connected = False
+	if ((pygame.joystick.Joystick(0).get_button(1) == True) & (compteur > 5)) :
+		compteur = 0
+		send_message = "stop"
+		send_message_type = "system"
 
 	# determine real x and y in the referential
 	for i in range(0, 20):
@@ -106,23 +116,37 @@ while (1):
 				if data == "":
 					s.close()
 					connected = False
-				else:
+				elif ord(data[0]) == 123 :
 					recv_data = data
 					try: 
 						decoded_data = json.load(recv_data)
 					except Exception, e:
-						print "Error while decoding received data : \n\t" + e
+						print "Error while decoding received data : \n\t" + str(e)
+						exit()
 					try:
 						robot_x = decoded_data['robot']['X']
 						robot_y = decoded_data['robot']['Y']
-						robot_r = decoded_data['robot']['R']
+						robot_z = decoded_data['robot']['R']
 					except Exception, e:
-						print "Bad formed JSON : \n\tMiss " + e
-						
+						print "Bad formed JSON : \n\tMiss " + str(e)
+					try:
+						recv_message = decoded_data['message']['content']
+						recv_message_type = decoded_data['message']['type']
+					except Exception, e:
+						print "No message received."
+				else:
+					print "Data : " + data
+					exit()
 
 	# If connected, send data !
 	if (connected == True):
-		s.send('{"robot":{"X":' + str(jj) + ',"Y":' + str(ii) + ',"T":' + str(vvv) + '}}')
+		if send_message == "":
+			message = ""
+		else:
+			message = ',"message":{"type":"' + send_message_type + '","content":"' + send_message + '"}'
+			send_message_type = ""
+			send_message = ""
+		s.send('{"robot":{"X":' + str(jj) + ',"Y":' + str(ii) + ',"T":' + str(vvv) + '}' + message + '}')
 
 	# print those
 	os.system('clear')
@@ -146,7 +170,7 @@ while (1):
 		print 'Not connected'
 	else:
 		print 'Connected'	
-	print "Robot info :\n\t x = " + robot_x + "\n\t y = " + robot_y + "\n\t r = " + robot_r
-	
+	print "Robot info :\n\t x = " + str(robot_x) + "\n\t y = " + str(robot_y) + "\n\t r = " + str(robot_z)
+	print "Last message from the robot :\n\t" + recv_message_type + "\t" + recv_message + "\n"
 	# Wait a little time
 	time.sleep(0.1)
