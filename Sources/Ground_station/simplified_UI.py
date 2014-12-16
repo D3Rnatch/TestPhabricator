@@ -119,7 +119,7 @@ while (1):
 				elif ord(data[0]) == 123 :
 					recv_data = data
 					try: 
-						decoded_data = json.load(recv_data)
+						decoded_data = json.loads(recv_data)
 					except Exception, e:
 						print "Error while decoding received data : \n\t" + str(e)
 						exit()
