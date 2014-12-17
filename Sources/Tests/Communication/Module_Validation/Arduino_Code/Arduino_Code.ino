@@ -9,6 +9,9 @@ unsigned long time;
 unsigned long last_time;
 boolean motor_last_set = false;
 
+#define MIN 10
+#define MAX 90
+
 Servo escenter[4];
 
 void setSpeedcent(int a, int spd){
@@ -21,8 +24,8 @@ void setSpeedFans(uint8_t * b)
 {
   int vit[4]; 
  for(int i=0;i<4;i++) {
-     if(b[i]>100) b[i] = 100;
-     else if (b[i] < 0) b[i] = 0;
+     if(b[i]>MAX) b[i] = MAX;
+     else if (b[i] < MIN) b[i] = MIN;
      vit[i] = map(b[i],0,100,0,180);
   }
  for(int j=0;j<4;j++)
@@ -30,20 +33,20 @@ void setSpeedFans(uint8_t * b)
 }
 
 void arm(){
-  setSpeedcent(0,30);
-  setSpeedcent(1,30);
-  setSpeedcent(2,30);
-  setSpeedcent(3,30);
+  setSpeedcent(0,MIN);
+  setSpeedcent(1,MIN);
+  setSpeedcent(2,MIN);
+  setSpeedcent(3,MIN);
   delay(1200);
-  setSpeedcent(0,90);
-  setSpeedcent(1,90);
-  setSpeedcent(2,90);
-  setSpeedcent(3,90);
+  setSpeedcent(0,MAX);
+  setSpeedcent(1,MAX);
+  setSpeedcent(2,MAX);
+  setSpeedcent(3,MAX);
   delay(1200);
-  setSpeedcent(0,30);
-  setSpeedcent(1,30);
-  setSpeedcent(2,30);
-  setSpeedcent(3,30);
+  setSpeedcent(0,MIN);
+  setSpeedcent(1,MIN);
+  setSpeedcent(2,MIN);
+  setSpeedcent(3,MIN);
   delay(1200);
 }
 
@@ -63,7 +66,7 @@ void Process_Com(uint8_t id, uint8_t * b)
 	}
         else if( motor_last_set == false) {
            motor_last_set = true;
-           uint8_t c[5] = {30,30,30,30,30};
+           uint8_t c[5] = {MIN,MIN,MIN,MIN,MIN};
            setSpeedFans(c); 
         }
 }
@@ -81,8 +84,8 @@ void setup()
 uint8_t cpt = 0;
 void loop()
 { 
-              if(cpt%20) {
-                cpt = 0;
+              //if(cpt%5) {
+              //  cpt = 0;
 		// acquire data
 		net->run_the_magic();
 		
@@ -94,8 +97,8 @@ void loop()
 		// net->send(b[0],b[1],b[2],b[3],b[4],'\n');
 		
 		Process_Com(id, b);
-              }
-              cpt ++;
+             // }
+             // cpt ++;
 }
 
 

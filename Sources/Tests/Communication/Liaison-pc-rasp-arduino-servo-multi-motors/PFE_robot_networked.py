@@ -93,21 +93,35 @@ while(1):
 			byte3 = 0
 			byte4 = 0
 			
-			if data1 > 100 :
-				byte1 = data3
-				byte4 = data3
-			elif data1 < 100 :
-				byte2 = data3
-				byte3 = data3
+			# if data1 > 100 :
+			# 	byte1 = data3
+			# 	byte4 = data3
+			# elif data1 < 100 :
+			# 	byte2 = data3
+			# 	byte3 = data3
 				
-			if data2 > 100 :
-				byte1 = data3
-				byte2 = data3
-			elif data2 < 100 :
-				byte4 = data3
-				byte3 = data3
+			# if data2 > 100 :
+			# 	byte1 = data3
+			# 	byte2 = data3
+			# elif data2 < 100 :
+			# 	byte4 = data3
+			# 	byte3 = data3
 			
-			byte5 = 254
+			if data1 > 100 :
+				byte1 = data1-100 # Intervalle : [0;99]
+				byte4 = data1-100
+			elif data1 < 100 :
+				byte2 = 100 - data1
+				byte3 = 100 - data1
+
+			if data2 > 100 :
+				byte1 = data2 - 100 # intervalle : [0;99]
+				byte2 = data2 - 100
+			elif data2 < 100 :
+				byte4 = 100 - data2
+				byte3 = 100 - data2
+
+			byte5 = data3
 			
 			#frame = net.create_packed_data_frame(chr(2), chr(byte1), chr(byte2), chr(byte3), chr(byte4), chr(byte5))
 			#print 'Test data3 value : ' + str(int(data3))
@@ -115,12 +129,12 @@ while(1):
 			#print 'Test b1, b2, b3, b4 : ' + str(int(byte1)) + ':' + str(int(byte2)) + ':' + str(int(byte3)) + ':' + str(int(byte4))			
 			#print str(frame)
 
-			if byte1 != 0 or byte2 != 0 or byte3 != 0 or byte4 != 0 :
-				frame = '2'
-				frame += chr(byte1+48)
-				frame += chr(byte2+48)
-				frame += chr(byte3+48)
-				frame += chr(byte4+48)
+			# if byte1 != 0 or byte2 != 0 or byte3 != 0 or byte4 != 0 :
+			frame = '2'
+			frame += chr(byte1+48) # transforming the Int value to the char Int value
+			frame += chr(byte2+48)
+			frame += chr(byte3+48)
+			frame += chr(byte4+48)
 
 			net.send(str(frame))
 			# Trying to get response :
