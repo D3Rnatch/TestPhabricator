@@ -117,6 +117,7 @@ III. Wifi protocol
 	T : levitation power
 
 	The ground station can also send some custom messages as "start", "stop", etc.
+	System messages should be first in the queue.
 
 	Example in JSON :
 	
@@ -141,6 +142,23 @@ III. Wifi protocol
 	+		     +-----------------------------+----------------------------------------------------+
 	|		     |  hello			   |  Robot responds "hello" in the next frame		|
 	+--------------------+-----------------------------+----------------------------------------------------+
+	|  set_state	     |  scan			   |  Set the scan state on the robot (start scanning)  |
+	+		     +-----------------------------+----------------------------------------------------+
+	|		     |  move			   |  Set the movement mode on the robot		|
+	+--------------------+-----------------------------+----------------------------------------------------+
+	|  set_ai	     |  manual			   |  Set the manual mode				|
+	+		     +-----------------------------+----------------------------------------------------+
+	|		     |  auto			   |  Set the auto mode (auto room scanning)		|
+	+		     +-----------------------------+----------------------------------------------------+
+	|		     |  folow_wall		   |  Set wall folowing mode				|
+	+		     +-----------------------------+----------------------------------------------------+
+	|		     |  find_target		   |  Set target finding mode				|
+	+--------------------+-----------------------------+----------------------------------------------------+
+	|  get		     |  state			   |  Ask the current state mode (response: state_info)	|
+	+		     +-----------------------------+----------------------------------------------------+
+	|		     |  ai			   |  Ask AI mode (response: ai_info)			|
+	+--------------------+-----------------------------+----------------------------------------------------+
+
 
 	2) Raspberry Pi to Grund Station
 
@@ -155,6 +173,7 @@ III. Wifi protocol
 	scanner image
 
 	The robot can also send some custom messages as "ready", acks...
+	System messages should be first in the queue.
 	
 	JSON message example (to be completed):
 	
@@ -186,6 +205,23 @@ III. Wifi protocol
 	|  system	     |  hello			   |  Robot response from previous "hello"		|
 	+		     +-----------------------------+----------------------------------------------------+
 	|		     |  stop			   |  The robot has stopped !!				|
+	+		     +-----------------------------+----------------------------------------------------+
+	|		     |  ready			   |  The robot is ready !				|
 	+--------------------+-----------------------------+----------------------------------------------------+
+	|  state_info	     |  scan			   |  The robot is in scanning mode			|
+	+		     +-----------------------------+----------------------------------------------------+
+	|		     |  move			   |  The robot is in moving mode			|
+	+--------------------+-----------------------------+----------------------------------------------------+
+	|  ai_info	     |  manual			   |  Robot is in manual mode				|
+	+		     +-----------------------------+----------------------------------------------------+
+	|		     |  auto			   |  Robot is in auto mode (auto room scanning)	|
+	+		     +-----------------------------+----------------------------------------------------+
+	|		     |  folow_wall		   |  Robot is folowing walls				|
+	+		     +-----------------------------+----------------------------------------------------+
+	|		     |  find_target		   |  Robot is searching a target			|
+	+--------------------+-----------------------------+----------------------------------------------------+
+	|  simple_massage    |  [message]		   |  Send a custom message (info, error,...)		|
+	+--------------------+-----------------------------+----------------------------------------------------+
+
 
 --- EOF ---
