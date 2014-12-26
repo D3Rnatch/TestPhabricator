@@ -1,7 +1,7 @@
 ## @file station_message.py
 #  @brief JSON messages for the station.
 #  @author Loic Dalloz.
-#  @version 1.1
+#  @version 1.2
 #
 import json
 import base64
@@ -10,6 +10,7 @@ import numpy
 
 ## JSON management for the station communication
 #  Fields:
+#    - self.message_queue      => message to send queue 
 #    - self.my_message_type    => message type for custom messages to send
 #    - self.my_message_content => message content for next custom message to send
 #
@@ -19,6 +20,7 @@ class messages_sol:
     def __init__(self):
         self.my_message_type = ""
         self.my_message_content = ""
+        self.message_queue = list()
 
     ## Construct the JSON message to send.
     #  @param self The object pointer.
@@ -36,23 +38,25 @@ class messages_sol:
         else:
             scanner_message = ""
 
+        self.pop_message()
         if self.my_message_type != "":
             custom_message = ',"message": {"type":"%s","content":"%s"}' % (str(self.my_message_type), str(self.my_message_content))
         else:
             custom_message = ""
+
         message_string = '{"robot":{"X":%s,"Y":%s,"R":%s,"batteries":[{"batterie":1, "value":%s},{"batterie":2, "value":%s}]}%s%s}' % (str(position[0]), str(position[1]), str(robot_angle), str(batteries_state[0]), str(batteries_state[1]),scanner_message, custom_message)
         
-        self.my_message_content = ""
-        self.my_message_type = ""
         return message_string
 
-    ## Add a custom message to the next message creation.
+    ## Add a command in the queue.
     #  @param self The object pointer
     #  @param message_type The custom message type in a string format.
     #  @param message_content The custom message content.
     def add_custom_message(self, message_type, message_content):
-        self.my_message_type = message_type
-        self.my_message_content = message_content
+        if message_type == "system":
+            self.message_queue.insert(0, (message_type, message_content))
+        else:
+            self.message_queue.append((message_type, message_content))
 
     ## Encode a binary image in base64.
     #  @param self The object pointer.
@@ -67,12 +71,11 @@ class messages_sol:
     #  @param message The received string.
     #  @return (X, Y, T, message_type, message_content).
     def decode_message(self, message):
-	try:
+        try:
             decoded_message = json.loads(message)
-	except Exception, e:
-	    print "Error while trying to load JSON : \n\t%s\n\n\tmessage :\n\t%s\n\n" % (e, message)
-        
-	try:
+        except Exception, e:
+            print "Error while trying to load JSON : \n\t%s\n\n\tmessage :\n\t%s\n\n" % (e, message)
+        try:
             robot_x = decoded_message['robot']['X']
             robot_y = decoded_message['robot']['Y']
             robot_t = decoded_message['robot']['T']
@@ -91,3 +94,14 @@ class messages_sol:
             message_content = ""
        
         return (robot_x, robot_y, robot_t, message_type, message_content)
+
+    ## Pop the next message to send in built in containers (can be used to dismiss a message but it shouldn't be done).
+    #  @param self The object pointer.
+    def pop_message(self):
+        if len(self.message_queue) > 0:
+            next_message = self.message_queue.pop(0)
+            self.my_message_type = next_message[0]
+            self.my_message_content = next_message[1]
+        else:
+            self.my_message_content = ""
+            self.my_message_type = ""
