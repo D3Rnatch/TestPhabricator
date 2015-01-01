@@ -41,6 +41,8 @@ recv_message_type = ""
 recv_message = ""
 send_message_type = ""
 send_message = ""
+state = ""
+ai = ""
 
 # Run the app
 while (1):
@@ -82,6 +84,14 @@ while (1):
 		compteur = 0
 		send_message = "stop"
 		send_message_type = "system"
+	if ((pygame.joystick.Joystick(0).get_button(2) == True) & (compteur > 5)) :
+		compteur = 0
+		if state == "scan" || state == "wait":
+			send_message = "move"
+			send_message_type = "set_state"
+		else:
+			send_message = "scan"
+			send_message_type = "set_state"
 
 	# determine real x and y in the referential
 	for i in range(0, 20):
@@ -132,6 +142,11 @@ while (1):
 					try:
 						recv_message = decoded_data['message']['content']
 						recv_message_type = decoded_data['message']['type']
+						# store current states in local vars
+						if recv_message_type == "state_info":
+							state = recv_message
+						elif recv_message_type == "ai_info":
+							ai = recv_message
 					except Exception, e:
 						print "No message received."
 				else:
@@ -172,5 +187,6 @@ while (1):
 		print 'Connected'	
 	print "Robot info :\n\t x = " + str(robot_x) + "\n\t y = " + str(robot_y) + "\n\t r = " + str(robot_z)
 	print "Last message from the robot :\n\t" + recv_message_type + "\t" + recv_message + "\n"
+	print "State : " + state + "\t\tAI : " + ai + "\n\n"
 	# Wait a little time
 	time.sleep(0.1)
