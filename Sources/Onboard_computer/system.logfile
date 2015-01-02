@@ -1,12 +1,17 @@
 	************************
-	****    20:55:00    ****
+	****    11:32:33    ****
 	************************
 
-[20:55:00] => Start routine.
-[20:55:00] => Start network manager.
-[20:55:00] => Start json parser manager.
-[20:55:00] => Start some variables.
-[20:55:00] => End start routine.
-[20:55:21] => Stop routine.
-[20:55:21] => Stop network module.
-[20:55:21] => Stop.
+[11:32:33] => Start routine.
+[11:32:33] => Start network manager.
+[11:32:33] => Start json parser manager.
+[11:32:33] => Start some variables.
+[11:32:33] => End start routine.
+[11:32:42] => Hello message received ! Respond hello.
+[11:32:49] => Set scan mode (from network)
+[11:32:52] => Set move mode (from network)
+[11:32:55] => Set scan mode (from network)
+[11:33:04] => Stop message received
+[11:33:04] => Stop routine.
+[11:33:04] => Stop network module.
+[11:33:04] => Stop.

@@ -105,3 +105,9 @@ class messages_sol:
         else:
             self.my_message_content = ""
             self.my_message_type = ""
+
+    ## Get pending messages number.
+    #  @param self The object pointer.
+    #  @return Pending messages number.
+    def get_pending_messages(self):
+	return len(self.message_queue)

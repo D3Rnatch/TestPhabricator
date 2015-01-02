@@ -66,7 +66,7 @@ while (1):
 	# Manage connection
 	if (compteur < 10):
 		compteur = compteur + 1
-	if ((pygame.joystick.Joystick(0).get_button(8) == True) & (compteur > 5)) :
+	if ((pygame.joystick.Joystick(0).get_button(8) == True) & (compteur > 5)) : # Connect
 		compteur = 0
 		if connected == False:
 			try:
@@ -80,18 +80,26 @@ while (1):
 		else:
 			s.close()
 			connected = False
-	if ((pygame.joystick.Joystick(0).get_button(1) == True) & (compteur > 5)) :
+	if ((pygame.joystick.Joystick(0).get_button(1) == True) & (compteur > 5)) : # Stop the robot
 		compteur = 0
 		send_message = "stop"
 		send_message_type = "system"
-	if ((pygame.joystick.Joystick(0).get_button(2) == True) & (compteur > 5)) :
+	if ((pygame.joystick.Joystick(0).get_button(2) == True) & (compteur > 5)) : # Change state
 		compteur = 0
-		if state == "scan" || state == "wait":
+		if state == "scan" or state == "wait":
 			send_message = "move"
 			send_message_type = "set_state"
 		else:
 			send_message = "scan"
 			send_message_type = "set_state"
+	if ((pygame.joystick.Joystick(0).get_button(3) == True) & (compteur > 5)): # Change AI
+		compteur = 0
+		if ai == "manual":
+			send_message = "auto"
+			send_message_type = "set_ai"
+		else:
+			send_message = "manual"
+			send_message_type = "set_ai"
 
 	# determine real x and y in the referential
 	for i in range(0, 20):

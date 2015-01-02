@@ -56,8 +56,8 @@ class Robot:
         self.tetha = 0
         self.logs = logManager()
         self.logs.set_name("system")
-        self.ai_mode = AI_MANUAL
-        self.state_mode = STATE_WAIT
+        self.ai_mode = self.AI_MANUAL
+        self.state_mode = self.STATE_WAIT
 
     ## Start routine for the robot.
     #  @param self The object pointer.
@@ -86,14 +86,31 @@ class Robot:
 
         # Add some threatments here.
         # TODO
+	if self.state_mode == self.STATE_SCAN:
+	    self.scan_tick()    
+	elif self.state_mode == self.STATE_MOVE:
+	    self.move_tick()
 
         # Send the infos to the base station
         #self.json_module.add_custom_message("Info", "Everything ok !")
-        if self.need_to_send == True:
+        if self.json_module.get_pending_messages() > 0:
             self.net_module.send_to_base(self.json_module.build_message((self.x, self.y), self.tetha, (50, 50), 30, ""))
             self.need_to_send = False
 
         return self.is_running
+
+    ## Scan tick.
+    #  @param self The object pointer.
+    def scan_tick(self):
+	print "Move the servo and take distance."
+
+    ## Move tick.
+    #  @param self The object pointer.
+    def move_tick(self):
+	if self.ai_mode == self.AI_MANUAL:
+	    print "Allow moving from network."
+	elif self.ai_mode == self.AI_AUTO:
+	    print "Move from self calculated position."	
 
     ## Stop routine.
     #  @param self The object pointer.
@@ -110,63 +127,74 @@ class Robot:
     def custom_messages_eater(self, message_type, message_content):
         if message_type == "system":
             if message_content == "stop": # system stop
+		self.logs.write_log("Stop message received")
                 self.is_running = False
                 self.json_module.add_custom_message("system", "stop")
                 self.need_to_send = True
             elif message_content == "hello": # system hello
+		self.logs.write_log("Hello message received ! Respond hello.")
                 self.json_module.add_custom_message("system", "hello")
                 self.need_to_send = True
         elif message_type == "set_state":
             if message_content == "scan": # set_state scan
-                self.state_mode = STATE_SCAN
+		self.logs.write_log("Set scan mode (from network)")
+                self.state_mode = self.STATE_SCAN
                 self.json_module.add_custom_message("state_info", "scan")
                 self.need_to_send = True
             elif message_content == "move": # set_state move
-                self.state_mode = STATE_MOVE
+		self.logs.write_log("Set move mode (from network)")
+                self.state_mode = self.STATE_MOVE
                 self.json_module.add_custom_message("state_info", "move")
                 self.need_to_send = True
             elif message_content == "wait": # set_state wait
-                self.state_mode = STATE_WAIT
+		self.logs.write_log("Set waiting mode (from network)")
+                self.state_mode = self.STATE_WAIT
                 self.json_module.add_custom_message("state_info", "wait")
                 self.need_to_send = True
         elif message_type == "set_ai":
             if message_content == "manual": # set_ai manual
-                self.ai_mode = AI_MANUAL
+		self.logs.write_log("Set manual AI (from network)")
+                self.ai_mode = self.AI_MANUAL
                 self.json_module.add_custom_message("ai_info", "manual")
                 self.need_to_send = True
             elif message_content == "auto": # set_ai auto
-                self.ai_mode = AI_AUTO
+		self.logs.write_log("Set auto AI (from network)")
+                self.ai_mode = self.AI_AUTO
                 self.json_module.add_custom_message("ai_info", "auto")
                 self.need_to_send = True
             elif message_content == "follow_wall": # set_ai follow_wall
-                self.ai_mode = AI_FOLLOW
+		self.logs.write_log("Set follow AI (from network)")
+                self.ai_mode = self.AI_FOLLOW
                 self.json_module.add_custom_message("ai_info", "follow_wall")
                 self.need_to_send = True
             elif message_content == "find_target": # set_ai find_target
-                self.ai_mode = AI_FIND
+		self.logs.write_log("Set find AI (from network)")
+                self.ai_mode = self.AI_FIND
                 self.json_module.add_custom_message("ai_info", "find_target")
                 self.need_to_send = True
         elif message_type == "get":
             if message_content == "state": # get state
-                if self.state_mode == STATE_SCAN:
+		self.logs.write_log("Return current state to network")
+                if self.state_mode == self.STATE_SCAN:
                     self.json_module.add_custom_message("state_info", "scan")
                     self.need_to_send = True
-                elif self.state_mode == STATE_MOVE:
+                elif self.state_mode == self.STATE_MOVE:
                     self.json_module.add_custom_message("state_info", "move")
                     self.need_to_send = True
-                elif self.state_mode == STATE_WAIT:
+                elif self.state_mode == self.STATE_WAIT:
                     self.json_module.add_custom_message("state_info", "wait")
                     self.need_to_send = True
             elif message_content == "ai": # get ai
-                if self.ai_mode == AI_MANUAL:
+		self.logs.write_log("Return current AI to network")
+                if self.ai_mode == self.AI_MANUAL:
                     self.json_module.add_custom_message("ai_info", "manual")
                     self.need_to_send = True
-                elif self.ai_mode == AI_AUTO:
+                elif self.ai_mode == self.AI_AUTO:
                     self.json_module.add_custom_message("ai_info", "auto")
                     self.need_to_send = True
-                elif self.ai_mode == AI_FOLLOW:
+                elif self.ai_mode == self.AI_FOLLOW:
                     self.json_module.add_custom_message("ai_info", "follow_wall")
                     self.need_to_send = True
-                elif self.ai_mode == AI_FIND:
+                elif self.ai_mode == self.AI_FIND:
                     self.json_module.add_custom_message("ai_info", "find_target")
                     self.need_to_send = True
