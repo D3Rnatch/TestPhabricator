@@ -135,28 +135,31 @@ while (1):
 					s.close()
 					connected = False
 				elif ord(data[0]) == 123 :
-					recv_data = data
-					try: 
-						decoded_data = json.loads(recv_data)
-					except Exception, e:
-						print "Error while decoding received data : \n\t" + str(e)
-						exit()
-					try:
-						robot_x = decoded_data['robot']['X']
-						robot_y = decoded_data['robot']['Y']
-						robot_z = decoded_data['robot']['R']
-					except Exception, e:
-						print "Bad formed JSON : \n\tMiss " + str(e)
-					try:
-						recv_message = decoded_data['message']['content']
-						recv_message_type = decoded_data['message']['type']
-						# store current states in local vars
-						if recv_message_type == "state_info":
-							state = recv_message
-						elif recv_message_type == "ai_info":
-							ai = recv_message
-					except Exception, e:
-						print "No message received."
+					recv_datas = data.split(' ')
+					print recv_datas
+					for recv_data in recv_datas:
+					    if recv_data != '':
+					        try: 
+					   	    decoded_data = json.loads(recv_data)
+					        except Exception, e:
+						    print "Error while decoding received data : \n\t" + str(e) + "\nData : " + recv_data
+						    exit()
+					        try:
+						    robot_x = decoded_data['robot']['X']
+						    robot_y = decoded_data['robot']['Y']
+						    robot_z = decoded_data['robot']['R']
+					        except Exception, e:
+						    print "Bad formed JSON : \n\tMiss " + str(e)
+					        try:
+						    recv_message = decoded_data['message']['content']
+						    recv_message_type = decoded_data['message']['type']
+						    # store current states in local vars
+						    if recv_message_type == "state_info":
+							    state = recv_message
+						    elif recv_message_type == "ai_info":
+							    ai = recv_message
+					        except Exception, e:
+						    print "No message received."
 				else:
 					print "Data : " + data
 					exit()

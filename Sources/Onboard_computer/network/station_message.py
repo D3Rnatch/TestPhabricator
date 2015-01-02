@@ -40,11 +40,11 @@ class messages_sol:
 
         self.pop_message()
         if self.my_message_type != "":
-            custom_message = ',"message": {"type":"%s","content":"%s"}' % (str(self.my_message_type), str(self.my_message_content))
+            custom_message = ',"message":{"type":"%s","content":"%s"}' % (str(self.my_message_type), str(self.my_message_content))
         else:
             custom_message = ""
 
-        message_string = '{"robot":{"X":%s,"Y":%s,"R":%s,"batteries":[{"batterie":1, "value":%s},{"batterie":2, "value":%s}]}%s%s}' % (str(position[0]), str(position[1]), str(robot_angle), str(batteries_state[0]), str(batteries_state[1]),scanner_message, custom_message)
+        message_string = '{"robot":{"X":%s,"Y":%s,"R":%s,"batteries":[{"batterie":1,"value":%s},{"batterie":2,"value":%s}]}%s%s}' % (str(position[0]), str(position[1]), str(robot_angle), str(batteries_state[0]), str(batteries_state[1]),scanner_message, custom_message)
         
         return message_string
 

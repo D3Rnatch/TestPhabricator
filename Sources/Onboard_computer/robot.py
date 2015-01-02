@@ -20,9 +20,8 @@ from logs.logManager import logManager
 #       - self.json_module  => json manager instance.
 #
 #       - self.is_running       => running state.
-#       - self.need_to_send     => if sending a message to the base is needed.
 #
-#	    - self.logs => log manager object
+#	- self.logs => log manager object
 #
 #       - self.state_mode   => robot mode.
 #       - self.ai_mode      => robot ai mode.
@@ -70,7 +69,6 @@ class Robot:
         self.json_module = messages_sol()
         self.logs.write_log("Start some variables.")
         self.is_running = True
-        self.need_to_send = False
         self.logs.write_log("End start routine.")
 
         
@@ -94,23 +92,22 @@ class Robot:
         # Send the infos to the base station
         #self.json_module.add_custom_message("Info", "Everything ok !")
         if self.json_module.get_pending_messages() > 0:
-            self.net_module.send_to_base(self.json_module.build_message((self.x, self.y), self.tetha, (50, 50), 30, ""))
-            self.need_to_send = False
+            self.net_module.send_to_base(self.json_module.build_message((self.x, self.y), self.tetha, (50, 50), 30, "") + " ")
 
         return self.is_running
 
     ## Scan tick.
     #  @param self The object pointer.
     def scan_tick(self):
-	print "Move the servo and take distance."
+	pass
 
     ## Move tick.
     #  @param self The object pointer.
     def move_tick(self):
 	if self.ai_mode == self.AI_MANUAL:
-	    print "Allow moving from network."
+	    pass
 	elif self.ai_mode == self.AI_AUTO:
-	    print "Move from self calculated position."	
+	    pass
 
     ## Stop routine.
     #  @param self The object pointer.
@@ -130,71 +127,67 @@ class Robot:
 		self.logs.write_log("Stop message received")
                 self.is_running = False
                 self.json_module.add_custom_message("system", "stop")
-                self.need_to_send = True
             elif message_content == "hello": # system hello
 		self.logs.write_log("Hello message received ! Respond hello.")
                 self.json_module.add_custom_message("system", "hello")
-                self.need_to_send = True
+		self.send_state()
+		self.send_ai()
         elif message_type == "set_state":
             if message_content == "scan": # set_state scan
 		self.logs.write_log("Set scan mode (from network)")
                 self.state_mode = self.STATE_SCAN
                 self.json_module.add_custom_message("state_info", "scan")
-                self.need_to_send = True
             elif message_content == "move": # set_state move
 		self.logs.write_log("Set move mode (from network)")
                 self.state_mode = self.STATE_MOVE
                 self.json_module.add_custom_message("state_info", "move")
-                self.need_to_send = True
             elif message_content == "wait": # set_state wait
 		self.logs.write_log("Set waiting mode (from network)")
                 self.state_mode = self.STATE_WAIT
                 self.json_module.add_custom_message("state_info", "wait")
-                self.need_to_send = True
         elif message_type == "set_ai":
             if message_content == "manual": # set_ai manual
 		self.logs.write_log("Set manual AI (from network)")
                 self.ai_mode = self.AI_MANUAL
                 self.json_module.add_custom_message("ai_info", "manual")
-                self.need_to_send = True
             elif message_content == "auto": # set_ai auto
 		self.logs.write_log("Set auto AI (from network)")
                 self.ai_mode = self.AI_AUTO
                 self.json_module.add_custom_message("ai_info", "auto")
-                self.need_to_send = True
             elif message_content == "follow_wall": # set_ai follow_wall
 		self.logs.write_log("Set follow AI (from network)")
                 self.ai_mode = self.AI_FOLLOW
                 self.json_module.add_custom_message("ai_info", "follow_wall")
-                self.need_to_send = True
             elif message_content == "find_target": # set_ai find_target
 		self.logs.write_log("Set find AI (from network)")
                 self.ai_mode = self.AI_FIND
                 self.json_module.add_custom_message("ai_info", "find_target")
-                self.need_to_send = True
         elif message_type == "get":
             if message_content == "state": # get state
-		self.logs.write_log("Return current state to network")
-                if self.state_mode == self.STATE_SCAN:
-                    self.json_module.add_custom_message("state_info", "scan")
-                    self.need_to_send = True
-                elif self.state_mode == self.STATE_MOVE:
-                    self.json_module.add_custom_message("state_info", "move")
-                    self.need_to_send = True
-                elif self.state_mode == self.STATE_WAIT:
-                    self.json_module.add_custom_message("state_info", "wait")
-                    self.need_to_send = True
+		self.send_state()
             elif message_content == "ai": # get ai
-		self.logs.write_log("Return current AI to network")
-                if self.ai_mode == self.AI_MANUAL:
-                    self.json_module.add_custom_message("ai_info", "manual")
-                    self.need_to_send = True
-                elif self.ai_mode == self.AI_AUTO:
-                    self.json_module.add_custom_message("ai_info", "auto")
-                    self.need_to_send = True
-                elif self.ai_mode == self.AI_FOLLOW:
-                    self.json_module.add_custom_message("ai_info", "follow_wall")
-                    self.need_to_send = True
-                elif self.ai_mode == self.AI_FIND:
-                    self.json_module.add_custom_message("ai_info", "find_target")
-                    self.need_to_send = True
+		self.send_ai()
+
+    ## Send current state to the network
+    #  @param self The object pointer.
+    def send_state(self):
+	self.logs.write_log("Return current state to network")
+        if self.state_mode == self.STATE_SCAN:
+            self.json_module.add_custom_message("state_info", "scan")
+        elif self.state_mode == self.STATE_MOVE:
+            self.json_module.add_custom_message("state_info", "move")
+        elif self.state_mode == self.STATE_WAIT:
+            self.json_module.add_custom_message("state_info", "wait")
+
+    ## Send ai state to the network
+    #  @param self The object pointer.
+    def send_ai(self):
+	self.logs.write_log("Return current AI to network")
+        if self.ai_mode == self.AI_MANUAL:
+            self.json_module.add_custom_message("ai_info", "manual")
+        elif self.ai_mode == self.AI_AUTO:
+            self.json_module.add_custom_message("ai_info", "auto")
+        elif self.ai_mode == self.AI_FOLLOW:
+            self.json_module.add_custom_message("ai_info", "follow_wall")
+        elif self.ai_mode == self.AI_FIND:
+            self.json_module.add_custom_message("ai_info", "find_target")
