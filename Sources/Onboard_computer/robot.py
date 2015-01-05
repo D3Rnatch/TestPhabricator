@@ -92,8 +92,8 @@ class Robot:
 	r_t = 0
         datas = self.net_module.read()
         if datas != "" and ord(datas[0]) == 123: # If we have a '{' to start the message (a JSON message).
-            r_x, r_y, r_t, r_message_t, r_message_c = self.json_module.decode_message(datas)
-            self.custom_messages_eater(r_message_t, r_message_c)
+            r_x, r_y, r_t, r_messages = self.json_module.decode_message(datas)
+            self.custom_messages_eater(r_messages)
 	    received = True
 
         # Add some threatments here.
@@ -156,56 +156,62 @@ class Robot:
     #  @param self The object pointer.
     #  @param message_type The message type received.
     #  @param message_content The received message.
-    def custom_messages_eater(self, message_type, message_content):
-        if message_type == "system":
-            if message_content == "stop": # system stop
-		self.logs.write_log("Stop message received")
-                self.is_running = False
-                self.json_module.add_custom_message("system", "stop")
-            elif message_content == "hello": # system hello
-		self.logs.write_log("Hello message received ! Respond hello.")
-                self.json_module.add_custom_message("system", "hello")
-		self.send_state()
-		self.send_ai()
-        elif message_type == "set_state":
-            if message_content == "scan": # set_state scan
-		self.logs.write_log("Set scan mode (from network)")
-                self.state_mode = self.STATE_SCAN
-		self.serial_manager.send(str(self.serial_manager.create_stop_frame()))
-                self.json_module.add_custom_message("state_info", "scan")
-            elif message_content == "move": # set_state move
-		self.set_moving()
-            elif message_content == "wait": # set_state wait
-		self.logs.write_log("Set waiting mode (from network)")
-                self.state_mode = self.STATE_WAIT
-                self.json_module.add_custom_message("state_info", "wait")
-        elif message_type == "set_ai":
-            if message_content == "manual": # set_ai manual
-		self.logs.write_log("Set manual AI (from network)")
-                self.ai_mode = self.AI_MANUAL
-                self.json_module.add_custom_message("ai_info", "manual")
-            elif message_content == "auto": # set_ai auto
-		self.logs.write_log("Set auto AI (from network)")
-                self.ai_mode = self.AI_AUTO
-                self.json_module.add_custom_message("ai_info", "auto")
-            elif message_content == "follow_wall": # set_ai follow_wall
-		self.logs.write_log("Set follow AI (from network)")
-                self.ai_mode = self.AI_FOLLOW
-                self.json_module.add_custom_message("ai_info", "follow_wall")
-            elif message_content == "find_target": # set_ai find_target
-		self.logs.write_log("Set find AI (from network)")
-                self.ai_mode = self.AI_FIND
-                self.json_module.add_custom_message("ai_info", "find_target")
-        elif message_type == "get":
-            if message_content == "state": # get state
-		self.send_state()
-            elif message_content == "ai": # get ai
-		self.send_ai()
+    def custom_messages_eater(self, messages):
+        for message in messages:
+            if message[0] == "system":
+                if message[1] == "stop": # system stop
+                    self.logs.write_log("Stop message received")
+                    self.is_running = False
+                    self.json_module.add_custom_message("system", "stop")
+                elif message[1] == "hello": # system hello
+                    self.logs.write_log("Hello message received ! Respond hello.")
+                    self.json_module.add_custom_message("system", "hello")
+                    self.send_state()
+                    self.send_ai()
+            elif message[0] == "set_state":
+                if message[1] == "scan": # set_state scan
+                    if self.state_mode == self.STATE_MOVE:
+                        self.logs.write_log("Send the stop frame to robot.")
+                        self.serial_manager.send(str(self.serial_manager.create_stop_frame()))
+                    self.logs.write_log("Set scan mode (from network)")
+                    self.state_mode = self.STATE_SCAN
+                    self.json_module.add_custom_message("state_info", "scan")
+                elif message[1] == "move": # set_state move
+		            self.set_moving()
+                elif message[1] == "wait": # set_state wait
+                    if self.state_mode == self.STATE_MOVE:
+                        self.logs.write_log("Send the stop frame to robot.")
+                        self.serial_manager.send(str(self.serial_manager.create_stop_frame()))
+                    self.logs.write_log("Set waiting mode (from network)")
+                    self.state_mode = self.STATE_WAIT
+                    self.json_module.add_custom_message("state_info", "wait")
+            elif message[0] == "set_ai":
+                if message[1] == "manual": # set_ai manual
+                    self.logs.write_log("Set manual AI (from network)")
+                    self.ai_mode = self.AI_MANUAL
+                    self.json_module.add_custom_message("ai_info", "manual")
+                elif message[1] == "auto": # set_ai auto
+                    self.logs.write_log("Set auto AI (from network)")
+                    self.ai_mode = self.AI_AUTO
+                    self.json_module.add_custom_message("ai_info", "auto")
+                elif message[1] == "follow_wall": # set_ai follow_wall
+                    self.logs.write_log("Set follow AI (from network)")
+                    self.ai_mode = self.AI_FOLLOW
+                    self.json_module.add_custom_message("ai_info", "follow_wall")
+                elif message[1] == "find_target": # set_ai find_target
+                    self.logs.write_log("Set find AI (from network)")
+                    self.ai_mode = self.AI_FIND
+                    self.json_module.add_custom_message("ai_info", "find_target")
+            elif message[0] == "get":
+                if message[1] == "state": # get state
+		            self.send_state()
+                elif message[1] == "ai": # get ai
+		            self.send_ai()
 
     ## Send current state to the network
     #  @param self The object pointer.
     def send_state(self):
-	self.logs.write_log("Return current state to network")
+        self.logs.write_log("Return current state to network")
         if self.state_mode == self.STATE_SCAN:
             self.json_module.add_custom_message("state_info", "scan")
         elif self.state_mode == self.STATE_MOVE:
@@ -216,7 +222,7 @@ class Robot:
     ## Send ai state to the network
     #  @param self The object pointer.
     def send_ai(self):
-	self.logs.write_log("Return current AI to network")
+        self.logs.write_log("Return current AI to network")
         if self.ai_mode == self.AI_MANUAL:
             self.json_module.add_custom_message("ai_info", "manual")
         elif self.ai_mode == self.AI_AUTO:
@@ -229,8 +235,7 @@ class Robot:
     ## Set in moving mode.
     #  @param The object pointer.
     def set_moving(self):
-	self.logs.write_log("Set move mode (from network)")
+        self.logs.write_log("Set move mode (from network)")
         self.state_mode = self.STATE_MOVE
-	self.serial_manager.send(str(self.serial_manager.create_start_frame(0)))
+        self.serial_manager.send(str(self.serial_manager.create_start_frame(0)))
         self.json_module.add_custom_message("state_info", "move")
-	
