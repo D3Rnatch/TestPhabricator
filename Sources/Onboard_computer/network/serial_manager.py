@@ -43,18 +43,54 @@ class Serial_Manager :
 	# \param p1 : parameter 1
 	# \param p2 to p5 are identical.
 	def create_data_frame (self,id,p1,p2,p3,p4,p5) :
+		pass
 		# creating the frame
-		frame = array('c')
+		#frame = array('c')
 		
 		# id
-		frame.insert(0,id)
+		#frame.insert(0,id)
 
 		# p1
-		frame.insert(1,p1)
-		frame.insert(2,p2)
-		frame.insert(3,p3)
-		frame.insert(4,p4)
-		frame.insert(5,p5)
+		#frame.insert(1,p1)
+		#frame.insert(2,p2)
+		#frame.insert(3,p3)
+		#frame.insert(4,p4)
+		#frame.insert(5,p5)
 
 		# At end, when ready we return the present frame.
+		#return frame
+
+	def create_data_frame (self, id, p1, p2, p3, p4, p5) :
+		frame = chr(id+48)
+		frame += chr(p1+48)
+		frame += chr(p2+48)
+		frame += chr(p3+48)
+		frame += chr(p4+48)
+		frame += chr(p5+48)
+
 		return frame
+
+	# Creates a start and state packet. Unfreezes robot.
+	# state : 0;1;2
+	# start : 0;1
+	def create_start_frame (self,state) :
+		if state > 3 and state < 0 :
+			state = 0
+		frame = create_data_frame(0,state,1,0,0,0)
+		return frame
+
+	# Create a Move Frame
+	def create_move_frame (self,p1,p2,p3,p4,p5) :
+		frame = create_data_frame(2,p1, p2, p3, p4, p5) :
+		return frame
+	
+	# Create a Stop Frame
+	def create_stop_frame (self) :
+		frame = create_data_frame(1,1,0,0,0,0)
+		return frame
+			
+	def create_point_frame (self) :
+		pass
+
+
+ 

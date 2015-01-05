@@ -16,8 +16,9 @@ from logs.logManager import logManager
 #       - self.y        => robot y position.
 #       - self.tetha    => robot angle.
 #
-#       - self.net_module   => network manager instance.
-#       - self.json_module  => json manager instance.
+#       - self.net_module     => network manager instance.
+#       - self.json_module    => json manager instance.
+#	- self.serial_manager => serial manager to connect with the arduino
 #
 #       - self.is_running       => running state.
 #
@@ -69,6 +70,13 @@ class Robot:
         self.json_module = messages_sol()
         self.logs.write_log("Start some variables.")
         self.is_running = True
+	self.logs.write_log("Start serial manager.")
+	try:
+	    self.serial_manager = Serial_Manager("/dev/ttyACM0", 9600)
+	except Exception, e:
+	    print "Connection to arduino failed !\nSee logs file."
+	    self.logs.write_log("Fatal error: connection to arduino failed :\n\t" + e)
+	    exit()
         self.logs.write_log("End start routine.")
 
         
@@ -83,11 +91,10 @@ class Robot:
             self.custom_messages_eater(r_message_t, r_message_c)
 
         # Add some threatments here.
-        # TODO
 	if self.state_mode == self.STATE_SCAN:
 	    self.scan_tick()    
 	elif self.state_mode == self.STATE_MOVE:
-	    self.move_tick()
+	    self.move_tick((r_x, r_y, t_t))
 
         # Send the infos to the base station
         #self.json_module.add_custom_message("Info", "Everything ok !")
@@ -103,9 +110,30 @@ class Robot:
 
     ## Move tick.
     #  @param self The object pointer.
-    def move_tick(self):
+    #  @param joystick_movement Tuple of joystick informations.
+    def move_tick(self, joystick_movement):
 	if self.ai_mode == self.AI_MANUAL:
-	    pass
+	    data1 = joystick_movement[0]*10
+	    data2 = joystick_movement[1]*10
+	    data3 = joystick_movement[2]*10
+	    byte1 = 0
+	    byte2 = 0
+	    byte3 = 0
+	    byte4 = 0
+	    byte5 = data3
+	    if data1 > 100:
+		byte1 = data1-100
+		byte4 = data1-100
+	    elif data1 < 100:
+		byte2 = 100-data1
+		byte3 = 100-data1
+	    if data2 > 100:
+		byte1 = data2-100
+		byte2 = data2-100
+	    elif data2 < 100:
+		byte4 = 100 - data2
+		byte3 = 100 - data2
+	    self.serial_manager.send(str(self.serial_manager.create_move_frame(byte1, byte2, byte3, byte4, byte5)))
 	elif self.ai_mode == self.AI_AUTO:
 	    pass
 
@@ -136,11 +164,10 @@ class Robot:
             if message_content == "scan": # set_state scan
 		self.logs.write_log("Set scan mode (from network)")
                 self.state_mode = self.STATE_SCAN
+		self.serial_manager.send(str(self.serial_manager.create_stop_frame()))
                 self.json_module.add_custom_message("state_info", "scan")
             elif message_content == "move": # set_state move
-		self.logs.write_log("Set move mode (from network)")
-                self.state_mode = self.STATE_MOVE
-                self.json_module.add_custom_message("state_info", "move")
+		self.set_moving()
             elif message_content == "wait": # set_state wait
 		self.logs.write_log("Set waiting mode (from network)")
                 self.state_mode = self.STATE_WAIT
@@ -191,3 +218,12 @@ class Robot:
             self.json_module.add_custom_message("ai_info", "follow_wall")
         elif self.ai_mode == self.AI_FIND:
             self.json_module.add_custom_message("ai_info", "find_target")
+
+    ## Set in moving mode.
+    #  @param The object pointer.
+    def set_moving(self):
+	self.logs.write_log("Set move mode (from network)")
+        self.state_mode = self.STATE_MOVE
+	self.serial_manager.send(str(self.serial_manager.create_start_frame()))
+        self.json_module.add_custom_message("state_info", "move")
+	
