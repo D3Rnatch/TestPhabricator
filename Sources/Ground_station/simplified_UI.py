@@ -172,7 +172,7 @@ while (1):
 			message = ',"message":{"type":"' + send_message_type + '","content":"' + send_message + '"}'
 			send_message_type = ""
 			send_message = ""
-		s.send('{"robot":{"X":' + str(jj) + ',"Y":' + str(ii) + ',"T":' + str(vvv) + '}' + message + '}')
+		s.send('{"robot":{"X":' + str(jj) + ',"Y":' + str(ii) + ',"T":' + str(vvv) + '}' + message + '} ')
 
 	# print those
 	os.system('clear')
