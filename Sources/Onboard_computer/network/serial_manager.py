@@ -76,17 +76,17 @@ class Serial_Manager :
 	def create_start_frame (self,state) :
 		if state > 3 and state < 0 :
 			state = 0
-		frame = create_data_frame(0,state,1,0,0,0)
+		frame = self.create_data_frame(0,state,1,0,0,0)
 		return frame
 
 	# Create a Move Frame
 	def create_move_frame (self,p1,p2,p3,p4,p5) :
-		frame = create_data_frame(2,p1, p2, p3, p4, p5) :
+		frame = self.create_data_frame(2,p1, p2, p3, p4, p5)
 		return frame
 	
 	# Create a Stop Frame
 	def create_stop_frame (self) :
-		frame = create_data_frame(1,1,0,0,0,0)
+		frame = self.create_data_frame(1,1,0,0,0,0)
 		return frame
 			
 	def create_point_frame (self) :

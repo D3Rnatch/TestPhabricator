@@ -7,6 +7,7 @@ import time
 import os
 
 from network.network import network
+from network.serial_manager import *
 from network.station_message import messages_sol
 from logs.logManager import logManager
 
@@ -75,7 +76,7 @@ class Robot:
 	    self.serial_manager = Serial_Manager("/dev/ttyACM0", 9600)
 	except Exception, e:
 	    print "Connection to arduino failed !\nSee logs file."
-	    self.logs.write_log("Fatal error: connection to arduino failed :\n\t" + e)
+	    self.logs.write_log("Fatal error: connection to arduino failed :\n\t" + str(e))
 	    exit()
         self.logs.write_log("End start routine.")
 
@@ -85,16 +86,22 @@ class Robot:
     #  @return A boolean True if ok to continue, False if quit.
     def loop_function(self):
         # Read network message if any.
+	received = False
+	r_x = 0
+	r_y = 0
+	r_t = 0
         datas = self.net_module.read()
         if datas != "" and ord(datas[0]) == 123: # If we have a '{' to start the message (a JSON message).
             r_x, r_y, r_t, r_message_t, r_message_c = self.json_module.decode_message(datas)
             self.custom_messages_eater(r_message_t, r_message_c)
+	    received = True
 
         # Add some threatments here.
 	if self.state_mode == self.STATE_SCAN:
 	    self.scan_tick()    
 	elif self.state_mode == self.STATE_MOVE:
-	    self.move_tick((r_x, r_y, t_t))
+	    if received == True:
+	        self.move_tick((r_x, r_y, r_t))
 
         # Send the infos to the base station
         #self.json_module.add_custom_message("Info", "Everything ok !")
@@ -224,6 +231,6 @@ class Robot:
     def set_moving(self):
 	self.logs.write_log("Set move mode (from network)")
         self.state_mode = self.STATE_MOVE
-	self.serial_manager.send(str(self.serial_manager.create_start_frame()))
+	self.serial_manager.send(str(self.serial_manager.create_start_frame(0)))
         self.json_module.add_custom_message("state_info", "move")
 	
