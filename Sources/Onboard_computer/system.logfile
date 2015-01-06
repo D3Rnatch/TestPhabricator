@@ -1,33 +1,18 @@
 	************************
-	****    14:43:58    ****
+	****    09:33:16    ****
 	************************
 
-[14:43:58] => Start routine.
-[14:43:58] => Start network manager.
-[14:43:58] => Start json parser manager.
-[14:43:58] => Start some variables.
-[14:43:58] => Start serial manager.
-[14:43:58] => End start routine.
-[14:44:10] => Hello message received ! Respond hello.
-[14:44:10] => Return current state to network
-[14:44:10] => Return current AI to network
-[14:44:12] => Set move mode (from network)
-[14:44:51] => Hello message received ! Respond hello.
-[14:44:51] => Return current state to network
-[14:44:51] => Return current AI to network
-[14:45:07] => Set auto AI (from network)
-[14:45:09] => Set scan mode (from network)
-[14:45:12] => Set move mode (from network)
-[14:45:18] => Set scan mode (from network)
-[14:45:21] => Set move mode (from network)
-[14:45:25] => Hello message received ! Respond hello.
-[14:45:25] => Return current state to network
-[14:45:25] => Return current AI to network
-[14:45:26] => Set scan mode (from network)
-[14:45:27] => Set move mode (from network)
-[14:45:30] => Set scan mode (from network)
-[14:45:31] => Set move mode (from network)
-[14:45:34] => Stop message received
-[14:45:34] => Stop routine.
-[14:45:34] => Stop network module.
-[14:45:34] => Stop.
+[09:33:16] => Start routine.
+[09:33:16] => Start network manager.
+[09:33:16] => Start json parser manager.
+[09:33:16] => Start some variables.
+[09:33:16] => Start serial manager.
+[09:33:16] => End start routine.
+[09:33:19] => Hello message received ! Respond hello.
+[09:33:19] => Return current state to network
+[09:33:19] => Return current AI to network
+[09:33:23] => Set move mode (from network)
+[09:33:26] => Stop message received
+[09:33:26] => Stop routine.
+[09:33:26] => Stop network module.
+[09:33:26] => Stop.

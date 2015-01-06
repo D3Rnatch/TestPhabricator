@@ -74,28 +74,29 @@ class messages_sol:
         received_messages = message.split(' ')
         messages = list()
         for received_message in received_messages:
-            try:
-                decoded_message = json.loads(received_message)
-            except Exception, e:
-                print "Error while trying to load JSON : \n\t%s\n\n\tmessage :\n\t%s\n\n" % (e, received_message)
-            try:
-                robot_x = decoded_message['robot']['X']
-                robot_y = decoded_message['robot']['Y']
-                robot_t = decoded_message['robot']['T']
-            except Exception, e:
-                print "Error : missing %s in received message.\n\tEvery values in robot set to 0.\n\n" % (e)
-                robot_x = 0
-                robot_y = 0
-                robot_t = 0
+	    if received_message != '':
+                try:
+                    decoded_message = json.loads(received_message)
+                except Exception, e:
+                    print "Error while trying to load JSON : \n\t%s\n\n\tmessage :\n\t%s\n\n" % (e, received_message)
+                try:
+                    robot_x = decoded_message['robot']['X']
+                    robot_y = decoded_message['robot']['Y']
+                    robot_t = decoded_message['robot']['T']
+                except Exception, e:
+                    print "Error : missing %s in received message.\n\tEvery values in robot set to 0.\n\n" % (e)
+                    robot_x = 0
+                    robot_y = 0
+                    robot_t = 0
 
-            try:
-                message_type = decoded_message['message']['type']
-                message_content = decoded_message['message']['content']
-                messages.append((message_type, message_content))
-            except Exception, e:
-                #print "Error : missing %s in received message.\n\tEmpty message.\n\n" % (e)
-                message_type = ""
-                message_content = ""
+                try:
+                    message_type = decoded_message['message']['type']
+                    message_content = decoded_message['message']['content']
+                    messages.append((message_type, message_content))
+                except Exception, e:
+                    #print "Error : missing %s in received message.\n\tEmpty message.\n\n" % (e)
+                    message_type = ""
+                    message_content = ""
        
         return (robot_x, robot_y, robot_t, messages)
 
