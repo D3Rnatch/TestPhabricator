@@ -23,7 +23,8 @@ from logs.logManager import logManager
 #
 #       - self.is_running       => running state.
 #
-#	- self.logs => log manager object
+#	- self.logs 		=> log manager object
+#	- self.logs_arduino 	=> logs arduino communication.
 #
 #       - self.state_mode   => robot mode.
 #       - self.ai_mode      => robot ai mode.
@@ -57,6 +58,8 @@ class Robot:
         self.tetha = 0
         self.logs = logManager()
         self.logs.set_name("system")
+	self.logs_arduino = logManager()
+	self.logs_arduino.set_name("arduino_com")
         self.ai_mode = self.AI_MANUAL
         self.state_mode = self.STATE_WAIT
 
@@ -140,7 +143,10 @@ class Robot:
 	    elif data2 < 100:
 		byte4 = 100 - data2
 		byte3 = 100 - data2
-	    self.serial_manager.send(str(self.serial_manager.create_move_frame(byte1, byte2, byte3, byte4, byte5)))
+	    frame = str(self.serial_manager.create_move_frame(byte1, byte2, byte3, byte4, byte5))
+	    self.logs_arduino.write_log("Send: " + frame)
+	    self.serial_manager.send(frame)
+	    self.logs_arduino.write_log("Received: " + str(self.serial_manager.read()))
 	elif self.ai_mode == self.AI_AUTO:
 	    pass
 
@@ -172,7 +178,10 @@ class Robot:
                 if message[1] == "scan": # set_state scan
                     if self.state_mode == self.STATE_MOVE:
                         self.logs.write_log("Send the stop frame to robot.")
-                        self.serial_manager.send(str(self.serial_manager.create_stop_frame()))
+			frame = str(self.serial_manager.create_stop_frame())
+                        self.logs_arduino.write_log("Send: " + frame)
+			self.serial_manager.send(frame)
+			self.logs_arduino.write_log("Received: " + str(self.serial_manager.read()))
                     self.logs.write_log("Set scan mode (from network)")
                     self.state_mode = self.STATE_SCAN
                     self.json_module.add_custom_message("state_info", "scan")
@@ -181,7 +190,10 @@ class Robot:
                 elif message[1] == "wait": # set_state wait
                     if self.state_mode == self.STATE_MOVE:
                         self.logs.write_log("Send the stop frame to robot.")
-                        self.serial_manager.send(str(self.serial_manager.create_stop_frame()))
+			frame = str(self.serial_manager.create_stop_frame())
+			self.logs_arduino.write_log("Send: " + frame)
+                        self.serial_manager.send(frame)
+			self.logs_arduino.write_log("Received: " + str(self.serial_manager.read()))
                     self.logs.write_log("Set waiting mode (from network)")
                     self.state_mode = self.STATE_WAIT
                     self.json_module.add_custom_message("state_info", "wait")
@@ -237,5 +249,8 @@ class Robot:
     def set_moving(self):
         self.logs.write_log("Set move mode (from network)")
         self.state_mode = self.STATE_MOVE
-        self.serial_manager.send(str(self.serial_manager.create_start_frame(0)))
+	frame = str(self.serial_manager.create_start_frame(0))
+	self.logs_arduino.write_log("Send: " + frame)
+        self.serial_manager.send(frame)
+	self.logs_arduino.write_log("Received: " + str(self.serial_manager.read()))
         self.json_module.add_custom_message("state_info", "move")
