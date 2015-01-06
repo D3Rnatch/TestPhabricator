@@ -132,6 +132,8 @@ class Robot:
 	    byte3 = 0
 	    byte4 = 0
 	    byte5 = data3
+	    if byte5 > 126:
+		byte5 = 126
 	    if data1 > 100:
 		byte1 = data1-100
 		byte4 = data1-100
