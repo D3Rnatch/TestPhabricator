@@ -123,6 +123,7 @@ class Robot:
     #  @param joystick_movement Tuple of joystick informations.
     def move_tick(self, joystick_movement):
 	if self.ai_mode == self.AI_MANUAL:
+	    self.logs_arduino.write_log("Movement tick.")
 	    data1 = joystick_movement[0]*10
 	    data2 = joystick_movement[1]*10
 	    data3 = joystick_movement[2]*10
@@ -146,7 +147,8 @@ class Robot:
 	    frame = str(self.serial_manager.create_move_frame(byte1, byte2, byte3, byte4, byte5))
 	    self.logs_arduino.write_log("Send: " + frame)
 	    self.serial_manager.send(frame)
-	    self.logs_arduino.write_log("Received: " + str(self.serial_manager.read()))
+	    frame = str(self.serial_manager.read())
+	    self.logs_arduino.write_log("Received: " + frame + "\n")
 	elif self.ai_mode == self.AI_AUTO:
 	    pass
 
@@ -179,9 +181,8 @@ class Robot:
                     if self.state_mode == self.STATE_MOVE:
                         self.logs.write_log("Send the stop frame to robot.")
 			frame = str(self.serial_manager.create_stop_frame())
-                        self.logs_arduino.write_log("Send: " + frame)
+                        self.logs_arduino.write_log("Send: " + frame + "\n")
 			self.serial_manager.send(frame)
-			self.logs_arduino.write_log("Received: " + str(self.serial_manager.read()))
                     self.logs.write_log("Set scan mode (from network)")
                     self.state_mode = self.STATE_SCAN
                     self.json_module.add_custom_message("state_info", "scan")
@@ -191,9 +192,8 @@ class Robot:
                     if self.state_mode == self.STATE_MOVE:
                         self.logs.write_log("Send the stop frame to robot.")
 			frame = str(self.serial_manager.create_stop_frame())
-			self.logs_arduino.write_log("Send: " + frame)
+			self.logs_arduino.write_log("Send: " + frame + "\n")
                         self.serial_manager.send(frame)
-			self.logs_arduino.write_log("Received: " + str(self.serial_manager.read()))
                     self.logs.write_log("Set waiting mode (from network)")
                     self.state_mode = self.STATE_WAIT
                     self.json_module.add_custom_message("state_info", "wait")
@@ -250,7 +250,6 @@ class Robot:
         self.logs.write_log("Set move mode (from network)")
         self.state_mode = self.STATE_MOVE
 	frame = str(self.serial_manager.create_start_frame(0))
-	self.logs_arduino.write_log("Send: " + frame)
+	self.logs_arduino.write_log("Send: " + frame + "\n")
         self.serial_manager.send(frame)
-	self.logs_arduino.write_log("Received: " + str(self.serial_manager.read()))
         self.json_module.add_custom_message("state_info", "move")
