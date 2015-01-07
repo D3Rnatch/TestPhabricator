@@ -29,6 +29,8 @@ from logs.logManager import logManager
 #       - self.state_mode   => robot mode.
 #       - self.ai_mode      => robot ai mode.
 #
+#	- self.scan_angle	=> scanner angle.
+#
 #  Defines :
 #       - self.STATE_SCAN   => scanning state number.
 #       - self.STATE_MOVE   => moving state number.
@@ -62,6 +64,7 @@ class Robot:
 	self.logs_arduino.set_name("arduino_com")
         self.ai_mode = self.AI_MANUAL
         self.state_mode = self.STATE_WAIT
+	self.scan_angle = 0
 
     ## Start routine for the robot.
     #  @param self The object pointer.
@@ -116,7 +119,15 @@ class Robot:
     ## Scan tick.
     #  @param self The object pointer.
     def scan_tick(self):
-	pass
+	frame = self.serial_manager.create_update_scanner_frame(self.scan_angle)
+	self.logs_arduino("Send: " + str(frame))
+	self.serial_manager.send(frame)
+	frame = str(self.serial_manager.read())
+	self.logs_arduino("Received: " + frame + "\n")
+	self.scan_angle = self.scan_angle + 1
+	if self.scan_angle > 180:
+	    self.scan_angle = 0
+	    self.set_wait()
 
     ## Move tick.
     #  @param self The object pointer.
@@ -180,25 +191,11 @@ class Robot:
                     self.send_ai()
             elif message[0] == "set_state":
                 if message[1] == "scan": # set_state scan
-                    if self.state_mode == self.STATE_MOVE:
-                        self.logs.write_log("Send the stop frame to robot.")
-			frame = str(self.serial_manager.create_stop_frame())
-                        self.logs_arduino.write_log("Send: " + frame + "\n")
-			self.serial_manager.send(frame)
-                    self.logs.write_log("Set scan mode (from network)")
-                    self.state_mode = self.STATE_SCAN
-                    self.json_module.add_custom_message("state_info", "scan")
+		    self.set_scanning()
                 elif message[1] == "move": # set_state move
-		            self.set_moving()
+		    self.set_moving()
                 elif message[1] == "wait": # set_state wait
-                    if self.state_mode == self.STATE_MOVE:
-                        self.logs.write_log("Send the stop frame to robot.")
-			frame = str(self.serial_manager.create_stop_frame())
-			self.logs_arduino.write_log("Send: " + frame + "\n")
-                        self.serial_manager.send(frame)
-                    self.logs.write_log("Set waiting mode (from network)")
-                    self.state_mode = self.STATE_WAIT
-                    self.json_module.add_custom_message("state_info", "wait")
+		    self.set_wait()
             elif message[0] == "set_ai":
                 if message[1] == "manual": # set_ai manual
                     self.logs.write_log("Set manual AI (from network)")
@@ -247,11 +244,36 @@ class Robot:
             self.json_module.add_custom_message("ai_info", "find_target")
 
     ## Set in moving mode.
-    #  @param The object pointer.
+    #  @param self The object pointer.
     def set_moving(self):
-        self.logs.write_log("Set move mode (from network)")
+        self.logs.write_log("Set move mode.")
         self.state_mode = self.STATE_MOVE
 	frame = str(self.serial_manager.create_start_frame(0))
 	self.logs_arduino.write_log("Send: " + frame + "\n")
         self.serial_manager.send(frame)
         self.json_module.add_custom_message("state_info", "move")
+
+    ## Set in scanning mode.
+    #  @param self The object pointer.
+    def set_scanning(self):
+        if self.state_mode == self.STATE_MOVE:
+            self.logs.write_log("Send the stop frame to robot.")
+	    frame = str(self.serial_manager.create_stop_frame())
+            self.logs_arduino.write_log("Send: " + frame + "\n")
+	    self.serial_manager.send(frame)
+	self.logs.write_log("Set scan mode.")
+	self.state_mode = self.STATE_SCAN
+	self.json_module.add_custom_message("state_info", "scan")
+
+    ## Set in waiting mode.
+    #  @param self The object pointer.
+    def set_wait(self):
+        if self.state_mode == self.STATE_MOVE:
+            self.logs.write_log("Send the stop frame to robot.")
+	    frame = str(self.serial_manager.create_stop_frame())
+	    self.logs_arduino.write_log("Send: " + frame + "\n")
+            self.serial_manager.send(frame)
+        self.logs.write_log("Set waiting mode (from network)")
+        self.state_mode = self.STATE_WAIT
+        self.json_module.add_custom_message("state_info", "wait")
+	
