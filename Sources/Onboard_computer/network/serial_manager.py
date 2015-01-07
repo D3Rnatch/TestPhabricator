@@ -93,7 +93,7 @@ class Serial_Manager :
 		pass
 
 	def create_update_scaner_frame (self,angle) :
-		frame = self.create_data_frame(4,angle,88,88,88,88)
+		frame = self.create_data_frame(4,angle,0,0,0,0)
 		return frame
 
 

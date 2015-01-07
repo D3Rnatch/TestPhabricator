@@ -1,28 +1,25 @@
 	************************
-	****    12:12:34    ****
+	****    12:47:29    ****
 	************************
 
-[12:12:34] => Start routine.
-[12:12:34] => Start network manager.
-[12:12:34] => Start json parser manager.
-[12:12:34] => Start some variables.
-[12:12:34] => Start serial manager.
-[12:12:34] => End start routine.
-[12:12:36] => Hello message received ! Respond hello.
-[12:12:36] => Return current state to network
-[12:12:36] => Return current AI to network
-[12:12:38] => Set move mode.
-[12:12:39] => Send the stop frame to robot.
-[12:12:39] => Set scan mode.
-[12:12:41] => Set move mode.
-[12:12:43] => Send the stop frame to robot.
-[12:12:43] => Set scan mode.
-[12:12:43] => Set waiting mode
-[12:12:46] => Set move mode.
-[12:12:47] => Send the stop frame to robot.
-[12:12:47] => Set scan mode.
-[12:12:48] => Set waiting mode
-[12:13:06] => Stop message received
-[12:13:06] => Stop routine.
-[12:13:06] => Stop network module.
-[12:13:06] => Stop.
+[12:47:29] => Start routine.
+[12:47:29] => Start network manager.
+[12:47:29] => Start json parser manager.
+[12:47:29] => Start some variables.
+[12:47:29] => Start serial manager.
+[12:47:29] => End start routine.
+[12:47:37] => Hello message received ! Respond hello.
+[12:47:37] => Return current state to network
+[12:47:37] => Return current AI to network
+[12:47:39] => Set move mode.
+[12:47:40] => Send the stop frame to robot.
+[12:47:40] => Set scan mode.
+[12:47:41] => Set waiting mode
+[12:47:44] => Set move mode.
+[12:47:45] => Send the stop frame to robot.
+[12:47:45] => Set scan mode.
+[12:47:46] => Set waiting mode
+[12:47:48] => Set move mode.
+[12:48:20] => Send the stop frame to robot.
+[12:48:20] => Set scan mode.
+[12:48:30] => Set waiting mode
