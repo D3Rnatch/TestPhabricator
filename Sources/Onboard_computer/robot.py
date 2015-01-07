@@ -120,7 +120,7 @@ class Robot:
     #  @param self The object pointer.
     def scan_tick(self):
 	self.logs_arduino.write_log("Scan tick.")
-	frame = send_to_arduino(self.serial_manager.create_update_scaner_frame(self.scan_angle))
+	frame = self.send_to_arduino(self.serial_manager.create_update_scaner_frame(self.scan_angle))
 	self.scan_angle = self.scan_angle + 1
 	if self.scan_angle > 180:
 	    self.scan_angle = 0
@@ -154,7 +154,7 @@ class Robot:
 	    elif data2 < 100:
 		byte4 = 100 - data2
 		byte3 = 100 - data2
-	    frame = send_to_arduino(self.serial_manager.create_move_frame(byte1, byte2, byte3, byte4, byte5))
+	    frame = self.send_to_arduino(self.serial_manager.create_move_frame(byte1, byte2, byte3, byte4, byte5))
 	elif self.ai_mode == self.AI_AUTO:
 	    pass
 
@@ -241,7 +241,7 @@ class Robot:
     def set_moving(self):
         self.logs.write_log("Set move mode.")
         self.state_mode = self.STATE_MOVE
-	frame = send_to_arduino(self.serial_manager.create_start_frame(0))
+	frame = self.send_to_arduino(self.serial_manager.create_start_frame(0))
         self.json_module.add_custom_message("state_info", "move")
 
     ## Set in scanning mode.
@@ -249,7 +249,7 @@ class Robot:
     def set_scanning(self):
         if self.state_mode == self.STATE_MOVE:
             self.logs.write_log("Send the stop frame to robot.")
-	    frame = send_to_arduino(self.serial_manager.create_stop_frame())
+	    frame = self.send_to_arduino(self.serial_manager.create_stop_frame())
 	self.logs.write_log("Set scan mode.")
 	self.state_mode = self.STATE_SCAN
 	self.json_module.add_custom_message("state_info", "scan")
@@ -259,7 +259,7 @@ class Robot:
     def set_wait(self):
         if self.state_mode == self.STATE_MOVE:
             self.logs.write_log("Send the stop frame to robot.")
-	    frame = self.end_to_arduino(self.serial_manager.create_stop_frame())
+	    frame = self.send_to_arduino(self.serial_manager.create_stop_frame())
         self.logs.write_log("Set waiting mode")
         self.state_mode = self.STATE_WAIT
         self.json_module.add_custom_message("state_info", "wait")
