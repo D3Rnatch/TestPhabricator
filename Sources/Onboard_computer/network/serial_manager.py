@@ -21,6 +21,7 @@ class Serial_Manager :
 	# The frame is a 5 bytes long Id + data, folowed of a ending byte ('\n')
 	def send(self,frame) :
 		try :
+			self.ser.flushOutput()
 			self.ser.write(frame + '\n')
 	
 		except :
@@ -31,6 +32,7 @@ class Serial_Manager :
 	# See frames creation functions for further detail.
 	# \return Returns a list of 5 bytes 
 	def read(self) :
+		self.ser.flushInput()
 		val = self.ser.readline()
 		# test = array('B',val)
 			
