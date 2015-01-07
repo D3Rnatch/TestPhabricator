@@ -1,26 +1,25 @@
 	************************
-	****    13:06:54    ****
+	****    14:58:53    ****
 	************************
 
-[13:06:54] => Start routine.
-[13:06:54] => Start network manager.
-[13:06:54] => Start json parser manager.
-[13:06:54] => Start some variables.
-[13:06:54] => Start serial manager.
-[13:06:54] => End start routine.
-[13:07:01] => Hello message received ! Respond hello.
-[13:07:01] => Return current state to network
-[13:07:01] => Return current AI to network
-[13:07:03] => Set move mode.
-[13:07:06] => Send the stop frame to robot.
-[13:07:06] => Set scan mode.
-[13:07:07] => Set waiting mode
-[13:07:09] => Set move mode.
-[13:07:10] => Send the stop frame to robot.
-[13:07:10] => Set scan mode.
-[13:07:11] => Set waiting mode
-[13:07:13] => Set move mode.
-[13:07:14] => Send the stop frame to robot.
-[13:07:14] => Set scan mode.
-[13:07:18] => Set move mode.
-[13:07:18] => Set move mode.
+[14:58:53] => Start routine.
+[14:58:53] => Start network manager.
+[14:58:53] => Start json parser manager.
+[14:58:53] => Start some variables.
+[14:58:53] => Start serial manager.
+[14:58:53] => End start routine.
+[14:58:59] => Hello message received ! Respond hello.
+[14:58:59] => Return current state to network
+[14:58:59] => Return current AI to network
+[14:59:02] => Set move mode.
+[14:59:04] => Send the stop frame to robot.
+[14:59:04] => Set scan mode.
+[14:59:08] => Set waiting mode
+[14:59:12] => Set move mode.
+[14:59:16] => Send the stop frame to robot.
+[14:59:16] => Set scan mode.
+[14:59:20] => Set waiting mode
+[14:59:22] => Stop message received
+[14:59:22] => Stop routine.
+[14:59:22] => Stop network module.
+[14:59:22] => Stop.

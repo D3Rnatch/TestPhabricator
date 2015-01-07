@@ -121,7 +121,10 @@ class Robot:
     def scan_tick(self):
 	self.logs_arduino.write_log("Scan tick.")
 	frame = self.send_to_arduino(self.serial_manager.create_update_scaner_frame(self.scan_angle))
-	self.scan_angle = self.scan_angle + 1
+	self.scan_angle = self.scan_angle + 15
+	if self.scan_angle == 0 :
+	    time.sleep(1)	
+	time.sleep(0.3)
 	if self.scan_angle > 180:
 	    self.scan_angle = 0
 	    self.set_wait()
@@ -271,6 +274,6 @@ class Robot:
     def send_to_arduino(self, frame):
 	self.logs_arduino.write_log("Send: " + str(frame))
         self.serial_manager.send(str(frame))
-	frame = self.serial_manager.read()
-	self.logs_arduino.write_log("Received: " + str(frame) + "\n")
+	#frame = self.serial_manager.read()
+	#self.logs_arduino.write_log("Received: " + str(frame) + "\n")
 	return frame

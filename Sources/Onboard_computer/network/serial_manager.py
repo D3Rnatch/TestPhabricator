@@ -32,8 +32,8 @@ class Serial_Manager :
 	# See frames creation functions for further detail.
 	# \return Returns a list of 5 bytes 
 	def read(self) :
-		self.ser.flushInput()
 		val = self.ser.readline()
+		self.ser.flushInput()
 		# test = array('B',val)
 			
 		# print str(' Read line is : ' + ret) 
@@ -78,24 +78,24 @@ class Serial_Manager :
 	def create_start_frame (self,state) :
 		if state > 3 and state < 0 :
 			state = 0
-		frame = self.create_data_frame(0,state,1,0,0,0)
+		frame = self.create_data_frame(1,state,1,0,0,0)
 		return frame
 
 	# Create a Move Frame
 	def create_move_frame (self,p1,p2,p3,p4,p5) :
-		frame = self.create_data_frame(2,p1, p2, p3, p4, p5)
+		frame = self.create_data_frame(3,p1, p2, p3, p4, p5)
 		return frame
 	
 	# Create a Stop Frame
 	def create_stop_frame (self) :
-		frame = self.create_data_frame(1,1,0,0,0,0)
+		frame = self.create_data_frame(2,1,0,0,0,0)
 		return frame
 			
 	def create_point_frame (self) :
 		pass
 
 	def create_update_scaner_frame (self,angle) :
-		frame = self.create_data_frame(4,angle,0,0,0,0)
+		frame = self.create_data_frame(5,angle,0,0,0,0)
 		return frame
 
 
