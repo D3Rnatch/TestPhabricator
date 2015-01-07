@@ -119,12 +119,12 @@ class Robot:
     ## Scan tick.
     #  @param self The object pointer.
     def scan_tick(self):
-	self.logs_arduino("Scan tick.")
-	frame = self.serial_manager.create_update_scanner_frame(self.scan_angle)
-	self.logs_arduino("Send: " + str(frame))
+	self.logs_arduino.write_log("Scan tick.")
+	frame = self.serial_manager.create_update_scaner_frame(self.scan_angle)
+	self.logs_arduino.write_log("Send: " + str(frame))
 	self.serial_manager.send(frame)
 	frame = str(self.serial_manager.read())
-	self.logs_arduino("Received: " + frame + "\n")
+	self.logs_arduino.write_log("Received: " + frame + "\n")
 	self.scan_angle = self.scan_angle + 1
 	if self.scan_angle > 180:
 	    self.scan_angle = 0
@@ -264,8 +264,8 @@ class Robot:
 	    frame = str(self.serial_manager.create_stop_frame())
             self.logs_arduino.write_log("Send: " + frame)
 	    self.serial_manager.send(frame)
-	    frame = str(selr.serial_manager.read())
-	    self.logs_arduinp.write_log("Received: " + frame + "\n")
+	    frame = str(self.serial_manager.read())
+	    self.logs_arduino.write_log("Received: " + frame + "\n")
 	self.logs.write_log("Set scan mode.")
 	self.state_mode = self.STATE_SCAN
 	self.json_module.add_custom_message("state_info", "scan")
