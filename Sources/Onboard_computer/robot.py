@@ -119,6 +119,7 @@ class Robot:
     ## Scan tick.
     #  @param self The object pointer.
     def scan_tick(self):
+	self.logs_arduino("Scan tick.")
 	frame = self.serial_manager.create_update_scanner_frame(self.scan_angle)
 	self.logs_arduino("Send: " + str(frame))
 	self.serial_manager.send(frame)
@@ -249,8 +250,10 @@ class Robot:
         self.logs.write_log("Set move mode.")
         self.state_mode = self.STATE_MOVE
 	frame = str(self.serial_manager.create_start_frame(0))
-	self.logs_arduino.write_log("Send: " + frame + "\n")
+	self.logs_arduino.write_log("Send: " + frame)
         self.serial_manager.send(frame)
+	frame = str(self.serial_manager.read())
+	self.logs_arduino.write_log("Received " + frame + "\n")
         self.json_module.add_custom_message("state_info", "move")
 
     ## Set in scanning mode.
@@ -259,8 +262,10 @@ class Robot:
         if self.state_mode == self.STATE_MOVE:
             self.logs.write_log("Send the stop frame to robot.")
 	    frame = str(self.serial_manager.create_stop_frame())
-            self.logs_arduino.write_log("Send: " + frame + "\n")
+            self.logs_arduino.write_log("Send: " + frame)
 	    self.serial_manager.send(frame)
+	    frame = str(selr.serial_manager.read())
+	    self.logs_arduinp.write_log("Received: " + frame + "\n")
 	self.logs.write_log("Set scan mode.")
 	self.state_mode = self.STATE_SCAN
 	self.json_module.add_custom_message("state_info", "scan")
@@ -271,9 +276,11 @@ class Robot:
         if self.state_mode == self.STATE_MOVE:
             self.logs.write_log("Send the stop frame to robot.")
 	    frame = str(self.serial_manager.create_stop_frame())
-	    self.logs_arduino.write_log("Send: " + frame + "\n")
+	    self.logs_arduino.write_log("Send: " + frame)
             self.serial_manager.send(frame)
-        self.logs.write_log("Set waiting mode (from network)")
+	    frame = str(self.serial_manager.read())
+	    self.logs_arduino.write_log("Send: " + frame + "\n")
+        self.logs.write_log("Set waiting mode")
         self.state_mode = self.STATE_WAIT
         self.json_module.add_custom_message("state_info", "wait")
 	
