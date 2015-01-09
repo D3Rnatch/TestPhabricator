@@ -194,10 +194,10 @@ while (1):
 	print '--------------------------------------------------------------   ---'
 	if connected == False :
 		print 'Not connected'
+		print "Robot info :\n\t x = " + str(robot_x) + "\n\t y = " + str(robot_y) + "\n\t r = " + str(robot_z)
+		print "Last message from the robot :\n\t" + recv_message_type + "\t" + recv_message + "\n"
+		print "State : " + state + "\t\tAI : " + ai + "\n\n"
 	else:
 		print 'Connected'	
-	print "Robot info :\n\t x = " + str(robot_x) + "\n\t y = " + str(robot_y) + "\n\t r = " + str(robot_z)
-	print "Last message from the robot :\n\t" + recv_message_type + "\t" + recv_message + "\n"
-	print "State : " + state + "\t\tAI : " + ai + "\n\n"
 	# Wait a little time
 	time.sleep(0.1)
