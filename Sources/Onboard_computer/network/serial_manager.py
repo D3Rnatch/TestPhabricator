@@ -76,7 +76,7 @@ class Serial_Manager :
 	# state : 0;1;2
 	# start : 0;1
 	def create_start_frame (self,state) :
-		if state > 3 and state < 0 :
+		if state < 0 :
 			state = 0
 		frame = self.create_data_frame(1,state,1,0,0,0)
 		return frame
