@@ -97,6 +97,18 @@ class Serial_Manager :
 	def create_update_scaner_frame (self,angle) :
 		frame = self.create_data_frame(5,angle,0,0,0,0)
 		return frame
+	
+	##########################################################
+	#
+	#	EXTRACTION ZONE
+	#
+	##########################################################
 
-
+	# Extract Ready Frame
+	#	frame is the incomming array
+	#	@return : id
+	# 	@return : extraction array
+	def extract_ready_frame (self, frame) :
+		pass
+				
  
