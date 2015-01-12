@@ -2,15 +2,15 @@
 // AUTOPILOT MAIN PROGRAM
 //################################################"
 
-#include "arduino.h"
+#include <Arduino.h>
 
 #include "ADNS2610_arduino_driver.h"
 // #include "Drivers/MPU6050_arduino_driver.h"
 
-#include <PID_v1.h>
+// #include <PID_v1.h>
 
 
-class PID;
+// class PID;
 
 typedef struct s_ADNS2610
 {
@@ -31,8 +31,8 @@ SetPoints setPoints;
 double outDx, outDy, outGz;
 double setpDx, setpDy, setpGz;
 int inX;
-PID *myPID;
-PID *myPID2;
+//PID *myPID;
+//PID *myPID2;
 int waitTime = 0;
 
 void setup()
@@ -67,12 +67,12 @@ void setup()
 	setpGz = 0;
         outDx = 0.0;
         outDy = 0.0;
-        myPID = new PID(&opticSensor.dx, &outDx, &setpDx, 2.0, 5.0, 1.0, DIRECT); // PID calculus DX
+        /*myPID = new PID(&opticSensor.dx, &outDx, &setpDx, 2.0, 5.0, 1.0, DIRECT); // PID calculus DX
   	myPID2 = new PID(&opticSensor.dy, &outDy, &setpDy, 2.0, 5.0, 1.0, DIRECT); // PID calculus DY
         myPID->SetMode(AUTOMATIC);
   	myPID2->SetMode(AUTOMATIC);
         myPID->SetOutputLimits(-128, 127);
-        myPID2->SetOutputLimits(-128, 127);
+        myPID2->SetOutputLimits(-128, 127); */
 
 	// Sends OK to raspberryPI :
 	Serial.println("OK. Startup is complete.");
@@ -98,8 +98,8 @@ void loop()
 	Serial.print(";"); 
 	Serial.print((int)opticSensor.dy, DEC);
         Serial.print(";");
-        Serial.print(getSqual(), DEC);
-        Serial.print(";");
+        //Serial.print(getSqual(), DEC);
+        //Serial.print(";");
         
 	// Calculating PIDs
 	// myPID->Compute();
