@@ -1,7 +1,7 @@
 ## @file Scanner.py
 #  @brief Scanner laser module.
 #  @author Loic Dalloz
-#  @version 2.0
+#  @version 2.1
 #
 #import picamera
 #import picamera.array
@@ -106,16 +106,24 @@ class Scanner:
     ## build the mask.
     #  @param self The object pointer.
     def make_mask(self):
-        self.mask = cv2.inRange(self.image, self.lower_red, self.upper_red)
+        mask_temp = cv2.inRange(self.image, self.lower_red, self.upper_red)
+	kernel = np.ones((5,5), np.unit8)
+	self.mask = cv2.dilate(mask_temp, kernel, iterations=1)
 
     ## Get U (position of the laser in image)
     #  @param self The object pointer
     #  @return The position of the laser (in pixel)
     #  Find the position of the laser on the self.half row of the image.
     def get_U(self):
-        rows, col = self.mask.shape
-        liste = [j for j in xrange(col) if self.mask.item(self.half, j)==255]
-        return np.mean(liste)
+        #rows, col = self.mask.shape
+        #liste = [j for j in xrange(col) if self.mask.item(self.half, j)==255]
+        #return np.mean(liste)
+	contours, hierarchy = cv2.findContours(self.mask, cv2?RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+	return_value = 0
+	for contour in contours:
+		x, y, w, h = cv2.boundingRect(contour)
+		return_value = (x + w/2)
+	return return_value
 
     ## Calibrate the scanner
     #  @param self The object pointer.
