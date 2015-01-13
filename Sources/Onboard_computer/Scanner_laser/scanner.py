@@ -53,6 +53,8 @@ class Scanner:
     def start_module(self):
         # Start the camera.
         self.cap = cv2.VideoCapture(0)
+	ret = self.cap.set(3, 320)
+	ret = self.cap.set(4, 240)
         compteur = 30
         max2 = 0
         # Calibrate
@@ -81,33 +83,47 @@ class Scanner:
     ##  Take a picture.
     #   @param self The object pointer.
     def take_picture(self):
+	time.sleep(0.01)
         ret, self.image = self.cap.read()
         while ret == False:
+	    time.sleep(0.01)
             ret, self.image = self.cap.read()
+	time.sleep(0.01)
         ret, self.image = self.cap.read()
         while ret == False:
+	    time.sleep(0.01)
             ret, self.image = self.cap.read()
+	time.sleep(0.01)
         ret, self.image = self.cap.read()
         while ret == False:
+	    time.sleep(0.01)
             ret, self.image = self.cap.read()
+	time.sleep(0.01)
         ret, self.image = self.cap.read()
         while ret == False:
+	    time.sleep(0.01)
             ret, self.image = self.cap.read()
+	time.sleep(0.01)
         ret, self.image = self.cap.read()
         while ret == False:
+	    time.sleep(0.01)
             ret, self.image = self.cap.read()
+	time.sleep(0.01)
         ret, self.image = self.cap.read()
         while ret == False:
+	    time.sleep(0.01)
             ret, self.image = self.cap.read()
+	time.sleep(0.01)
         ret, self.image = self.cap.read()
         while ret == False:
+	    time.sleep(0.01)
             ret, self.image = self.cap.read()
 
     ## build the mask.
     #  @param self The object pointer.
     def make_mask(self):
         mask_temp = cv2.inRange(self.image, self.lower_red, self.upper_red)
-	kernel = np.ones((5,5), np.unit8)
+	kernel = np.ones((5,5), np.uint8)
 	self.mask = cv2.dilate(mask_temp, kernel, iterations=1)
 
     ## Get U (position of the laser in image)
@@ -118,7 +134,7 @@ class Scanner:
         #rows, col = self.mask.shape
         #liste = [j for j in xrange(col) if self.mask.item(self.half, j)==255]
         #return np.mean(liste)
-	contours, hierarchy = cv2.findContours(self.mask, cv2?RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+	contours, hierarchy = cv2.findContours(self.mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 	return_value = 0
 	for contour in contours:
 		x, y, w, h = cv2.boundingRect(contour)
