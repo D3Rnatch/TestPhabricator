@@ -12,7 +12,7 @@ import signal
 #  Fields :
 #     - self.base_connection => base connection used to communicate with the base.
 #     - self.listenner       => socket used to listent to new connections.
-#     - self.my_port            => port to be used for the communication.
+#     - self.my_port         => port to be used for the communication.
 #     - self.clients         => connected clients list.
 #
 class network:
