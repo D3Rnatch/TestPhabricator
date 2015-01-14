@@ -70,13 +70,15 @@ class network:
             if s == self.listenner:
                 client, addr = self.listenner.accept()
                 self.clients.append(client)
+		print "Connection de : " + str(addr)
             else:
                 try:
                     data = s.recv(1024)
                     if data:
-                        return_value = data
+			return_value = data
                     else:
                         self.clients.remove(s)
+			print "Deconnection d'un client."
                         s.close()
                 except Exception, e:
                     print 'Error while trying to read data from available socket :\n\t', e, '\n\n'

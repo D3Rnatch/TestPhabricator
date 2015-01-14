@@ -8,6 +8,8 @@ s.load_configs()
 s.start_module()
 # Scan
 while 1:
+    #s.take_picture()
+    #s.make_mask()
     print str(s.get_plan_distance())
     inp = raw_input("Enter for continue...")
 

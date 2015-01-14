@@ -123,7 +123,7 @@ class Scanner:
     #  @param self The object pointer.
     def make_mask(self):
         mask_temp = cv2.inRange(self.image, self.lower_red, self.upper_red)
-	kernel = np.ones((5,5), np.uint8)
+	kernel = np.ones((2,2), np.uint8)
 	self.mask = cv2.dilate(mask_temp, kernel, iterations=1)
 
     ## Get U (position of the laser in image)
