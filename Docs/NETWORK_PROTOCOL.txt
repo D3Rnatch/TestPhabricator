@@ -74,10 +74,26 @@ II. Serial protocol
 			|ID|X1|X2|Y1|Y2|--|
 			+-----------------+
 		Byte :   0  1  2  3  4  5
+
+		-> Set angle to the scanner; id 5
+
+			Angle to the laser scanner.
+			+-----------------+
+			|ID|An|--|--|--|--|
+			+-----------------+
+		Byte :   0  1  2  3  4  5
+
+		-> Read request; id 6
+
+			Send a read request to the Re address.
+			+-----------------+
+			|ID|Re|--|--|--|--|
+			+-----------------+
+		Byte :   0  1  2  3  4  5
 	
 	2) Arduino to the Raspberry Pi
 
-	Arduino sends to the raspberry the following frames :
+	Arduino sends to the raspberry the following frames (in response to the read request) :
 		-> Ready Frame; id 0
 
 			RD : different from 0

@@ -12,6 +12,9 @@ from network.station_message import messages_sol
 from logs.logManager import logManager
 
 ## Robot module.
+#
+#  /!\ WARNING /!\ HUGE class do not, in any circumstances, look at the code (unless you need it, and in this case, good luck).
+#  
 #  Fields :
 #       - self.x        => robot x position.
 #       - self.y        => robot y position.
@@ -41,6 +44,11 @@ from logs.logManager import logManager
 #       - self.AI_FOLLOW    => ai in wall following mode.
 #       - self.AI_FIND      => ai in finding mode.
 #
+#       Reading IDs :
+#       - self.GET_ODO      => read the odometry from the arduino.
+#       - self.GET_READY    => read the ready frame.
+#       - self.GET_BATTERY  => read battery states.
+#
 class Robot:
     # defines :
     STATE_SCAN = 0
@@ -51,6 +59,10 @@ class Robot:
     AI_AUTO = 1
     AI_FOLLOW = 2
     AI_FIND = 3
+
+    GET_ODO = 1
+    GET_READY = 0
+    GET_BATTERY = 2
 
     ## Constructor.
     #  @param self The object pointer.
@@ -77,13 +89,13 @@ class Robot:
         self.json_module = messages_sol()
         self.logs.write_log("Start some variables.")
         self.is_running = True
-	self.logs.write_log("Start serial manager.")
-	try:
-	    self.serial_manager = Serial_Manager("/dev/ttyACM0", 9600)
-	except Exception, e:
-	    print "Connection to arduino failed !\nSee logs file."
-	    self.logs.write_log("Fatal error: connection to arduino failed :\n\t" + str(e))
-	    exit()
+        self.logs.write_log("Start serial manager.")
+        try:
+            self.serial_manager = Serial_Manager("/dev/ttyACM0", 9600)
+        except Exception, e:
+	        print "Connection to arduino failed !\nSee logs file."
+	        self.logs.write_log("Fatal error: connection to arduino failed :\n\t" + str(e))
+	        exit()
         self.logs.write_log("End start routine.")
 
         
@@ -92,10 +104,10 @@ class Robot:
     #  @return A boolean True if ok to continue, False if quit.
     def loop_function(self):
         # Read network message if any.
-	received = False
-	r_x = 0
-	r_y = 0
-	r_t = 0
+        received = False
+        r_x = 0
+        r_y = 0
+        r_t = 0
         datas = self.net_module.read()
         if datas != "" and ord(datas[0]) == 123: # If we have a '{' to start the message (a JSON message).
             r_x, r_y, r_t, r_messages = self.json_module.decode_message(datas)
@@ -103,11 +115,11 @@ class Robot:
 	    received = True
 
         # Add some threatments here.
-	if self.state_mode == self.STATE_SCAN:
-	    self.scan_tick()    
-	elif self.state_mode == self.STATE_MOVE:
-	    if received == True:
-	        self.move_tick((r_x, r_y, r_t))
+        if self.state_mode == self.STATE_SCAN:
+            self.scan_tick()
+        elif self.state_mode == self.STATE_MOVE:
+	        if received == True:
+	            self.move_tick((r_x, r_y, r_t))
 
         # Send the infos to the base station
         #self.json_module.add_custom_message("Info", "Everything ok !")
@@ -119,47 +131,47 @@ class Robot:
     ## Scan tick.
     #  @param self The object pointer.
     def scan_tick(self):
-	self.logs_arduino.write_log("Scan tick.")
-	frame = self.send_to_arduino(self.serial_manager.create_update_scaner_frame(self.scan_angle))
-	self.scan_angle = self.scan_angle + 15
-	if self.scan_angle == 0 :
-	    time.sleep(1)	
-	time.sleep(0.3)
-	if self.scan_angle > 180:
-	    self.scan_angle = 0
-	    self.set_wait()
+	    self.logs_arduino.write_log("Scan tick.")
+	    frame = self.send_to_arduino(self.serial_manager.create_update_scaner_frame(self.scan_angle))
+	    self.scan_angle = self.scan_angle + 15
+	    if self.scan_angle == 0 :
+	        time.sleep(1)	
+	    time.sleep(0.3)
+	    if self.scan_angle > 180:
+	        self.scan_angle = 0
+	        self.set_wait()
 
     ## Move tick.
     #  @param self The object pointer.
     #  @param joystick_movement Tuple of joystick informations.
     def move_tick(self, joystick_movement):
-	if self.ai_mode == self.AI_MANUAL:
-	    self.logs_arduino.write_log("Movement tick.")
-	    data1 = joystick_movement[0]*10
-	    data2 = joystick_movement[1]*10
-	    data3 = joystick_movement[2]*10
-	    byte1 = 0
-	    byte2 = 0
-	    byte3 = 0
-	    byte4 = 0
-	    byte5 = data3
-	    if byte5 > 126:
-		byte5 = 126
-	    if data1 > 100:
-		byte1 = data1-100
-		byte4 = data1-100
-	    elif data1 < 100:
-		byte2 = 100-data1
-		byte3 = 100-data1
-	    if data2 > 100:
-		byte1 = data2-100
-		byte2 = data2-100
-	    elif data2 < 100:
-		byte4 = 100 - data2
-		byte3 = 100 - data2
-	    frame = self.send_to_arduino(self.serial_manager.create_move_frame(byte1, byte2, byte3, byte4, byte5))
-	elif self.ai_mode == self.AI_AUTO:
-	    pass
+	    if self.ai_mode == self.AI_MANUAL:
+	        self.logs_arduino.write_log("Movement tick.")
+	        data1 = joystick_movement[0]*10
+	        data2 = joystick_movement[1]*10
+	        data3 = joystick_movement[2]*10
+	        byte1 = 0
+	        byte2 = 0
+	        byte3 = 0
+	        byte4 = 0
+	        byte5 = data3
+	        if byte5 > 126:
+		        byte5 = 126
+	        if data1 > 100:
+		        byte1 = data1-100
+		        byte4 = data1-100
+	        elif data1 < 100:
+		        byte2 = 100-data1
+		        byte3 = 100-data1
+	        if data2 > 100:
+		        byte1 = data2-100
+		        byte2 = data2-100
+	        elif data2 < 100:
+		        byte4 = 100 - data2
+		        byte3 = 100 - data2
+	        frame = self.send_to_arduino(self.serial_manager.create_move_frame(byte1, byte2, byte3, byte4, byte5))
+	    elif self.ai_mode == self.AI_AUTO:
+	        pass
 
     ## Stop routine.
     #  @param self The object pointer.
@@ -244,7 +256,7 @@ class Robot:
     def set_moving(self):
         self.logs.write_log("Set move mode.")
         self.state_mode = self.STATE_MOVE
-	frame = self.send_to_arduino(self.serial_manager.create_start_frame(0))
+        frame = self.send_to_arduino(self.serial_manager.create_start_frame(0))
         self.json_module.add_custom_message("state_info", "move")
 
     ## Set in scanning mode.
@@ -253,9 +265,9 @@ class Robot:
         if self.state_mode == self.STATE_MOVE:
             self.logs.write_log("Send the stop frame to robot.")
 	    frame = self.send_to_arduino(self.serial_manager.create_stop_frame())
-	self.logs.write_log("Set scan mode.")
-	self.state_mode = self.STATE_SCAN
-	self.json_module.add_custom_message("state_info", "scan")
+	    self.logs.write_log("Set scan mode.")
+	    self.state_mode = self.STATE_SCAN
+	    self.json_module.add_custom_message("state_info", "scan")
 
     ## Set in waiting mode.
     #  @param self The object pointer.
@@ -272,8 +284,27 @@ class Robot:
     #  @param frame The frame to send.
     #  @return Frame returned by th arduino.
     def send_to_arduino(self, frame):
-	self.logs_arduino.write_log("Send: " + str(frame))
+        self.logs_arduino.write_log("Send: " + str(frame))
         self.serial_manager.send(str(frame))
-	frame = self.serial_manager.read()
-	self.logs_arduino.write_log("Received: " + str(frame) + "\n")
-	return frame
+        frame = self.serial_manager.read()
+        self.logs_arduino.write_log("Received: " + str(frame) + "\n")
+        return frame
+
+    ## Read data from the arduino.
+    #  @param self The object pointer.
+    #  @param id Reading ID.
+    #  @return Information requested (a tuple) None if nothing received.
+    def read_from_arduino(self, id):
+        frame = self.serial_manager.create_read_frame(id)
+        self.logs_arduino.write_log("Send: " + str(frame))
+        self.serial_manager.send(str(frame))
+        frame2 = self.serial_manager.read()
+        self.logs_arduino.write_log("Received: " + str(frame) + "\n")
+        if id == self.GET_READY:
+            return (frame2[1], frame2[2])
+        elif id == self.GET_ODO:
+            return (frame2[1], frame2[2], frame2[3])
+        elif id == self.GET_BATTERY:
+            return (frame2[1], frame2[2])
+        else:
+            return None
