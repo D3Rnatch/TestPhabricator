@@ -1,40 +1,57 @@
 #ifndef CONTROLLER_HELPER
 #define CONTROLLER_HELPER
 
+/**
+ * \file controller_helper.h
+ * \brief Main controller functions.
+ * \author Alexandre Brand
+ * \version 1.0
+ */
 #include "network_manager.h"
 #include "acq_handler.h"
 
 #define MIN 10
 #define MAX 90
 
+/**
+ * \enum enum State
+ * \brief State enumerator.
+ *
+ * Describes the robot state.
+ *
+ */
 enum State
 {
-   Idle,
-   Manual,
-   Manual_Acquisition,
-   Scan,
-   Automatic
+   Idle, /*!< Waiting mode. */
+   Manual, /*!< Manual mode. */
+   Manual_Acquisition, /*!< Manual aquisition mode. */
+   Scan, /*!< Scanning mode. */
+   Automatic /*!< Auto mode. */
 };
 
+/**
+ * \struct Controller_t
+ * \brief Strore everything for the robot.
+ */
 typedef struct struct_controller
 {
 	// Servo :
-	Servo escenter[4];
-	Servo LaserScaner;
+	Servo escenter[4];/*!< Servo speed map. */
+	Servo LaserScaner;/*!< Scanner servo. */
 	
 	// State :	
-	State controllerState;
+	State controllerState;/*!< Current state save. */
 
 	// Services
-	Network_manager *net;
-	ACQ_handler *acq;
+	Network_manager *net;/*!< Network service */
+	ACQ_handler *acq;/*!< Acquisition service */
 
-	unsigned long time;
-	unsigned long last_time;
-	boolean motor_last_set = false;
-	uint8_t motor_off_cpt = 0;
-	boolean scaner_last_set = false;
-	uint8_t scaner_off_cpt = 0;
+	unsigned long time;/*!< Time save */
+	unsigned long last_time;/*!< Save last time */
+	boolean motor_last_set = false;/*!< Is motors on ? */
+	uint8_t motor_off_cpt = 0;/*!< Motor off since. */
+	boolean scaner_last_set = false;/*!< Is scanner on ? */
+	uint8_t scaner_off_cpt = 0;/*!< Scanner on since. */
 }Controller_t;
 
 Controller_t Controller;
@@ -51,13 +68,17 @@ void Process_Acq();
 void reset_Services();
 void Process_Com(uint8_t id, uint8_t * b);
 
-/** ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-* //////	
-* //////	
-* //////	
-* //////	
-* //////		**/ ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+//////////////////////////////////
+//				//
+//	DEFINITIONS		//
+//				//
+//////////////////////////////////
+/**
+ * \fn void setSpeedcent(int a, int spd)
+ * \brief Set desired speed.
+ * \param a Motor number.
+ * \param spd Desired speed.
+ */
 void setSpeedcent(int a, int spd){
   //On envoie la vitesse désirée
   int vit = map(spd, 0, 100, 0, 180);

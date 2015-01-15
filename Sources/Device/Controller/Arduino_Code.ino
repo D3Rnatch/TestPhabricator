@@ -1,9 +1,12 @@
-/////////////////////////////////////////////////////////////////////////////
-//
-//	TO BE DEBUGGUED
-//
-/////////////////////////////////////////////////////////////////////////////
-
+/**
+ * \file Arduino_Code.ino
+ * \brief Main arduino code.
+ * \author Alexandre Brand
+ * \version 1.0
+ *
+ * Main file containing starting point for Arduino code.
+ *
+ */
 
 #include <Arduino.h>
 #include <Servo.h>
@@ -14,8 +17,12 @@
 
 #include "controller_helper.h"
 
-// int frame_counter = 
+uint8_t cpt = 0;
 
+/**
+ * \fn void setup()
+ * \brief Setup function for the Arduino.
+ */
 void setup()
 {
 	Controller.escenter[0].attach(2);
@@ -42,7 +49,10 @@ void setup()
 	Controller.net->send_ready_packet(0);
 }
 
-uint8_t cpt = 0;
+/**
+ * \fn void loop()
+ * \brief Loop function for the arduino.
+ */
 void loop()
 {
 	Controller.net->run_the_magic();

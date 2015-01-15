@@ -1,9 +1,8 @@
-/**	ARDUINO !!!
-*	Network manager : 
-*    This class handles the network over the arduino controler on the robot.
-* Copyleft PFE Hovercraft 1408 - 2014/2015
+/**
+* \file network_manager.h
+*
+*
 */
-
 
 #ifndef NETWORK_MANAGER_H
 #define NETWORK_MANAGER_H
@@ -22,39 +21,38 @@
 
 class Network_manager
 {
-	public :
-		Network_manager(int);
-		
-		/**
-		*	\brief run_the_magic : updates read/write data
-		*		Writes current writtable frames
-		*		 & reads usb entry.
-		*/
-		void run_the_magic();
-		
-		int get_last_frame_id();
-		
-		/**
-		*	\brief get_array : returns data frame array
-		*	\return uint8_t : contains 6 items.
-		*
-		*/
-		uint8_t * get_array();
-
-		void send(byte,byte,byte,byte,byte,byte);
-                void send_full(uint8_t,byte,byte,byte,byte,byte,byte);
-		void send_packet(t_encap * packet);
-
-		/**
-		*	Preencap frames to be sent
-		*
-		*/
-		void send_ready_packet(uint8_t errorCode);
+    public :
+	Network_manager(int);
 	
-	private :
-		t_frame_bytes last_extraction;
-		t_encap encapsulation_stack[10];
-                boolean flag;
+	/**
+	*	\brief run_the_magic : updates read/write data
+	*		Writes current writtable frames
+	*		 & reads usb entry.
+	*/
+	void run_the_magic();
+
+	int get_last_frame_id();
+
+	/**
+	*	\brief get_array : returns data frame array
+	*	\return uint8_t : contains 6 items.
+	*
+	*/
+	uint8_t * get_array();
+	void send(byte,byte,byte,byte,byte,byte);
+	void send_full(uint8_t,byte,byte,byte,byte,byte,byte);
+	void send_packet(t_encap * packet);
+	
+	/**
+	*	Preencap frames to be sent
+	*
+	*/
+	void send_ready_packet(uint8_t errorCode);
+	
+    private :
+	t_frame_bytes last_extraction;
+	t_encap encapsulation_stack[10];
+	boolean flag;
 };
 
 #endif

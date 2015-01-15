@@ -6,4 +6,5 @@ __pycache__/
 *.logfile
 *.db
 *.swp
+*.h264
 Docs/Computer/*
