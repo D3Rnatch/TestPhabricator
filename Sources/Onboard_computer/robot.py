@@ -11,7 +11,7 @@ from network.serial_manager import *
 from network.station_message import messages_sol
 from logs.logManager import logManager
 from Scanner_laser.scanner import Scanner
-from map.mapping import mapping
+from mapping.mapping import mapping
 
 ## Robot module.
 #
