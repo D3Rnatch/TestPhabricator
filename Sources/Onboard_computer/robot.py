@@ -10,41 +10,37 @@ from network.network import network
 from network.serial_manager import *
 from network.station_message import messages_sol
 from logs.logManager import logManager
+from Scanner_laser.scanner import Scanner
+from map.mapping import mapping
 
 ## Robot module.
 #
 #  /!\ WARNING /!\ HUGE class do not, in any circumstances, look at the code (unless you need it, and in this case, good luck).
 #  
 #  Fields :
-#       - self.x        => robot x position.
-#       - self.y        => robot y position.
-#       - self.tetha    => robot angle.
-#
-#       - self.net_module     => network manager instance.
-#       - self.json_module    => json manager instance.
-#	- self.serial_manager => serial manager to connect with the arduino
-#
-#       - self.is_running       => running state.
-#
-#	- self.logs 		=> log manager object
-#	- self.logs_arduino 	=> logs arduino communication.
-#
-#       - self.state_mode   => robot mode.
-#       - self.ai_mode      => robot ai mode.
-#
+#       - self.x		=> robot x position.
+#       - self.y		=> robot y position.
+#       - self.tetha		=> robot angle.
+#       - self.net_module	=> network manager instance.
+#       - self.json_module	=> json manager instance.
+#	- self.serial_manager	=> serial manager to connect with the arduino
+#	- self.scaner_module	=> scaner manager instance.
+#	- self.mapping_module	=> mapping manager instance.
+#       - self.is_running	=> running state.
+#	- self.logs		=> log manager object
+#	- self.logs_arduino	=> logs arduino communication.
+#       - self.state_mode	=> robot mode.
+#       - self.ai_mode		=> robot ai mode.
 #	- self.scan_angle	=> scanner angle.
 #
 #  Defines :
 #       - self.STATE_SCAN   => scanning state number.
 #       - self.STATE_MOVE   => moving state number.
 #       - self.STATE_WAIT   => waiting state number.
-#
 #       - self.AI_MANUAL    => ai in manual mode.
 #       - self.AI_AUTO      => ai in auto mode.
 #       - self.AI_FOLLOW    => ai in wall following mode.
 #       - self.AI_FIND      => ai in finding mode.
-#
-#       Reading IDs :
 #       - self.GET_ODO      => read the odometry from the arduino.
 #       - self.GET_READY    => read the ready frame.
 #       - self.GET_BATTERY  => read battery states.
@@ -87,6 +83,12 @@ class Robot:
         self.net_module.start()
         self.logs.write_log("Start json parser manager.")
         self.json_module = messages_sol()
+	self.logs.write_log("Start scaner manager.")
+	self.scaner_module = Scanner()
+	self.scaner_module.load_configs()
+	self.scaner_module.start_module()
+	self.logs.write_log("Start mapping manager.")
+	self.mapping_module = mapping((100, 100), 10)
         self.logs.write_log("Start some variables.")
         self.is_running = True
         self.logs.write_log("Start serial manager.")
@@ -179,6 +181,10 @@ class Robot:
         self.logs.write_log("Stop routine.")
         self.logs.write_log("Stop network module.")
         self.net_module.close()
+	self.logs.write_log("Stop scaner module.")
+	self.scaner_module.close()
+	self.logs.write_log("Save map.")
+	self.mapping_module.save("Saved_map.txt", (50, 50))
         self.logs.write_log("Stop.")
 
     ## Customs messages manager.

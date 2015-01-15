@@ -1,8 +1,8 @@
-from map import map
+from mapping import mapping
 
 print "start...\n"
 
-mp = map((20, 20), 10)
+mp = mapping((20, 20), 10)
 
 mp.update_map((10, 10, 0), (0, 50))
 mp.save("test_map_0.txt",(10, 10))

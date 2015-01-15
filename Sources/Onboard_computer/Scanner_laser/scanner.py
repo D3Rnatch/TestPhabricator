@@ -80,8 +80,13 @@ class Scanner:
         self.y = int(self.cap.get(3))
         self.half = round(self.y * 0.5)
 
-    ##  Take a picture.
-    #   @param self The object pointer.
+    ## Properly close.
+    #  @param self The object pointer.
+    def close(self):
+	self.cap.release()
+
+    ## Take a picture.
+    #  @param self The object pointer.
     def take_picture(self):
 	time.sleep(0.01)
         ret, self.image = self.cap.read()
