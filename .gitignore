@@ -8,3 +8,4 @@ __pycache__/
 *.swp
 *.h264
 Docs/Computer/*
+Docs/Device/*

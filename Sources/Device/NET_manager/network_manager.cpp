@@ -17,7 +17,8 @@ void Network_manager :: run_the_magic()
     // Reading data :
     // Serial.flush();
     char value[7];
-    Serial.readBytes(value,7);Serial.flush();
+    Serial.readBytes(value,7);
+    Serial.flush();
     //Serial.print("ACQQ : ");
     //Serial.print(value);
     //Serial.print("\n");
