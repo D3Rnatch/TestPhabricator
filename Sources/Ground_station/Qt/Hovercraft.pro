@@ -2,7 +2,9 @@ TEMPLATE= app
 QT += widgets network
 
 DEPENDPATH +=
-INCLUDEPATH += .
+INCLUDEPATH += -I"C:\Qt\5.4\mingw491_32\qjson-0.8.1\src"
+
+LIBS+= -L"C:\Qt\5.4\mingw491_32\qjson-0.8.1\src"
 
 
 HEADERS += mainwindow.h

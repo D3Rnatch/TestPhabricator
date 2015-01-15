@@ -6,13 +6,20 @@
 #include "ui_mainwindow.h"
 #include <QDebug>
 #include <QLineEdit>
+#include <QVariant>
+#include <QVariantMap>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonParseError>
+#include "parser.h"
+#include <QJsonValue>
+#include <QJsonObject>
 
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui (new Ui::MainWindow)
-    
-
 {
     setupUi(this);
 
@@ -48,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //Action Arrêt d'urgence
    connect(actionArret_d_urgence, SIGNAL(triggered()),this, SLOT(envoie_arret_urgence()));
+
 }
 
 
@@ -106,7 +114,12 @@ void MainWindow::donneesRecues()
 
     //On remet la taille du message à 0 pour pouvoir recevoir de futurs messages
     tailleMessage = 0;
+
+    //on lance le parseur
+    MainWindow parseur();
+
 }
+
 
 
 
@@ -197,5 +210,26 @@ void MainWindow::envoie_arret_urgence()
     message_recu->clear();
 }
 
+void MainWindow::parser()
+{
+    bool ok;
+    // json is a QString containing the JSON data
+    QtJson::JsonObject result = QJson::parse(json, ok).toMap();
 
+    if(!ok)
+    {
+    qFatal("An error occurred during parsing");
+    }
+    qDebug() << "encoding:" << result["encoding"].toString();
+    qDebug() << "plugins:";
 
+    foreach(QVariant plugin, result["plug-ins"].toList())
+    {
+        qDebug() << "  -" << plugin.toString();
+    }
+
+    QtJson::JsonObject nested = result["indent"].toMap();
+    qDebug() << "length:" << nested["length"].toInt();
+    qDebug() << "use_space:" << nested["use_space"].toBool();
+
+}
