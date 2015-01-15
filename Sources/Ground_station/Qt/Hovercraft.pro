@@ -1,5 +1,5 @@
 TEMPLATE= app
-QT += widgets network
+QT += widgets network core
 
 DEPENDPATH +=
 INCLUDEPATH += -I"C:\Qt\5.4\mingw491_32\qjson-0.8.1\src"
