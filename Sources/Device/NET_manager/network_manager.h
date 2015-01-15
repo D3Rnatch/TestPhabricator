@@ -42,10 +42,19 @@ class Network_manager
 		uint8_t * get_array();
 
 		void send(byte,byte,byte,byte,byte,byte);
+                void send_full(uint8_t,byte,byte,byte,byte,byte,byte);
+		void send_packet(t_encap * packet);
+
+		/**
+		*	Preencap frames to be sent
+		*
+		*/
+		void send_ready_packet(uint8_t errorCode);
 	
 	private :
 		t_frame_bytes last_extraction;
-		t_encap encapsulation_stack[10];	
+		t_encap encapsulation_stack[10];
+                boolean flag;
 };
 
 #endif

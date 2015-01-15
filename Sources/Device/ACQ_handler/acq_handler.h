@@ -2,10 +2,16 @@
 #ifndef ACQ_HANDLER_H
 #define ACQ_HANDLER_H
 
+#include <Arduino.h>
+
 #include "math.h"
 
 #include "ADNS2610_arduino_driver.h"
-#include "MPU6050_arduino_driver.h"
+#include <I2Cdev.h>
+#include <helper_3dmath.h>
+#include <MPU6050_6Axis_MotionApps20.h>
+
+// #include "MPU6050_arduino_driver.h"
 
 // For ADNS driver : Variable read in datasheet of ADNS2610
 #define ADNS_FPS 1500 // Frame per second : 2 frames are necessary for detection.
@@ -17,8 +23,9 @@
 // for F_DIST = 1,06
 // Alpha is the number permitting the transition between : Dx (Range : -128 ; 127) towards a distance value in cm.
 // /!\ WARNING : there is a problème of distance calculation : error range : Dist € [-10%;+10%].
-#define ALPHA 0,00000359
+#define ALPHA 0.00000359
 
+// #define CALL_MEMBER_FN(object,ptrToMember) ((object).*(ptrToMember))
 class ACQ_handler
 {
 	public :
@@ -46,7 +53,31 @@ class ACQ_handler
 		double actual_r; // r
 		double actual_theta; // deg
 		double last_x;
-		double last_y; 
+		double last_y;
+
+		MPU6050 *mpu;
+		boolean mpuInterrupt;
+		// boolean dmpReady;
+		uint8_t mpuIntStatus;
+		uint8_t packetSize;
+		uint8_t devStatus;
+		// Quaternion
+		Quaternion q;
+		// euler results
+		float euler[3];
+		// ypr results
+		float ypr[3];
+                // Gravity vector
+                VectorFloat gravity;
+
+		uint8_t errorCode;
+
+                uint8_t fifoBuffer[64]; // FIFO storage buffer
+                uint16_t fifoCount;     // count of all bytes currently in FIFO
+
+                // void dmpDataReady();
+		void mpuCalibrate();
+		void acquire_mpu();
 };
 
 

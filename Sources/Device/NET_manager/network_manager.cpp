@@ -10,21 +10,35 @@
 			this->last_extraction.type = -1;
 			for(int i=0;i<10;i++)
 				this->encapsulation_stack[i].array[0] = 255;
+                        this->flag = false;
 		}
 	
 		void Network_manager :: run_the_magic()
 		{
+                        this->flag = false;
 			// Reading data :
-			Serial.flush();
+			// Serial.flush();
     			char value[7];
     			Serial.readBytes(value,7);
-    			this->last_extraction = extract_data_bytes((byte*)value);
-		}
+			Serial.flush();
+                        //Serial.print("ACQQ : ");
+                        //Serial.print(value);
+                        //Serial.print("\n");
+                        if(value[6] == '\n') // il s'agit d'une frame
+                        {
+                            //Serial.println("FRAME !");
+                            this->flag = true;
+    			    this->last_extraction = extract_data_bytes((byte*)value);
+                        }
+                 }
 		
 	int Network_manager :: get_last_frame_id()
 	{
-		return this->last_extraction.type;	
-	}
+                if (this->flag)
+                  	return this->last_extraction.type;	
+	        else 
+                        return 200;
+        }
 		
 	/**
 	*	\brief get_array : returns data frame array
@@ -33,7 +47,10 @@
 	*/
 	uint8_t * Network_manager :: get_array()
 	{
-		return this->last_extraction.array;	
+                if (this->flag)
+        		return this->last_extraction.array;
+	        else 
+                        return NULL;	
 	}
 	
 	void Network_manager :: send(byte b0,byte b1,byte b2,byte b3,byte b4,byte b5)
@@ -47,9 +64,34 @@
 			Serial.print(this->encapsulation_stack[0].array[i]);
 			//Serial.print(":"); 
 		}
-		Serial.println("");
+		Serial.print("\n");
 	}
 
+        void Network_manager :: send_full(uint8_t id,byte b0,byte b1,byte b2,byte b3,byte b4,byte b5)
+	{
+		this->encapsulation_stack[0].array[0] = b0;
+		this->encapsulation_stack[0].array[1] = b1;
+		this->encapsulation_stack[0].array[2] = b2;
+		this->encapsulation_stack[0].array[3] = b3;
+		this->encapsulation_stack[0].array[4] = b4;
+                Serial.print(id);
+		for(int i=0;i<5;i++) {
+			Serial.print(this->encapsulation_stack[0].array[i]);
+			//Serial.print(":"); 
+		}
+		Serial.print("\n");
+	}
 
+	void Network_manager :: send_packet(t_encap * packet)
+	{
+		for(int i=0;i<6;i++) {
+			this->encapsulation_stack[0].array[0] = packet->array[i];
+			Serial.print(packet->array[i]); }
+		Serial.print("\n");
+	}
 
-
+	void Network_manager :: send_ready_packet(uint8_t errorCode)
+	{
+                 t_encap t = encap_ready();
+		this->send_packet(&t);
+	}

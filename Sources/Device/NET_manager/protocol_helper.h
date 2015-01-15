@@ -23,7 +23,7 @@
 */
 typedef struct send_encap
 {
-	byte array[5];
+	byte array[7];
 }t_encap;
 
 // ========================================================================
