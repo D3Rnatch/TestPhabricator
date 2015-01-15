@@ -9,6 +9,3 @@ Folders:
 Files:
   - NETWORK_PROTOCOL.txt: Communications protocols description.
   - Folder_readme_template.txt: Readme template to use (as possible) for each folders.
-  
-Un croissant pour qui mettra le code "Gloire à la sainte pelle !" sur le groupe FB du projet !
-  
