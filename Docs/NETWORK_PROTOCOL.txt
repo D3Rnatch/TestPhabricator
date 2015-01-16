@@ -30,7 +30,7 @@ II. Serial protocol
 	(See protocol_helper.h for more details)
 
 	Frames description :
-		-> State & Start Frame; id : 0
+		-> State & Start Frame; id : 1
 			St : state(0;1;2;3)
 				state 0 : manual control
 				state 1 : manual control and stabilization PID
@@ -41,7 +41,7 @@ II. Serial protocol
 			+-----------------+
 		Byte :   0  1  2  3  4  5
 		
-		-> Stop Frame; id 1
+		-> Stop Frame; id 2
 
 			St : stop(not 0)
 			+-----------------+
@@ -49,7 +49,7 @@ II. Serial protocol
 			+-----------------+
 		Byte :   0  1  2  3  4  5
 
-		-> Move Frame; id 2
+		-> Move Frame; id 3
 
 			frame element is an uint8_t from [0;180]
 			Activates motors and sets thrust.
@@ -58,7 +58,7 @@ II. Serial protocol
 			+-----------------+
 		Byte :   0  1  2  3  4  5
 		
-		-> Power Frame; id 3
+		-> Power Frame; id 4
 
 			frame elements are uint8_t types on [0;180]
 			Activates motors and sets thrust.
@@ -67,7 +67,7 @@ II. Serial protocol
 			+-----------------+
 		Byte :   0  1  2  3  4  5
 
-		-> Point Frame; id 4
+		-> Point Frame; id 5
 
 			Point frame contains a Xcoord and a Ycoord on 2 uint16_t types.
 			+-----------------+
@@ -75,7 +75,7 @@ II. Serial protocol
 			+-----------------+
 		Byte :   0  1  2  3  4  5
 
-		-> Set angle to the scanner; id 5
+		-> Set angle to the scanner; id 6
 
 			Angle to the laser scanner.
 			+-----------------+
@@ -83,7 +83,7 @@ II. Serial protocol
 			+-----------------+
 		Byte :   0  1  2  3  4  5
 
-		-> Read request; id 6
+		-> Read request; id 7
 
 			Send a read request to the Re address.
 			+-----------------+

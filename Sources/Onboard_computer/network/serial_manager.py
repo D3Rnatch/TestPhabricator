@@ -120,7 +120,7 @@ class Serial_Manager :
             y = 0
         else:
             y = position[1]
-        frame = self.create_data_frame(4, 0, x, 0, y, 0)
+        frame = self.create_data_frame(5, 0, x, 0, y, 0)
         return frame
 
 	## Create a scanner servo frame.
@@ -128,7 +128,7 @@ class Serial_Manager :
 	#  @param angle Angle to send.
 	#  @return The created frame.
 	def create_update_scaner_frame(self,angle):
-		frame = self.create_data_frame(5,angle,0,0,0,0)
+		frame = self.create_data_frame(6,angle,0,0,0,0)
 		return frame
 	
 	##########################################################
@@ -142,7 +142,7 @@ class Serial_Manager :
 	#  @param id The id to read.
 	#  @return The created frame.
 	def create_read_frame (self, id) :
-		frame = self.create_data_frame(6, id, 0, 0, 0, 0)
+		frame = self.create_data_frame(7, id, 0, 0, 0, 0)
         return frame
 				
  

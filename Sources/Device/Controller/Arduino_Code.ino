@@ -67,11 +67,13 @@ void loop()
 	// If controllerState is : 
 	if(Controller.controllerState == Manual_Acquisition) {
 		Process_Acq();
-		Process_Motor(b);
+		if(id == 3)
+			Process_Motor(b);
 	}
 
 	if(Controller.controllerState == Manual) {
-		Process_Motor(b);
+		if(id == 3)
+			Process_Motor(b);
 	}
 
 	if(Controller.controllerState == Scan) {

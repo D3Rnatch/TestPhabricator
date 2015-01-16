@@ -6,7 +6,13 @@
  * \brief Main controller functions.
  * \author Alexandre Brand
  * \version 1.0
+ *
+ * This file contains main functions used in the device.
+ * Those functions will manage every device module.
+ * Writent in C in a C plus plus header... What a shame !
+ *
  */
+
 #include "network_manager.h"
 #include "acq_handler.h"
 
@@ -56,16 +62,72 @@ typedef struct struct_controller
 
 Controller_t Controller;
 
+/**
+ * \fn void setSpeedcent(int a, int spd)
+ * \brief Set desired speed.
+ * \param a Motor number.
+ * \param spd Desired speed.
+ */
 void setSpeedcent(int a, int spd);
-void setSpeedFans(uint8_t * b);
+
+/**
+ * \fn void setSpeedFans(uint* b)
+ * \brief Set fan speed.
+ * \param b Byte array from frame.
+ */
+void setSpeedFans(uint8_t* b);
+
+/**
+ * \fn void setAngleLaserScaner(uint8_t angle)
+ * \brief Set and angle for the laser scaner servo.
+ * \param angle Angle to set.
+ */
 void setAngleLaserScaner(uint8_t angle);
+
+/**
+ * \fn void calibrate_laserscaner()
+ * \brief Calibrate laser scaner servo.
+ */
 void calibrate_laserscaner();
+
+/**
+ * \fn void arm()
+ * \brief Configure motors.
+ */
 void arm();
 
+/**
+ * \fn void Process_Motor(uint8_t* b)
+ * \brief Set motors speed.
+ * \param b Frame array.
+ */
 void Process_Motor(uint8_t * b);
+
+/**
+ * \fn void Process_Scan(uint8_t* b)
+ * \brief Send scaner angle position.
+ * \param b Byte array from the Frame.
+ */
 void Process_Scan(uint8_t * b);
+
+/**
+ * \fn void Process_Acq()
+ * \brief Process acquisition.
+ */
 void Process_Acq();
+
+/**
+ * \fn void reset_Services()
+ * \brief Reset every services.
+ */
 void reset_Services();
+
+/**
+ * \fn void Process_Com(uint8_t id, uint8_t* b)
+ * \brief Process frame messages.
+ * \param id Frame id.
+ * \param b Frame.
+ */
 void Process_Com(uint8_t id, uint8_t * b);
 
 //////////////////////////////////
@@ -73,23 +135,13 @@ void Process_Com(uint8_t id, uint8_t * b);
 //	DEFINITIONS		//
 //				//
 //////////////////////////////////
-/**
- * \fn void setSpeedcent(int a, int spd)
- * \brief Set desired speed.
- * \param a Motor number.
- * \param spd Desired speed.
- */
+
 void setSpeedcent(int a, int spd){
   //On envoie la vitesse désirée
   int vit = map(spd, 0, 100, 0, 180);
   Controller.escenter[a].write(vit);
 }
 
-/**
- * \fn void setSpeedFans(uint* b)
- * \brief Set fan speed.
- * \param b Byte array from frame.
- */
 void setSpeedFans(uint8_t * b)
 {
   int vit[4]; 
@@ -102,21 +154,12 @@ void setSpeedFans(uint8_t * b)
      Controller.escenter[j].write(vit[j]);  
 }
 
-/**
- * \fn void setAngleLaserScaner(uint8_t angle)
- * \brief Set and angle for the laser scaner servo.
- * \param angle Angle to set.
- */
 void setAngleLaserScaner(uint8_t angle)
 {
 	// int vit = map(angle,0,180,1,179);
 	Controller.LaserScaner.write(angle);
 }
 
-/**
- * \fn void calibrate_laserscaner()
- * \brief Calibrate laser scaner servo.
- */
 void calibrate_laserscaner()
 {
 	for(int i=0;i<180;i++){
@@ -129,10 +172,6 @@ void calibrate_laserscaner()
         }
 }
 
-/**
- * \fn void arm()
- * \brief Configure motors.
- */
 void arm(){
   setSpeedcent(0,MIN);
   setSpeedcent(1,MIN);
@@ -151,11 +190,6 @@ void arm(){
   delay(1200);
 }
 
-/**
- * \fn void Process_Motor(uint8_t* b)
- * \brief Set motors speed.
- * \param b Frame array.
- */
 void Process_Motor(uint8_t * b)
 {
 	if (Controller.motor_last_set == false) Controller.motor_last_set = true;
@@ -168,11 +202,6 @@ void Process_Motor(uint8_t * b)
         }
 }
 
-/**
- * \fn void Process_Scan(uint8_t* b)
- * \brief Send scaner angle position.
- * \param b Byte array from the Frame.
- */
 void Process_Scan(uint8_t * b)
 {
 	if (Controller.scaner_last_set == false){
@@ -187,10 +216,6 @@ void Process_Scan(uint8_t * b)
 
 }
 
-/**
- * \fn void reset_Services()
- * \brief Reset every services.
- */
 void reset_Services()
 {
 	// TO BE IMPLEMENTED
@@ -214,44 +239,36 @@ void reset_Services()
 	}
 }
 
-/**
- * \fn void Process_Com(uint8_t id, uint8_t* b)
- * \brief Process frame messages.
- * \param id Frame id.
- * \param b Frame.
- */
 void Process_Com(uint8_t id, uint8_t * b)
 {
 	if (id != 200) {
-		if(id != 6)
+		if(id != 7)
 			Controller.net->send_full(id,b[0],b[1],b[2],b[3],b[4],'\n');
 		switch(id)
 		{
 			case 1:
 				switch(b[0])
 				{
-					case 0 : // Idle State
+					case 0 : // Idle State.
 						Controller.controllerState = Idle;
 						break;
-					case 1 : // Manual State
+					case 1 : // Manual State.
 						Controller.controllerState = Manual;
 						break;
-					case 2 : // ACQ_MANUAL state
+					case 2 : // ACQ_MANUAL state.
 						Controller.controllerState = Manual_Acquisition;
 						break;
-					case 3 : // Automatic
+					case 3 : // Automatic.
 						Controller.controllerState = Automatic;
 						break;
+					defafult: //Idle State by default.
+						Controller.controllerState = Idle;
 				}
 				break;
 	  	}  	
     	}
 }
 
-/**
- * \fn void Process_Acq()
- * \brief Process acquisition.
- */
 void Process_Acq()
 {
 

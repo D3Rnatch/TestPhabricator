@@ -38,11 +38,6 @@ int Network_manager :: get_last_frame_id()
         return 200;
 }
 		
-/**
- *	\brief get_array : returns data frame array
- *	\return uint8_t : contains 6 items.
- *
- */
 uint8_t * Network_manager :: get_array()
 {
     if (this->flag)
