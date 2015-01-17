@@ -23,14 +23,14 @@ from mapping.mapping import mapping
 #       - self.tetha		=> robot angle.
 #       - self.net_module	=> network manager instance.
 #       - self.json_module	=> json manager instance.
-#	- self.serial_manager	=> serial manager to connect with the arduino
+#	- self.serial_manager	=> serial manager to connect with the arduino.
 #	- self.scaner_module	=> scaner manager instance.
 #	- self.mapping_module	=> mapping manager instance.
-#       - self.is_running	=> running state.
+#	- self.is_running	=> running state.
 #	- self.logs		=> log manager object
 #	- self.logs_arduino	=> logs arduino communication.
-#       - self.state_mode	=> robot mode.
-#       - self.ai_mode		=> robot ai mode.
+#	- self.state_mode	=> robot mode.
+#	- self.ai_mode		=> robot ai mode.
 #	- self.scan_angle	=> scanner angle.
 #
 #  Defines :
@@ -46,18 +46,28 @@ from mapping.mapping import mapping
 #       - self.GET_BATTERY  => read battery states.
 #
 class Robot:
-    # defines :
-    STATE_SCAN = 0
+
+    ## @brief Scanning state number.
+    STATE_SCAN = 0 
+    ## @brief Move state number.
     STATE_MOVE = 1
+    ## @brief Waiting state number.
     STATE_WAIT = 2
 
+    ## @brief Manual AI number.
     AI_MANUAL = 0
+    ## @brief Auto AI number.
     AI_AUTO = 1
+    ## @brief Follow walls AI number.
     AI_FOLLOW = 2
+    ## @brief Find target AI number.
     AI_FIND = 3
 
+    ## @brief Read odometry from the arduino frame ID.
     GET_ODO = 1
+    ## @brief Get ready frame from the arduino frame ID.
     GET_READY = 0
+    ## @brief Read battery from the arduino frame ID.
     GET_BATTERY = 2
 
     ## Constructor.
@@ -89,6 +99,8 @@ class Robot:
 	self.scaner_module.start_module()
 	self.logs.write_log("Start mapping manager.")
 	self.mapping_module = mapping((100, 100), 10)
+	self.x = 50
+	self.y = 50
         self.logs.write_log("Start some variables.")
         self.is_running = True
         self.logs.write_log("Start serial manager.")
@@ -120,8 +132,8 @@ class Robot:
         if self.state_mode == self.STATE_SCAN:
             self.scan_tick()
         elif self.state_mode == self.STATE_MOVE:
-	        if received == True:
-	            self.move_tick((r_x, r_y, r_t))
+	    if received == True:
+	        self.move_tick((r_x, r_y, r_t))
 
         # Send the infos to the base station
         #self.json_module.add_custom_message("Info", "Everything ok !")
@@ -133,15 +145,18 @@ class Robot:
     ## Scan tick.
     #  @param self The object pointer.
     def scan_tick(self):
-	    self.logs_arduino.write_log("Scan tick.")
-	    frame = self.send_to_arduino(self.serial_manager.create_update_scaner_frame(self.scan_angle))
-	    self.scan_angle = self.scan_angle + 15
-	    if self.scan_angle == 0 :
-	        time.sleep(1)	
-	    time.sleep(0.3)
-	    if self.scan_angle > 180:
-	        self.scan_angle = 0
-	        self.set_wait()
+        self.logs_arduino.write_log("Scan tick.")
+	frame = self.send_to_arduino(self.serial_manager.create_update_scaner_frame(self.scan_angle))
+	self.scan_angle = self.scan_angle + 15
+	if self.scan_angle == 0 :
+	    time.sleep(1)	
+	time.sleep(0.1)
+	dist = self.scaner_module.get_plan_distance()
+	if dist > 0:
+	    self.mapping_module.update_map((self.x, self.y, self.tetha), (self.scan_angle, dist))
+	if self.scan_angle > 180:
+	    self.scan_angle = 0
+	    self.set_wait()
 
     ## Move tick.
     #  @param self The object pointer.
@@ -183,8 +198,9 @@ class Robot:
         self.net_module.close()
 	self.logs.write_log("Stop scaner module.")
 	self.scaner_module.close()
-	self.logs.write_log("Save map.")
+	self.logs.write_log("Save map and destroy module.")
 	self.mapping_module.save("Saved_map.txt", (50, 50))
+	self.destroy()
         self.logs.write_log("Stop.")
 
     ## Customs messages manager.
