@@ -2,18 +2,7 @@
 #define MAINWINDOW_H
 //Adresse Serveur : 10.5.133.185
 
-#include <QtGui>
-#include <QtNetwork>
-#include <QMainWindow>
-#include <QDialog>
-#include "ui_mainwindow.h"
-#include <QDebug>
-#include <QLineEdit>
-#include <QVariant>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonParseError>
+#include "libraries.h"
 
 
 class MainWindow : public QMainWindow, private Ui::MainWindow
@@ -23,9 +12,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
     public:
         explicit MainWindow(QWidget *parent = 0);
 
-
-
-    private slots:
+    public slots:
         void quitterApp();
         void connexion();
         void on_boutonEnvoyer_clicked();
@@ -35,7 +22,11 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         void erreurSocket(QAbstractSocket::SocketError erreur);
         void deconnexion();
         void envoie_arret_urgence();
-        void parser();
+        void messageErreur();
+        void envoie_message_hello();
+        //void receptionDonneesJoyStick();
+        //void parserDonneesDrone();
+
 
     private:
         QTcpSocket *socket; // Représente le serveur
@@ -43,8 +34,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         Ui::MainWindow *ui;
         bool ok;
 
-
 };
+
+
 
 
 #endif // MAINWINDOW_H

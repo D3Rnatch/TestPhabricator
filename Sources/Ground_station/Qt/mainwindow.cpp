@@ -1,34 +1,25 @@
 //Adresse Serveur : 10.5.133.185
 
 #include "mainwindow.h"
-#include <QtGui>
-#include <QtNetwork>
-#include "ui_mainwindow.h"
-#include <QDebug>
-#include <QLineEdit>
-#include <QVariant>
-#include <QVariantMap>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonParseError>
-#include "parser.h"
-#include <QJsonValue>
-#include <QJsonObject>
+#include "libraries.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui (new Ui::MainWindow)
 {
-    setupUi(this);
+    setupUi(this); //initialision de l'IHM
 
-    socket = new QTcpSocket(this);
+    socket = new QTcpSocket(this);//Création du socket
 
-    connect(socket, SIGNAL(readyRead()),this, SLOT(donneesRecues()));
-    connect(socket, SIGNAL(connected()),this, SLOT(connecte()));
-    connect(socket, SIGNAL(disconnected()), this, SLOT(deconnecte()));
-    connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(erreurSocket(QAbstractSocket::SocketError)));
+    connect(socket, SIGNAL(readyRead()),this, SLOT(donneesRecues()));//Lancement de la reception de données Robot
+    connect(socket, SIGNAL(connected()),this, SLOT(connecte()));//Lancement de la connexion
+    connect(socket, SIGNAL(connected()),this, SLOT(envoie_message_hello()));//On envoie le message "hello" pour obtenir les données du Robot
+    connect(socket, SIGNAL(disconnected()), this, SLOT(deconnecte()));//Lancement de la deconnexion
+    connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(erreurSocket(QAbstractSocket::SocketError)));//Traitement des erreurs du socket
+    connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(messageErreur()));//Lancement de la Fenêtre Erreur
+
+
 
 
      tailleMessage = 0;
@@ -48,14 +39,19 @@ MainWindow::MainWindow(QWidget *parent) :
    QObject::connect(actionFermer, SIGNAL(triggered()), this, SLOT(quitterApp()));
 
     //Action Se Connecter
-   connect(actionSe_connecter_au_Drone, SIGNAL(triggered()),this, SLOT(connexion()/*on_boutonConnexion_clicked()*/));
+   QObject::connect(actionSe_connecter_au_Drone, SIGNAL(triggered()),this, SLOT(connexion()));
 
     //Action Se Deconnecter
-   connect(action_se_deconnecter, SIGNAL(triggered()),this, SLOT(deconnexion()));
+   QObject::connect(action_se_deconnecter, SIGNAL(triggered()),this, SLOT(deconnexion()));
 
     //Action Arrêt d'urgence
-   connect(actionArret_d_urgence, SIGNAL(triggered()),this, SLOT(envoie_arret_urgence()));
+   QObject::connect(actionArret_d_urgence, SIGNAL(triggered()),this, SLOT(envoie_arret_urgence()));
 
+   //Gestion de la batterie
+   //progressBarBatterie->setValue();
+
+   //Gestion de la vitesse
+   //ProgressBarVitesse->
 }
 
 
@@ -69,9 +65,25 @@ void MainWindow::quitterApp()
 
 void MainWindow::connexion()
 {
+
     socket->abort();//On désactive les connexions précédentes s'il y en a
     socket->connectToHost(adr_ip->text(), numero_port_serveur->value());//On se connecte au serveur demandé
+
 }
+
+// Ce slot est appelé lorsque la connexion au serveur a réussi
+ void MainWindow::connecte()
+{
+      //On affiche l'état de la connexion
+     etat_connexion->setText("Connecté");
+
+     //On nettoie la zone de reception
+     message_recu->clear();
+
+     //On nettoie la zone de reception
+     message_envoie->clear();
+
+     }
 
 //Envoie d'un messsage au serveur
 void MainWindow::on_boutonEnvoyer_clicked()
@@ -115,29 +127,25 @@ void MainWindow::donneesRecues()
     //On remet la taille du message à 0 pour pouvoir recevoir de futurs messages
     tailleMessage = 0;
 
-    //on lance le parseur
-    MainWindow parseur();
 
 }
 
 
-
-
-
-// Ce slot est appelé lorsque la connexion au serveur a réussi
- void MainWindow::connecte()
+void MainWindow::deconnexion()
 {
-      //On affiche l'état de la connexion
-     etat_connexion->setText("Connecté");
+    socket->close();
 
-     //On nettoie la zone d'e reception d'Emission
-     message_recu->clear();
+    //On affiche l'information Deconnecté
+    etat_connexion->setText("Déconnecté");
 
-     //On nettoie la zone de reception
-     message_envoie->clear();
+    //On nettoie la zone de reception
+    message_envoie->clear();
+
+    //On nettoie la zone de reception
+    message_recu->clear();
+
+    qDebug() << "\nDeconnexion\n";
 }
-
-
 
 //Ce slot est appelé lorsqu'on est déconnecté du serveur
  void MainWindow::deconnecte()
@@ -162,6 +170,7 @@ void MainWindow::erreurSocket(QAbstractSocket::SocketError problem)
      {
          case QAbstractSocket::HostNotFoundError:
             qDebug()<<"ERREUR : le serveur n'a pas pu être trouvé. Vérifiez l'IP et le port.";
+
             break;
          case QAbstractSocket::ConnectionRefusedError:
            qDebug()<<"ERREUR : le serveur a refusé la connexion. Vérifiez si le programme \"serveur\" a bien été lancé. Vérifiez aussi l'IP et le port.";
@@ -171,26 +180,14 @@ void MainWindow::erreurSocket(QAbstractSocket::SocketError problem)
             break;
           default:
              qDebug()<<"ERREUR : " + socket->errorString();
+            break;
      }
 }
 
-void MainWindow::deconnexion()
-{
-    socket->close();
-
-    //On affiche l'information Deconnecté
-    etat_connexion->setText("Déconnecté");
-
-    //On nettoie la zone de reception
-    message_envoie->clear();
-
-    //On nettoie la zone de reception
-    message_recu->clear();
-}
 
 
 
-//Ce slot est envoyé
+//Ce slot est envoyé des qu'on clique sur le bouton d'arret d'urgence
 void MainWindow::envoie_arret_urgence()
 {
 
@@ -210,6 +207,51 @@ void MainWindow::envoie_arret_urgence()
     message_recu->clear();
 }
 
+
+void MainWindow::messageErreur()
+{
+    //Lacement de la Pop-Up message d'Erreur
+    int reponse = QMessageBox::question(this,"Connexion impossible","Impossible de se connecter au serveur\nRecomencer?");
+
+        if (reponse == QMessageBox::Yes)//Si l'utlisateur désire sereconnecter
+
+                this->connexion();
+                qDebug()<<"Nouvelle connexion";
+
+        if (reponse == QMessageBox::No)//Si il ne désire pas se reconnecter
+
+                qDebug()<<"Fermeture de la fenêtre d'Erreur";
+}
+
+
+//Slot envoyé systematiquement à chaque nouvelle connexion
+void MainWindow::envoie_message_hello()
+{
+    message_envoie->clear();
+
+    QByteArray packet;
+    QDataStream out(&packet, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
+
+    //On prépare le paquet à envoyer
+    QString messageHello = "{\"robot\":{\"X\":10,\"Y\":10,\"T\":20},\"message\":{\"type\":\"system\",\"content\":\"hello\"}}";
+
+    socket->write(messageHello.toStdString().c_str()); // On envoie le paquet convertie
+
+    //on afiche le message envoyé dans la zone d'Emission Texte
+    message_envoie->setText(messageHello);
+
+}
+
+
+
+
+
+
+
+
+
+
+/*
 void MainWindow::parser()
 {
     bool ok;
@@ -233,3 +275,4 @@ void MainWindow::parser()
     qDebug() << "use_space:" << nested["use_space"].toBool();
 
 }
+*/

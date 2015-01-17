@@ -1,16 +1,6 @@
 //Adresse Serveur : 10.5.133.185
 
-#include <QApplication>
-#include <QPushButton>
-#include <QWidget>
-#include <QFont>
-#include <QIcon>
-#include <QCoreApplication>
-#include <QDebug>
-
-#include <QtWidgets>
-#include <QtNetwork>
-
+#include "libraries.h"
 #include "mainwindow.h"
 
 int main(int argc, char *argv[])
