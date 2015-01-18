@@ -1,6 +1,12 @@
-
 #ifndef MOTOR_HANDLER_H
 #define MOTOR_HANDLER_H
+
+/**
+ * \file motor_handler.h
+ * \brief handle motors.
+ * \author Alexandre Brand
+ * \version 1.0
+ */
 
 #include "servo.h"
 
@@ -8,8 +14,8 @@
 
 // Maximum rate value given to motors
 // in %
-#define MIN 10
-#define MAX 90
+#define MIN 10 /*!< Minimum rate value given to motors in percent. */
+#define MAX 90 /*!< Maximum rate value given to motors in percent. */
 
 // Test rate
 #define TEST_RATE_0 MIN
@@ -22,19 +28,25 @@
 #define LAT4 8
 #define LAT5 10
 
+/**
+ * \class Motor_handler
+ * \brief Motor management class.
+ */
 class Motor_handler
 {
 	public :
 	
-
-
-	/** \brief Motor_handler 
-	*	\param int 0 : min speed
-	*	\param int 1 : max speed
-	*	\param uint8_t : attached pin 0 : ground motor.
-	* 	\param uint8_t x : HL, HR, DL, DR
+	/** \brief Motor_handler constructor.
+	*   \param m Min speed.
+	*   \param mm Max speed.
+	*   \param t1 Attached pin 0 : ground motor.
+	*   \param t2 HL.
+	*   \param t3 HR.
+	*   \param t4 DL.
+	*   \param t5 DR.
 	*/
-	Motor_handler(int, int, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t);
+	Motor_handler(int m, int mm, uint8_t t1, uint8_t t2, uint8_t t3, uint8_t t4, uint8_t t5);
+	/** \brief default constructor.*/
 	Motor_handler();
 	
 	/** \brief Maintains motors at speed
@@ -43,12 +55,20 @@ class Motor_handler
 	void run_the_magic();
 
 	/**
-	*	Stops all motors immediately
-	*	Almost, Almost
+	*   \brief Stops all motors immediately
+	*   \param type Stop type.
+	*
+	*   type = 1 -> decrescendo.
+	*   Other -> brutal.
+	*   Almost, Almost.
 	*/
-	void emergency_stop();
+	void emergency_stop(uint8_t type);
 
-	void setSpeedFans(uint8_t *);
+	/**
+	*   \brief Set motor speed.
+	*   \param b Speed map.
+	*/
+	void setSpeedFans(uint8_t * b);
 	
 	private :
 	

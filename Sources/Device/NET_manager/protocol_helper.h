@@ -1,5 +1,5 @@
 /**
- * \file protocol_helper.cpp
+ * \file protocol_helper.h
  * \brief Protocol helper utils functions
  * \author Alexandre Brand
  */

@@ -1,10 +1,5 @@
 #include "protocol_helper.h"
 
-
-/**
-*	\brief encap_acq_data, encaps the acquisition data in format
-*
-*/
 t_encap encap_acq_data(byte dx,byte dy,byte gz)
 {
 	t_encap t;
@@ -20,10 +15,6 @@ t_encap encap_acq_data(byte dx,byte dy,byte gz)
 	return t;
 }
 
-/**
-*	\brief encap_ready, encaps the ready packet
-*
-*/
 t_encap encap_ready()
 {
 	t_encap t;
@@ -39,10 +30,6 @@ t_encap encap_ready()
 	return t;
 }
 
-/**
-*	\brief encap_battery_data, encaps the battery data in format
-*
-*/
 t_encap encap_battery_data(byte b1, byte b2)
 {
 	t_encap t;
@@ -58,7 +45,6 @@ t_encap encap_battery_data(byte b1, byte b2)
 	return t;
 }
 
-// return frame's id.
 uint8_t get_frame_type(byte *frame)
 {
 	uint8_t t = frame[0] - 48; // Transformation into integer
@@ -68,7 +54,6 @@ uint8_t get_frame_type(byte *frame)
 }
 
 
-// extracts for frame id [0;4]
 t_frame_bytes extract_data_bytes(byte *frame)
 {
 	t_frame_bytes extract;
@@ -86,7 +71,6 @@ t_frame_bytes extract_data_bytes(byte *frame)
 	return extract;
 }
 
-// Extracts for frame id = 5
 t_frame_doubles extract_data_doubles(byte *frame)
 {
 	t_frame_doubles extract;

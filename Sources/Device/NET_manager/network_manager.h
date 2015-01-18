@@ -38,6 +38,9 @@
 class Network_manager
 {
     public :
+    	/**
+	 * \brief Constructor.
+	 */
 	Network_manager(int);
 	
 	/**
