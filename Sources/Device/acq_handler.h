@@ -15,13 +15,14 @@
  *
  */
 #include <Arduino.h>
-
-#include "math.h"
-
-#include "ADNS2610_arduino_driver.h"
+//#include <Wire.h>
 #include <I2Cdev.h>
 #include <helper_3dmath.h>
 #include <MPU6050_6Axis_MotionApps20.h>
+#include <math.h>
+
+#include "ADNS2610_arduino_driver.h"
+
 
 // #include "MPU6050_arduino_driver.h"
 

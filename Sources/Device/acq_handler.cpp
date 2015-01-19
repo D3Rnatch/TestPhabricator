@@ -1,11 +1,12 @@
 #include "acq_handler.h"
+
 boolean dmpReady;
 
 void dmpDataReady(){
   dmpReady = true;
 }
 
-ACQ_handler :: ACQ_handler()
+ACQ_handler::ACQ_handler()
 {
     ADNSmouseInit(); // Démarrage du capteur optique.
     // mpuInit(); // Démarrage du G sensor
