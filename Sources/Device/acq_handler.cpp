@@ -34,14 +34,14 @@ ACQ_handler::ACQ_handler()
     }
 }
 
-void ACQ_handler :: run_the_magic()
+void ACQ_handler::run_the_magic()
 {
     this->delta_y_adns = ADNSgetFilteredValueY();
     this->delta_x_adns = ADNSgetFilteredValueX();
     this->update_values();
 }
 
-void ACQ_handler :: acquire_mpu()
+void ACQ_handler::acquire_mpu()
 {
     if (!dmpReady) return;
     while (!this->mpuInterrupt && this->fifoCount < this->packetSize) {
@@ -65,7 +65,7 @@ void ACQ_handler :: acquire_mpu()
     }
 }
 
-void ACQ_handler :: update_values()
+void ACQ_handler::update_values()
 {
     /* Theta Angle */
     int e = (int)ALPHA << 10;
@@ -87,27 +87,27 @@ void ACQ_handler :: update_values()
     this->actual_r = (double)((xt/cT) >> 10);
 }
 
-void ACQ_handler :: mpuCalibrate()
+void ACQ_handler::mpuCalibrate()
 {
 // TO BE IMPLEMENTED
 }
 
-double ACQ_handler :: get_MoveXY()
+double ACQ_handler::get_MoveXY()
 {		
     return this->actual_r; // r	
 }
 
-double ACQ_handler :: get_MoveAngle()
+double ACQ_handler::get_MoveAngle()
 {		
     return this->actual_theta; // r	
 }
 
-double ACQ_handler :: get_MoveX()
+double ACQ_handler::get_MoveX()
 {
     return this->last_x;
 }
 
-double ACQ_handler :: get_MoveY()
+double ACQ_handler::get_MoveY()
 {
     return this->last_y;
 }
