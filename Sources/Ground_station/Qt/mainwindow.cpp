@@ -10,6 +10,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     setupUi(this); //initialision de l'IHM
 
+//-----------------NETWORK---------------------------------------------
+
     socket = new QTcpSocket(this);//Création du socket
 
     connect(socket, SIGNAL(readyRead()),this, SLOT(donneesRecues()));//Lancement de la reception de données Robot
@@ -20,11 +22,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(messageErreur()));//Lancement de la Fenêtre Erreur
 
 
+//------------------JSON--------------------------------------------------
+
+
+    /*Test*/connect(boutonParse, SIGNAL(clicked()),this, SLOT(parserReception()));//Lancement du parse
+
 
 
      tailleMessage = 0;
 
-//----------DATE & HEURE---------------
+//--------------DATE & HEURE------------------------------------------
 
     //Actualisation de l'heure
   QDateTime date_heure = QDateTime::currentDateTime();
@@ -33,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
    QTextStream out(stdout);
    out << "Current date is " << date_heure.toString() << endl;
 
-//------------MENU----------------------
+//------------------MENU----------------------------------------------------
 
     //Action Fermer
    QObject::connect(actionFermer, SIGNAL(triggered()), this, SLOT(quitterApp()));
@@ -47,12 +54,18 @@ MainWindow::MainWindow(QWidget *parent) :
     //Action Arrêt d'urgence
    QObject::connect(actionArret_d_urgence, SIGNAL(triggered()),this, SLOT(envoie_arret_urgence()));
 
+   //Bouton Stop
+   QObject::connect(boutonStop, SIGNAL(clicked()),this, SLOT(stop()));
+
+
    //Gestion de la batterie
    //progressBarBatterie->setValue();
 
    //Gestion de la vitesse
    //ProgressBarVitesse->
+
 }
+
 
 
 void MainWindow::quitterApp()
@@ -96,10 +109,13 @@ void MainWindow::on_boutonEnvoyer_clicked()
     //On prépare le paquet à envoyer
     QString messageAEnvoyer = "{\"robot\":{\"X\":10,\"Y\":10,\"T\":20},\"message\":{\"type\":\"system\",\"content\":\"hello\"}}";
 
-    socket->write(messageAEnvoyer.toStdString().c_str()); // On envoie le paquet convertie
+    int envoie = socket->write(messageAEnvoyer.toStdString().c_str()); // On envoie le paquet convertie
 
     //on afiche le message envoyé dans la zone d'Emission Texte
     message_envoie->setText(messageAEnvoyer);
+
+    if(envoie == -1)
+        QMessageBox::critical(this,"Erreur","Message non envoyé");
 
 }
 
@@ -114,12 +130,13 @@ void MainWindow::donneesRecues()
     int buff_size = in.readRawData(temp, size);
 
     //Affichage dans la console du Message reçu
-    qDebug()<<temp;
-    qDebug()<<socket->bytesAvailable();
+   // qDebug()<<temp;
+   // qDebug()<<socket->bytesAvailable();
 
     //conversion du message reçu en QString
-    QString messageRecu(temp);
+    QString toto(temp);
 
+    messageRecu = toto;
 
     //On affiche le message sur la zone de Reception texte
     message_recu->setText(messageRecu);
@@ -127,10 +144,12 @@ void MainWindow::donneesRecues()
     //On remet la taille du message à 0 pour pouvoir recevoir de futurs messages
     tailleMessage = 0;
 
+    qDebug()<<"\nreturn donnees recues messageRecu =\n"<<messageRecu;
+
 
 }
 
-
+//Ce slot demande le déconexion du serveur
 void MainWindow::deconnexion()
 {
     socket->close();
@@ -146,6 +165,7 @@ void MainWindow::deconnexion()
 
     qDebug() << "\nDeconnexion\n";
 }
+
 
 //Ce slot est appelé lorsqu'on est déconnecté du serveur
  void MainWindow::deconnecte()
@@ -198,19 +218,24 @@ void MainWindow::envoie_arret_urgence()
     QString messageAEnvoyer_urgence = "{\"robot\":{\"X\":0,\"Y\":0,\"T\":0},\"message\":{\"type\":\"system\",\"content\":\"stop\"}}";
 
     // On envoie le paquet convertie
-    socket->write(messageAEnvoyer_urgence.toStdString().c_str());
+    int envoie = socket->write(messageAEnvoyer_urgence.toStdString().c_str());
 
     //on afiche le message envoyé dans la zone d'Emission Texte
     message_envoie->setText(messageAEnvoyer_urgence);
 
     //On nettoie la zone de reception
     message_recu->clear();
+
+    if(envoie == -1)
+        QMessageBox::critical(this,"Erreur","Message non envoyé");
 }
 
 
+
+//Ce slot est envoyé lorsqu'un message d'erreur de connexion apparait
 void MainWindow::messageErreur()
 {
-    //Lacement de la Pop-Up message d'Erreur
+    //Lancement de la Pop-Up message d'Erreur
     int reponse = QMessageBox::question(this,"Connexion impossible","Impossible de se connecter au serveur\nRecomencer?");
 
         if (reponse == QMessageBox::Yes)//Si l'utlisateur désire sereconnecter
@@ -224,6 +249,8 @@ void MainWindow::messageErreur()
 }
 
 
+
+
 //Slot envoyé systematiquement à chaque nouvelle connexion
 void MainWindow::envoie_message_hello()
 {
@@ -235,44 +262,101 @@ void MainWindow::envoie_message_hello()
     //On prépare le paquet à envoyer
     QString messageHello = "{\"robot\":{\"X\":10,\"Y\":10,\"T\":20},\"message\":{\"type\":\"system\",\"content\":\"hello\"}}";
 
-    socket->write(messageHello.toStdString().c_str()); // On envoie le paquet convertie
+    int envoie = socket->write(messageHello.toStdString().c_str()); // On envoie le paquet converti
 
     //on afiche le message envoyé dans la zone d'Emission Texte
     message_envoie->setText(messageHello);
 
+    //Test Erreur
+    if(envoie == -1)
+        QMessageBox::critical(this,"Erreur","Message non envoyé");
 }
-
-
-
-
-
-
 
 
 
 
 /*
-void MainWindow::parser()
+void MainWindow::parserDonneesDrone()
 {
-    bool ok;
-    // json is a QString containing the JSON data
-    QtJson::JsonObject result = QJson::parse(json, ok).toMap();
+    qDebug()<<"Bouton Parser cliqué";
+    QString messageHello = "{\"robot\":{\"X\":10,\"Y\":15,\"T\":20},\"message\":{\"type\":\"system\",\"content\":\"hello\"}}";
 
-    if(!ok)
-    {
-    qFatal("An error occurred during parsing");
-    }
-    qDebug() << "encoding:" << result["encoding"].toString();
-    qDebug() << "plugins:";
+    QJsonDocument doc = QJsonDocument::fromJson(messageHello.toUtf8());
+    qDebug() << doc.isNull();
 
-    foreach(QVariant plugin, result["plug-ins"].toList())
-    {
-        qDebug() << "  -" << plugin.toString();
-    }
+    QJsonObject JsonObj= doc.object();
 
-    QtJson::JsonObject nested = result["indent"].toMap();
-    qDebug() << "length:" << nested["length"].toInt();
-    qDebug() << "use_space:" << nested["use_space"].toBool();
+    int X_value = JsonObj["robot"].toObject()["X"].toInt();
+    qDebug() << "\nX="<<X_value;
+    int Y_value = JsonObj["robot"].toObject()["Y"].toInt();
+    qDebug() << "\nY="<<Y_value;
+    int T_value = JsonObj["robot"].toObject()["T"].toInt();
+    qDebug() << "\nT="<<T_value;
+    QString type_of_message = JsonObj["message"].toObject()["type"].toString();
+    qDebug() << "\ntype of the message="<<type_of_message;
+    QString message_content = JsonObj["message"].toObject()["content"].toString();
+    qDebug() << "\nmessage content="<<message_content;
+
+}*/
+
+
+//Ce slot est envoyé lorsqu'uon appuie sur le bouton Stop
+void MainWindow::stop()
+{
+    qDebug()<<"Bouton Stop cliqué";
+    QString messageStop = "{\"robot\":{\"X\":0,\"Y\":0,\"T\":0},\"message\":{\"type\":\"system\",\"content\":\"stop\"}}";
+
+    QByteArray paquet_stop;
+    QDataStream out(&paquet_stop, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
+
+    //On envoie le paquet convertie
+    //socket->write(messageStop.toStdString().c_str());
+
+    //retour de fonction testé dans le "if"
+    int envoie = socket->write(messageStop.toStdString().c_str());
+
+    //On afiche le message envoyé dans la zone d'Emission Texte
+    message_envoie->setText(messageStop);
+
+    //Test erreur
+    if(envoie == -1)
+        QMessageBox::critical(this,"Erreur","Message non envoyé");
 
 }
-*/
+
+
+void MainWindow::parserReception()
+{
+
+    qDebug()<<"\nParser Reception";
+    qDebug()<<"\nmessage Recu avant parse=\n"<<messageRecu;
+
+    QJsonDocument doc = QJsonDocument::fromJson(messageRecu.toUtf8());
+
+    qDebug()<< doc.isNull();
+
+    QJsonObject JsonObj= doc.object();
+
+    int X_value = JsonObj["robot"].toObject()["X"].toInt();
+    qDebug() << "\nX="<<X_value;
+    int Y_value = JsonObj["robot"].toObject()["Y"].toInt();
+    qDebug() << "\nY="<<Y_value;
+    int T_value = JsonObj["robot"].toObject()["R"].toInt();
+    qDebug() << "\nR="<<T_value;
+
+    QString batterie_index = JsonObj["robot"].toObject()["batterie"].toString();
+    qDebug() << "\nindex batterie="<<batterie_index;
+    QString batterie_value = JsonObj["robot"].toObject()["value"].toString();
+    qDebug() << "\nvalue_batterie="<<batterie_value;
+
+    QString scaner_angle = JsonObj["scaner"].toObject()["angle"].toString();
+    qDebug() << "\nscaner angle ="<<scaner_angle;
+    QString image_in_binary_state = JsonObj["scaner"].toObject()["angle"].toString();
+    qDebug() << "\nmessage content="<<image_in_binary_state;
+
+    QString type_of_message = JsonObj["message"].toObject()["type"].toString();
+    qDebug() << "\ntype of the message="<<type_of_message;
+    QString message_content = JsonObj["message"].toObject()["content"].toString();
+    qDebug() << "\nmessage content="<<message_content;
+
+}

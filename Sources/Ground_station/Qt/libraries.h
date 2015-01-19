@@ -21,6 +21,10 @@
 #include <QDebug>
 #include "parser.h"
 #include <QPalette>
+#include <QJsonValue>
+#include <QJsonDocument>
+#include <QJsonObject>
+
 
 #endif // LIBRARIES
 

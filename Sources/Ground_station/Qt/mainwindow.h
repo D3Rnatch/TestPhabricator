@@ -12,6 +12,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
     public:
         explicit MainWindow(QWidget *parent = 0);
 
+
+
     public slots:
         void quitterApp();
         void connexion();
@@ -25,7 +27,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         void messageErreur();
         void envoie_message_hello();
         //void receptionDonneesJoyStick();
-        //void parserDonneesDrone();
+       // void parserDonneesDrone();
+        void stop();
+        void parserReception();
 
 
     private:
@@ -33,6 +37,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         quint16 tailleMessage;
         Ui::MainWindow *ui;
         bool ok;
+        QString messageRecu;
 
 };
 
