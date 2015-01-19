@@ -53,8 +53,8 @@ class Scanner:
     def start_module(self):
         # Start the camera.
         self.cap = cv2.VideoCapture(0)
-	ret = self.cap.set(3, 320)
-	ret = self.cap.set(4, 240)
+	ret = self.cap.set(3, 670)
+	ret = self.cap.set(4, 480)
         compteur = 30
         max2 = 0
         # Calibrate

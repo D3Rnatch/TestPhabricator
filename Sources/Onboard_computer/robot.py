@@ -198,7 +198,7 @@ class Robot:
 	self.scaner_module.close()
 	self.logs.write_log("Save map and destroy module.")
 	self.mapping_module.save("Saved_map.txt", (50, 50))
-	self.destroy()
+	self.mapping_module.destroy()
         self.logs.write_log("Stop.")
 
     ## Customs messages manager.
