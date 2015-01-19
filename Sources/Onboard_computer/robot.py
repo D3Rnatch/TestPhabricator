@@ -17,33 +17,31 @@ from mapping.mapping import mapping
 #
 #  /!\ WARNING /!\ HUGE class do not, in any circumstances, look at the code (unless you need it, and in this case, good luck).
 #  
-#  Fields :
-#       - self.x		=> robot x position.
-#       - self.y		=> robot y position.
-#       - self.tetha		=> robot angle.
-#       - self.net_module	=> network manager instance.
-#       - self.json_module	=> json manager instance.
-#	- self.serial_manager	=> serial manager to connect with the arduino.
-#	- self.scaner_module	=> scaner manager instance.
-#	- self.mapping_module	=> mapping manager instance.
-#	- self.is_running	=> running state.
-#	- self.logs		=> log manager object
-#	- self.logs_arduino	=> logs arduino communication.
-#	- self.state_mode	=> robot mode.
-#	- self.ai_mode		=> robot ai mode.
-#	- self.scan_angle	=> scanner angle.
+#  - var x Robot x position.
+#  - var y Robot y position.
+#  - var tetha Robot angle.
+#  - var net_module Network manager instance.
+#  - var json_module Json manager instance.
+#  - var serial_manager Serial manager to connect with the arduino.
+#  - var scaner_module Scaner manager instance.
+#  - var mapping_module Mapping manager instance.
+#  - var is_running Running state.
+#  - var logs Log manager object.
+#  - var logs_arduino Logs arduino communication.
+#  - var state_mode Current robot state mode.
+#  - var ai_mode Current robot ai mode.
 #
-#  Defines :
-#       - self.STATE_SCAN   => scanning state number.
-#       - self.STATE_MOVE   => moving state number.
-#       - self.STATE_WAIT   => waiting state number.
-#       - self.AI_MANUAL    => ai in manual mode.
-#       - self.AI_AUTO      => ai in auto mode.
-#       - self.AI_FOLLOW    => ai in wall following mode.
-#       - self.AI_FIND      => ai in finding mode.
-#       - self.GET_ODO      => read the odometry from the arduino.
-#       - self.GET_READY    => read the ready frame.
-#       - self.GET_BATTERY  => read battery states.
+#  - var scan_angle Current Scanner angle.
+#  - var STATE_SCAN Scanning state number.
+#  - var STATE_MOVE Moving state number.
+#  - var STATE_WAIT Waiting state number.
+#  - var AI_MANUAL Ai in manual mode.
+#  - var AI_AUTO Ai in auto mode.
+#  - var AI_FOLLOW Ai in wall following mode.
+#  - var AI_FIND Ai in finding mode.
+#  - var GET_ODO Read the odometry from the arduino.
+#  - var GET_READY Read the ready frame.
+#  - var GET_BATTERY Read battery states.
 #
 class Robot:
 
