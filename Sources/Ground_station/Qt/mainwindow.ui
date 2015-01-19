@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QPushButton" name="BoutonRec">
     <property name="geometry">
@@ -229,6 +232,9 @@
     </property>
    </widget>
    <widget class="QLineEdit" name="etat_connexion">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>510</x>
