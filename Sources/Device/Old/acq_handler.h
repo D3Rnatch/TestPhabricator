@@ -15,6 +15,10 @@
  *
  */
 #include <Arduino.h>
+//#include <Wire.h>
+#include <I2Cdev.h>
+#include <helper_3dmath.h>
+#include <MPU6050_6Axis_MotionApps20.h>
 #include <math.h>
 
 // #include "ADNS2610_arduino_driver.h"
@@ -157,7 +161,7 @@ class ACQ_handler
 		double actual_theta; // deg
 		double last_x;
 		double last_y;
-/*
+
 		MPU6050 *mpu;
 		boolean mpuInterrupt;
 		// boolean dmpReady;
@@ -177,11 +181,10 @@ class ACQ_handler
 
                 uint8_t fifoBuffer[64]; // FIFO storage buffer
                 uint16_t fifoCount;     // count of all bytes currently in FIFO
-*/
+
                 // void dmpDataReady();
 		void mpuCalibrate();
 		void acquire_mpu();
-
 };
 
 

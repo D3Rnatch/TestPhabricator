@@ -1,10 +1,10 @@
 #include "acq_handler.h"
-/*
+
 boolean dmpReady;
 
 void dmpDataReady(){
   dmpReady = true;
-}*/
+}
 
 ACQ_handler::ACQ_handler()
 {
@@ -14,24 +14,24 @@ ACQ_handler::ACQ_handler()
     this->g_z_mpu = 0;
     this->actual_r = this->actual_theta = last_x = last_y = 0.0;
 		
-    //this->mpu = new MPU6050(0x69);
-    //mpu->initialize();
-    //if(!mpu->testConnection())
-    //this->errorCode = 112;
+    this->mpu = new MPU6050(0x69);
+    mpu->initialize();
+    if(!mpu->testConnection())
+    this->errorCode = 112;
 
-    //this->devStatus = mpu->dmpInitialize();
+    this->devStatus = mpu->dmpInitialize();
 
-    //this->mpu->setXGyroOffset(220);
-    //this->mpu->setYGyroOffset(76);
-    //this->mpu->setZGyroOffset(-85);	
-    /*
+    this->mpu->setXGyroOffset(220);
+    this->mpu->setYGyroOffset(76);
+    this->mpu->setZGyroOffset(-85);	
+
     if (devStatus == 0) {
 	this->mpu->setDMPEnabled(true);	
         attachInterrupt(0, dmpDataReady, RISING);
 	this->mpuIntStatus = mpu->getIntStatus();
 	dmpReady = true;
 	this->packetSize = mpu->dmpGetFIFOPacketSize();
-    }*/
+    }
 }
 
 void ACQ_handler::run_the_magic()
@@ -42,7 +42,7 @@ void ACQ_handler::run_the_magic()
 }
 
 void ACQ_handler::acquire_mpu()
-{/*
+{
     if (!dmpReady) return;
     while (!this->mpuInterrupt && this->fifoCount < this->packetSize) {
     }
@@ -62,7 +62,7 @@ void ACQ_handler::acquire_mpu()
         this->mpu->dmpGetEuler(this->euler, &this->q);
         this->mpu->dmpGetGravity(&this->gravity, &this->q);
         this->mpu->dmpGetYawPitchRoll(this->ypr, &this->q, &this->gravity);
-    }*/
+    }
 }
 
 void ACQ_handler::update_values()
@@ -152,11 +152,11 @@ void ACQ_handler::ADNSdumpDiag(void)
   unsigned int val;
 
   val = ADNSreadRegister(regStatus);
-/*
+
   Serial.print("Product ID: ");
   Serial.println( (unsigned int)((val & maskPID) >> 5));
   Serial.println("Ready.");
-  Serial.flush();*/
+  Serial.flush();
 }
 
 void ACQ_handler::ADNSwriteRegister(byte addr, byte data)

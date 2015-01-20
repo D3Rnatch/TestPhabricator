@@ -9,7 +9,6 @@
  */
 
 #include <Arduino.h>
-
 #include "protocol_helper.h"
 
 /**

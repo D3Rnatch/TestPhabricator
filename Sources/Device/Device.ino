@@ -11,43 +11,18 @@
 
 #include <Arduino.h>
 #include <Servo.h>
-/*#include <Wire.h>
-#include <I2Cdev.h>
-#include <helper_3dmath.h>
-#include <MPU6050_6Axis_MotionApps20.h>
-*/
 #include "controller_helper.h"
 
 uint8_t cpt = 0;
-
+Controller *controller;
 /**
  * \fn void setup()
  * \brief Setup function for the Arduino.
  */
 void setup()
 {
-	Controller.escenter[0].attach(2);
-    	Controller.escenter[1].attach(4);
-    	Controller.escenter[2].attach(6);
-    	Controller.escenter[3].attach(8);
-	
-	Controller.LaserScaner.attach(3);
-        delay(2);
-	calibrate_laserscaner();
-    	
-        arm();
-
-	// Starting The Acq manager
-	Controller.acq = new ACQ_handler();
-
-	Controller.net = new Network_manager(9600);
-        // Serial.println("End OF INIT");
-
-	Controller.controllerState = Idle;
-
-	// Controller finished init 
-	// Sending OK ready packet.
-	Controller.net->send_ready_packet(0);
+        controller = new Controller();
+	controller->init();
 }
 
 /**
@@ -56,36 +31,36 @@ void setup()
  */
 void loop()
 {
-	Controller.net->run_the_magic();
+	controller->net->run_the_magic();
 		
 	// resend data
-	uint8_t id = (byte)Controller.net->get_last_frame_id();
-	uint8_t * b = Controller.net->get_array();
+	uint8_t id = (byte)controller->net->get_last_frame_id();
+	uint8_t * b = controller->net->get_array();
 		
 	// Processing Communication
-	Process_Com(id, b);	
+	controller->Process_Com(id, b);	
 	
 	// If controllerState is : 
-	if(Controller.controllerState == Manual_Acquisition) {
-		Process_Acq();
+	if(controller->controllerState == Manual_Acquisition) {
+		controller->Process_Acq();
 		if(id == 3)
-			Process_Motor(b);
+			controller->Process_Motor(b);
 	}
 
-	if(Controller.controllerState == Manual) {
+	if(controller->controllerState == Manual) {
 		if(id == 3)
-			Process_Motor(b);
+			controller->Process_Motor(b);
 	}
 
-	if(Controller.controllerState == Scan) {
-		Process_Scan(b);
+	if(controller->controllerState == Scan) {
+		controller->Process_Scan(b);
 	}
 
-	if(Controller.controllerState == Automatic) {
+	if(controller->controllerState == Automatic) {
 		// TO BE IMPLEMENTED
 	}
 
-	if(Controller.controllerState == Idle) {
+	if(controller->controllerState == Idle) {
 		// TO BE IMPLEMENTED
 	}
 }

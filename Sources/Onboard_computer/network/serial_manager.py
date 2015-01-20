@@ -23,6 +23,14 @@ class Serial_Manager :
 		# We try the opening of the interface
 		try :
 			self.ser = serial.Serial(port,baud)
+			handshack = self.read()
+
+			# Testing handshack
+			if handshack[0] == 0 and handshack[1] == 10 :
+				print 'Controller is Ready.'
+				print 'Error Code is : '
+				print handshack[1]
+			
 		except :
 			print 'USB port does not exists.'
 			print 'Program is quitting.'
@@ -123,26 +131,25 @@ class Serial_Manager :
         frame = self.create_data_frame(5, 0, x, 0, y, 0)
         return frame
 
-	## Create a scanner servo frame.
-	#  @param self The object pointer.
-	#  @param angle Angle to send.
-	#  @return The created frame.
-	def create_update_scaner_frame(self,angle):
-		frame = self.create_data_frame(6,angle,0,0,0,0)
-		return frame
+    ## Create a scanner servo frame.
+    #  @param self The object pointer.
+    #  @param angle Angle to send.
+    #  @return The created frame.
+    def create_update_scaner_frame(self, angle):
+	frame = self.create_data_frame(6,angle,0,0,0,0)
+	return frame
 	
-	##########################################################
-	#
-	#	EXTRACTION ZONE
-	#
-	##########################################################
+    ##########################################################
+    #
+    #	EXTRACTION ZONE
+    #
+    ##########################################################
 
-	## Create the read request frame.
-	#  @param self The object pointer.
-	#  @param id The id to read.
-	#  @return The created frame.
-	def create_read_frame (self, id) :
-		frame = self.create_data_frame(7, id, 0, 0, 0, 0)
+    ## Create the read request frame.
+    #  @param self The object pointer.
+    #  @param id The id to read.
+    #  @return The created frame.
+    def create_read_frame (self, id) :
+	frame = self.create_data_frame(7, id, 0, 0, 0, 0)
         return frame
 				
- 
