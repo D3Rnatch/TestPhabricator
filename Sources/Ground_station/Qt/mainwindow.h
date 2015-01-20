@@ -12,6 +12,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
     public:
         explicit MainWindow(QWidget *parent = 0);
 
+        void CreerLog();
+        void qInstallMsgHandler();
+
 
 
     public slots:
@@ -30,6 +33,12 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
        // void parserDonneesDrone();
         void stop();
         void parserReception();
+        void envoieModeAuto();
+        void envoieModeManuel();
+        void creationLogs();
+
+    signals:
+        void signal_parse();
 
 
     private:
@@ -38,6 +47,10 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         Ui::MainWindow *ui;
         bool ok;
         QString messageRecu;
+        QString message_1;
+        QString message_2;
+        int batterie_index_1=50;
+        int batterie_index_2=50;
 
 };
 

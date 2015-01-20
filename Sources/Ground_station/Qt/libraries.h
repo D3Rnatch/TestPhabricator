@@ -19,12 +19,24 @@
 #include <QIcon>
 #include <QCoreApplication>
 #include <QDebug>
-#include "parser.h"
+//#include "parser.h"
 #include <QPalette>
 #include <QJsonValue>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QLoggingCategory>
+#include <qlogging.h>
+#include <qloggingcategory.h>
 
+#include <qApplication.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <QtGlobal>
+#include <iostream>
+
+#include "libraries.h"
+#include "mainwindow.h"
+#include "log.h"
 
 #endif // LIBRARIES
 

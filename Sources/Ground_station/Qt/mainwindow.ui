@@ -30,7 +30,7 @@
      <string>O</string>
     </property>
    </widget>
-   <widget class="QProgressBar" name="progressBarBatterie">
+   <widget class="QProgressBar" name="progressBarBatterieFans">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -43,7 +43,7 @@
      <number>24</number>
     </property>
    </widget>
-   <widget class="QProgressBar" name="ProgressBarVitesse">
+   <widget class="QProgressBar" name="progressBarBatterieLevitation">
     <property name="geometry">
      <rect>
       <x>680</x>
@@ -250,6 +250,157 @@
      <string>Parser</string>
     </property>
    </widget>
+   <widget class="QLineEdit" name="box_message_content_1">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>300</y>
+      <width>113</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_message_content_1">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>300</y>
+      <width>101</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>message content</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_message_content_2">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>330</y>
+      <width>101</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>message content</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="box_message_content_2">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>330</y>
+      <width>113</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_x">
+    <property name="geometry">
+     <rect>
+      <x>770</x>
+      <y>260</y>
+      <width>55</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>         X</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>770</x>
+      <y>290</y>
+      <width>51</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>         Y</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_T">
+    <property name="geometry">
+     <rect>
+      <x>780</x>
+      <y>320</y>
+      <width>55</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>       T</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_T_2">
+    <property name="geometry">
+     <rect>
+      <x>780</x>
+      <y>350</y>
+      <width>55</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>       R</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="box_x">
+    <property name="geometry">
+     <rect>
+      <x>830</x>
+      <y>260</y>
+      <width>42</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="box_y">
+    <property name="geometry">
+     <rect>
+      <x>830</x>
+      <y>290</y>
+      <width>42</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="box_t">
+    <property name="geometry">
+     <rect>
+      <x>830</x>
+      <y>320</y>
+      <width>42</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="box_r">
+    <property name="geometry">
+     <rect>
+      <x>830</x>
+      <y>350</y>
+      <width>42</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="boutonLog">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>380</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Générer Logs</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -287,7 +438,7 @@
     <addaction name="actionCharger_la_Map"/>
     <addaction name="actionControle_boucle_ferm_e"/>
     <addaction name="actionArret_d_urgence"/>
-    <addaction name="actionD_tails_Overcraft"/>
+    <addaction name="action_Details_Hovercraft"/>
     <addaction name="menuConnexion"/>
     <addaction name="actionFermer"/>
    </widget>
@@ -322,12 +473,12 @@
     <string>Arret d'urgence</string>
    </property>
   </action>
-  <action name="actionD_tails_Overcraft">
+  <action name="action_Details_Hovercraft">
    <property name="checkable">
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Détails Overcraft</string>
+    <string>Détails Hovercraft</string>
    </property>
   </action>
   <action name="actionFermer">

@@ -1,6 +1,5 @@
 //Adresse Serveur : 10.5.133.185
 
-#include "mainwindow.h"
 #include "libraries.h"
 
 
@@ -21,11 +20,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(erreurSocket(QAbstractSocket::SocketError)));//Traitement des erreurs du socket
     connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(messageErreur()));//Lancement de la Fenêtre Erreur
 
+    QObject::connect(boutonLog,SIGNAL(clicked()),this,SLOT(creationLogs()));//tests sur la creation de logs
+
 
 //------------------JSON--------------------------------------------------
 
-
-    /*Test*/connect(boutonParse, SIGNAL(clicked()),this, SLOT(parserReception()));//Lancement du parse
+    QObject::connect(this,SIGNAL(signal_parse()),this,SLOT(parserReception()));//Lancement du parse automatique
 
 
 
@@ -58,11 +58,17 @@ MainWindow::MainWindow(QWidget *parent) :
    QObject::connect(boutonStop, SIGNAL(clicked()),this, SLOT(stop()));
 
 
-   //Gestion de la batterie
-   //progressBarBatterie->setValue();
+   //Gestion de la batterie des hélices latérales
+   progressBarBatterieFans->setValue(batterie_index_1);
 
-   //Gestion de la vitesse
-   //ProgressBarVitesse->
+   //Gestion de la batterie de l'hélice centrale
+   progressBarBatterieLevitation->setValue(batterie_index_2);
+
+   //Mode Automatique
+   QObject::connect(boutonAuto,SIGNAL(clicked()),this, SLOT(envoieModeAuto()));
+
+   //Mode Manuel
+   QObject::connect(boutonManuel,SIGNAL(clicked()),this, SLOT(envoieModeManuel()));
 
 }
 
@@ -107,7 +113,7 @@ void MainWindow::on_boutonEnvoyer_clicked()
     QDataStream out(&paquet, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
 
     //On prépare le paquet à envoyer
-    QString messageAEnvoyer = "{\"robot\":{\"X\":10,\"Y\":10,\"T\":20},\"message\":{\"type\":\"system\",\"content\":\"hello\"}}";
+    QString messageAEnvoyer = "{\"robot\":{\"X\":10,\"Y\":10,\"T\":20},\"message\":{\"type\":\"system\",\"content\":\"hello\"}} ";
 
     int envoie = socket->write(messageAEnvoyer.toStdString().c_str()); // On envoie le paquet convertie
 
@@ -144,9 +150,19 @@ void MainWindow::donneesRecues()
     //On remet la taille du message à 0 pour pouvoir recevoir de futurs messages
     tailleMessage = 0;
 
-    qDebug()<<"\nreturn donnees recues messageRecu =\n"<<messageRecu;
+    qDebug()<<"\nreturn donnees recues messageRecu :\n"<<messageRecu<<"\n";
 
 
+    //Séparation de
+    QStringList list = QString(messageRecu).split(" ");
+    message_1 = QString(list.at(0));
+    list.removeFirst();
+    message_2 = list.join(QString(" "));
+
+    qDebug()<<"\nmessage 1 :\n"<<message_1<<"\n";
+    qDebug()<<"\nmessage 2 :\n"<<message_2<<"\n";
+
+    emit signal_parse();//Lancement du signal d'execution du parse
 }
 
 //Ce slot demande le déconexion du serveur
@@ -182,7 +198,7 @@ void MainWindow::deconnexion()
 
 
 
- // Ce slot est appelé lorsqu'il y a une erreur
+// Ce slot est appelé lorsqu'il y a une erreur
 void MainWindow::erreurSocket(QAbstractSocket::SocketError problem)
 {
     // On affiche un message différent selon l'erreur qu'on nous indique
@@ -215,7 +231,7 @@ void MainWindow::envoie_arret_urgence()
     QDataStream out(&paquet_urgence, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
 
     //On prépare le paquet à envoyer
-    QString messageAEnvoyer_urgence = "{\"robot\":{\"X\":0,\"Y\":0,\"T\":0},\"message\":{\"type\":\"system\",\"content\":\"stop\"}}";
+    QString messageAEnvoyer_urgence = "{\"robot\":{\"X\":0,\"Y\":0,\"T\":0},\"message\":{\"type\":\"system\",\"content\":\"stop\"}} ";
 
     // On envoie le paquet convertie
     int envoie = socket->write(messageAEnvoyer_urgence.toStdString().c_str());
@@ -260,7 +276,7 @@ void MainWindow::envoie_message_hello()
     QDataStream out(&packet, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
 
     //On prépare le paquet à envoyer
-    QString messageHello = "{\"robot\":{\"X\":10,\"Y\":10,\"T\":20},\"message\":{\"type\":\"system\",\"content\":\"hello\"}}";
+    QString messageHello = "{\"robot\":{\"X\":10,\"Y\":10,\"T\":20},\"message\":{\"type\":\"system\",\"content\":\"hello\"}} ";
 
     int envoie = socket->write(messageHello.toStdString().c_str()); // On envoie le paquet converti
 
@@ -275,36 +291,14 @@ void MainWindow::envoie_message_hello()
 
 
 
-/*
-void MainWindow::parserDonneesDrone()
-{
-    qDebug()<<"Bouton Parser cliqué";
-    QString messageHello = "{\"robot\":{\"X\":10,\"Y\":15,\"T\":20},\"message\":{\"type\":\"system\",\"content\":\"hello\"}}";
 
-    QJsonDocument doc = QJsonDocument::fromJson(messageHello.toUtf8());
-    qDebug() << doc.isNull();
-
-    QJsonObject JsonObj= doc.object();
-
-    int X_value = JsonObj["robot"].toObject()["X"].toInt();
-    qDebug() << "\nX="<<X_value;
-    int Y_value = JsonObj["robot"].toObject()["Y"].toInt();
-    qDebug() << "\nY="<<Y_value;
-    int T_value = JsonObj["robot"].toObject()["T"].toInt();
-    qDebug() << "\nT="<<T_value;
-    QString type_of_message = JsonObj["message"].toObject()["type"].toString();
-    qDebug() << "\ntype of the message="<<type_of_message;
-    QString message_content = JsonObj["message"].toObject()["content"].toString();
-    qDebug() << "\nmessage content="<<message_content;
-
-}*/
 
 
 //Ce slot est envoyé lorsqu'uon appuie sur le bouton Stop
 void MainWindow::stop()
 {
     qDebug()<<"Bouton Stop cliqué";
-    QString messageStop = "{\"robot\":{\"X\":0,\"Y\":0,\"T\":0},\"message\":{\"type\":\"system\",\"content\":\"stop\"}}";
+    QString messageStop = "{\"robot\":{\"X\":0,\"Y\":0,\"T\":0},\"message\":{\"type\":\"system\",\"content\":\"stop\"}} ";
 
     QByteArray paquet_stop;
     QDataStream out(&paquet_stop, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
@@ -324,39 +318,151 @@ void MainWindow::stop()
 
 }
 
-
+//Ce slot est envoyer lorsqu'on appuis sur le bouton parser
 void MainWindow::parserReception()
 {
 
     qDebug()<<"\nParser Reception";
-    qDebug()<<"\nmessage Recu avant parse=\n"<<messageRecu;
+    qDebug()<<"\nmessage Recu 1 avant parse=\n"<<message_1;
+    qDebug()<<"\nmessage Recu 2 avant parse=\n"<<message_2;
 
-    QJsonDocument doc = QJsonDocument::fromJson(messageRecu.toUtf8());
+    QJsonDocument doc_1 = QJsonDocument::fromJson(message_1.toUtf8());
+    QJsonDocument doc_2 = QJsonDocument::fromJson(message_2.toUtf8());
 
-    qDebug()<< doc.isNull();
+    qDebug()<< doc_1.isNull();
+    qDebug()<< doc_2.isNull();
 
-    QJsonObject JsonObj= doc.object();
+    QJsonObject JsonObj_1= doc_1.object();
+    QJsonObject JsonObj_2= doc_2.object();
 
-    int X_value = JsonObj["robot"].toObject()["X"].toInt();
-    qDebug() << "\nX="<<X_value;
-    int Y_value = JsonObj["robot"].toObject()["Y"].toInt();
-    qDebug() << "\nY="<<Y_value;
-    int T_value = JsonObj["robot"].toObject()["R"].toInt();
-    qDebug() << "\nR="<<T_value;
+    //Message 1
+    //Informations Coordonnées
+    int X_value_1 = JsonObj_1["robot"].toObject()["X"].toInt();
+    qDebug() << "\nX="<<X_value_1;
+    int Y_value_1 = JsonObj_1["robot"].toObject()["Y"].toInt();
+    qDebug() << "\nY="<<Y_value_1;
+    int T_value_1 = JsonObj_1["robot"].toObject()["R"].toInt();
+    qDebug() << "\nT="<<T_value_1;
 
-    QString batterie_index = JsonObj["robot"].toObject()["batterie"].toString();
-    qDebug() << "\nindex batterie="<<batterie_index;
-    QString batterie_value = JsonObj["robot"].toObject()["value"].toString();
-    qDebug() << "\nvalue_batterie="<<batterie_value;
+    //Informations Batteries
+    int batterie_index_1 = JsonObj_1["batteries"].toObject()["batterie"].toInt();
+    qDebug() << "\nindex batterie="<<batterie_index_1;
+    int batterie_value_1 = JsonObj_1["batteries"].toObject()["value"].toInt();
+    qDebug() << "\nvalue_batterie="<<batterie_value_1;
 
-    QString scaner_angle = JsonObj["scaner"].toObject()["angle"].toString();
-    qDebug() << "\nscaner angle ="<<scaner_angle;
-    QString image_in_binary_state = JsonObj["scaner"].toObject()["angle"].toString();
-    qDebug() << "\nmessage content="<<image_in_binary_state;
+    //Informations angle
+    int scaner_angle_1 = JsonObj_1["scaner"].toObject()["angle"].toInt();
+    qDebug() << "\nscaner angle ="<<scaner_angle_1;
+    int image_in_binary_state_1 = JsonObj_1["scaner"].toObject()["angle"].toInt();
+    qDebug() << "\nmessage content="<<image_in_binary_state_1;
 
-    QString type_of_message = JsonObj["message"].toObject()["type"].toString();
-    qDebug() << "\ntype of the message="<<type_of_message;
-    QString message_content = JsonObj["message"].toObject()["content"].toString();
-    qDebug() << "\nmessage content="<<message_content;
+    //Informations message
+    QString type_of_message_1 = JsonObj_1["message"].toObject()["type"].toString();
+    qDebug() << "\ntype of the message="<<type_of_message_1;
+    QString message_content_1 = JsonObj_1["message"].toObject()["content"].toString();
+    qDebug() << "\nmessage content="<<message_content_1;
+
+
+    //Message 2
+    //Informations Coordonnées
+    int X_value_2 = JsonObj_2["robot"].toObject()["X"].toInt();
+    qDebug() << "\nX="<<X_value_2;
+    int Y_value_2 = JsonObj_2["robot"].toObject()["Y"].toInt();
+    qDebug() << "\nY="<<Y_value_2;
+    int T_value_2 = JsonObj_2["robot"].toObject()["R"].toInt();
+    qDebug() << "\nR="<<T_value_2;
+
+    //Informations Batteries
+    int batterie_index_2 = JsonObj_2["robot"].toObject()["batterie"].toInt();
+    qDebug() << "\nindex batterie="<<batterie_index_2;
+    int batterie_value_2 = JsonObj_2["robot"].toObject()["value"].toInt();
+    qDebug() << "\nvalue_batterie="<<batterie_value_2;
+
+    //Informations angle
+    int scaner_angle_2 = JsonObj_2["scanner"].toObject()["angle"].toInt();
+    qDebug() << "\nscanner angle ="<<scaner_angle_2;
+    int image_in_binary_state_2 = JsonObj_2["scanner"].toObject()["angle"].toInt();
+    qDebug() << "\nmessage content="<<image_in_binary_state_2;
+
+    //Informations message
+    QString type_of_message_2 = JsonObj_2["message"].toObject()["type"].toString();
+    qDebug() << "\ntype of the message="<<type_of_message_2;
+    QString message_content_2 = JsonObj_2["message"].toObject()["content"].toString();
+    qDebug() << "\nmessage content="<<message_content_2;
+
+    //Afichage des données dans l'IHM
+    box_message_content_1->setText(message_content_1);
+    box_message_content_2->setText(message_content_2);
+    box_x->setValue(X_value_1);
+    box_y->setValue(Y_value_1);
+    box_t->setValue(T_value_1);// A CORRIGER
+    box_r->setValue(T_value_1);
 
 }
+
+//Ce slot est envoyé lorsqu'on clique sur le bouton Manuel
+void MainWindow::envoieModeAuto()//----------------------- A TESTER--------------------
+{
+    qDebug()<<"Bouton Auto cliqué";
+    QString messageAuto = "{\"message\":{\"type\":\"set_ai\",\"content\":\"auto\"}} ";
+
+    QByteArray paquet_auto;
+    QDataStream out(&paquet_auto, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
+
+    //retour de fonction testé dans le "if"
+    int envoie = socket->write(messageAuto.toStdString().c_str());
+
+    //On afiche le message envoyé dans la zone d'Emission Texte
+    message_envoie->setText(messageAuto);
+
+    //Test erreur
+    if(envoie == -1)
+        QMessageBox::critical(this,"Erreur","Message non envoyé");
+}
+
+
+
+//Ce slot est envoyé lorsqu'on clique sur le bouton Auto
+void MainWindow::envoieModeManuel()
+{
+    qDebug()<<"Bouton Manuel cliqué";
+    QString messageManuel = "{\"message\":{\"type\":\"set_ai\",\"content\":\"manual\"}} ";
+
+    QByteArray paquet_manuel;
+    QDataStream out(&paquet_manuel, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
+
+    //retour de fonction testé dans le "if"
+    int envoie = socket->write(messageManuel.toStdString().c_str());
+
+    //On afiche le message envoyé dans la zone d'Emission Texte
+    message_envoie->setText(messageManuel);
+
+    //Test erreur
+    if(envoie == -1)
+        QMessageBox::critical(this,"Erreur","Message non envoyé");
+}
+
+
+
+void MainWindow::creationLogs()
+{
+ qDebug()<<"Création d'un objet QFile";
+
+// Création d'un objet QFile
+QFile file("Logs.txt");
+// On ouvre notre fichier en lecture seule et on vérifie l'ouverture
+if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+{
+    qDebug()<<"fichier non créé";
+    return;
+}
+// Création d'un objet QTextStream à partir de notre objet QFile
+QTextStream flux(&file);
+// On choisit le codec correspondant au jeu de caractère que l'on souhaite ; ici, UTF-8
+flux.setCodec("UTF-8");
+// Écriture des différentes lignes dans le fichier
+flux << "Bonjour," << endl << "Nous sommes le " << 3 << " avril " << 2009 << endl;
+}
+
+
+
