@@ -148,7 +148,7 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
 	if (id != 200) {
 		if(id != 7)
 			this->net->send_full(id,b[0],b[1],b[2],b[3],b[4],'\n');
-		switch(id)
+		/*switch(id)
 		{
 			case 1:
 				switch(b[0])
@@ -169,7 +169,59 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
 						this->controllerState = Idle;
 				}
 				break;
-	  	}  	
+
+			default :
+				switch(b[0])
+				{
+					case 2 : // Stop frame
+						this->controllerState = Idle;
+						break;
+					case 3 : // Move frame
+						this->controllerState = Manual;
+						break;
+					case 4 : // Move + Acq frame
+						// this->controllerState = Manual_Acquisition;
+						break;
+					case 5 : // Move + Acq frame
+						this->controllerState = Manual_Acquisition;
+						break;
+					case 6 : // Scanning
+						this->controllerState = Scan;
+						break;
+					case 7 :
+						break;
+					default :
+						this->controllerState = Idle;
+						break;
+				}
+	  	} */
+
+
+              switch(id) {
+         
+					case 2 : // Stop frame
+						this->controllerState = Idle;
+						break;
+					case 3 : // Move frame
+						this->controllerState = Manual;
+						break;
+					case 4 : // Move + Acq frame
+						// this->controllerState = Manual_Acquisition;
+						break;
+					case 5 : // Move + Acq frame
+						this->controllerState = Manual_Acquisition;
+						break;
+					case 6 : // Scanning
+						this->controllerState = Scan;
+						break;
+					case 7 :
+						break;
+					default :
+						this->controllerState = Idle;
+						break; 
+          
+                  }
+	
     	}
 }
 
