@@ -55,6 +55,7 @@ class Scanner:
         self.cap = cv2.VideoCapture(0)
 	ret = self.cap.set(3, 670)
 	ret = self.cap.set(4, 480)
+	ret = self.cap.set(11, 0.5)
         compteur = 30
         max2 = 0
         # Calibrate
@@ -72,6 +73,7 @@ class Scanner:
             max2 = 254
 
         # Init mask threshold.
+	max2 = 254
         self.lower_red = np.array([0, 0, max2])
         self.upper_red = np.array([255, 255, 255])
 
@@ -161,7 +163,7 @@ class Scanner:
         self.take_picture()
         self.make_mask()
         u1 = self.get_U()
-	cv2.line(self.image, (0, int(self.half)), (int(self.y), int(self.half)), (255, 255, 255), 1) 
+	cv2.line(self.image, (u1, 0), (u1, int(self.x)), (255, 255, 255), 1) 
 	cv2.imwrite("50cm.png", self.image)
 	print "u = %s" % (str(u1))
         raw_input("Bring the target to 150cm of the camera then press ENTER...")
@@ -169,7 +171,7 @@ class Scanner:
         self.take_picture()
         self.make_mask()
         u2 = self.get_U()
-	cv2.line(self.image, (0, int(self.half)), (int(self.y), int(self.half)), (255, 255, 255), 1) 
+	cv2.line(self.image, (u2, 0), (u2, int(self.x)), (255, 255, 255), 1) 
 	cv2.imwrite("150cm.png", self.image)
 	print "u = %s" % (str(u2))
         print "computing coefs..."
