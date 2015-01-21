@@ -237,7 +237,7 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="boutonParse">
+   <widget class="QPushButton" name="ajouterLogs">
     <property name="geometry">
      <rect>
       <x>720</x>
@@ -247,7 +247,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Parser</string>
+     <string>Ajouter Logs</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="box_message_content_1">
