@@ -270,10 +270,14 @@ void setup() {
 // ================================================================
 // ===                    MAIN PROGRAM LOOP                     ===
 // ================================================================
-
+double timeLoop = 0.0;
+double precTime = 0.0;
 void loop() {
     // if programming failed, don't try to do anything
     if (!dmpReady) return;
+
+    // Begin Time mesure
+    timeLoop = millis();
 
     // wait for MPU interrupt or extra packet(s) available
     while (!mpuInterrupt && fifoCount < packetSize) {
@@ -350,6 +354,7 @@ void loop() {
             Serial.print(ypr[1] * 180/M_PI);
             Serial.print("\t");
             Serial.println(ypr[2] * 180/M_PI);
+        
         #endif
 
         #ifdef OUTPUT_READABLE_REALACCEL
@@ -395,7 +400,7 @@ void loop() {
             Serial.write(teapotPacket, 14);
             teapotPacket[11]++; // packetCount, loops at 0xFF on purpose
         #endif
-
+/*
         updateCalculation();
           Serial.print("Mean : ");
           Serial.println(mean,DEC);
@@ -404,8 +409,13 @@ void loop() {
 
         Treshold();
           Serial.print("After Threshold : ");
-          Serial.println(ypr[0],DEC);
+          Serial.println(ypr[0],DEC);*/
           
+        precTime = timeLoop;
+        timeLoop = millis();
+        Serial.println("LOOP TIME IS : ");
+        Serial.println((timeLoop-precTime),DEC);
+
 
         // blink LED to indicate activity
         blinkState = !blinkState;

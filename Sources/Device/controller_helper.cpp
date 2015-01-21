@@ -3,6 +3,11 @@
 
 Controller :: Controller()
 {
+  	 motor_last_set = false;
+	 motor_off_cpt = 0;
+	 scaner_last_set = false;
+	 scaner_off_cpt = 0;
+  
 	this->net = new Network_manager(9600);
 
 	this->escenter[0].attach(2);
@@ -13,6 +18,7 @@ Controller :: Controller()
         // Serial.println("OK esc.");
 	// Starting The Acq manager
 	this->acq = new ACQ_handler();
+	this->acq_system = 0;
         // Serial.println("End OF INIT");
 }
 
@@ -145,57 +151,11 @@ void Controller ::  reset_Services()
 
 void Controller ::  Process_Com(uint8_t id, uint8_t * b)
 {
+  int x = 0;
+                                                int y = 0;
 	if (id != 200) {
 		if(id != 7)
 			this->net->send_full(id,b[0],b[1],b[2],b[3],b[4],'\n');
-		/*switch(id)
-		{
-			case 1:
-				switch(b[0])
-				{
-					case 0 : // Idle State.
-						this->controllerState = Idle;
-						break;
-					case 1 : // Manual State.
-						this->controllerState = Manual;
-						break;
-					case 2 : // ACQ_MANUAL state.
-						this->controllerState = Manual_Acquisition;
-						break;
-					case 3 : // Automatic.
-						this->controllerState = Automatic;
-						break;
-					default: //Idle State by default.
-						this->controllerState = Idle;
-				}
-				break;
-
-			default :
-				switch(b[0])
-				{
-					case 2 : // Stop frame
-						this->controllerState = Idle;
-						break;
-					case 3 : // Move frame
-						this->controllerState = Manual;
-						break;
-					case 4 : // Move + Acq frame
-						// this->controllerState = Manual_Acquisition;
-						break;
-					case 5 : // Move + Acq frame
-						this->controllerState = Manual_Acquisition;
-						break;
-					case 6 : // Scanning
-						this->controllerState = Scan;
-						break;
-					case 7 :
-						break;
-					default :
-						this->controllerState = Idle;
-						break;
-				}
-	  	} */
-
 
               switch(id) {
          
@@ -214,7 +174,14 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
 					case 6 : // Scanning
 						this->controllerState = Scan;
 						break;
-					case 7 :
+					case 7 : // Request for acquisition
+						// Rechange the data :
+						x = this->acq->get_MoveX();
+						y = this->acq->get_MoveY();
+						if (x < 0) x = 255-x;
+						if (y < 0) y = 255 - y;
+						// Send packet ...
+						this->net->send_data_packet(x,y,0);
 						break;
 					default :
 						this->controllerState = Idle;
@@ -227,6 +194,16 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
 
 void Controller ::  Process_Acq()
 {
-
+	// ACQUISITION UPDATE
+	this->acq->run_the_magic(); // update values...
+	this->acq_system++;
+	// Process PID
+	if(this->acq_system%2 == 0)
+		// PID ADNS
+		delay(8);
+	else
+                delay(8);
+		// PID MPU
+		// delay(8);
 }
 

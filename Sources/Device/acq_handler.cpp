@@ -8,6 +8,8 @@ void dmpDataReady(){
 
 ACQ_handler::ACQ_handler()
 {
+
+  
     ADNSmouseInit(); // Démarrage du capteur optique.
     // mpuInit(); // Démarrage du G sensor
     this->delta_x_adns = this->delta_y_adns = 0;
@@ -102,12 +104,12 @@ double ACQ_handler::get_MoveAngle()
     return this->actual_theta; // r	
 }
 
-double ACQ_handler::get_MoveX()
+int ACQ_handler::get_MoveX()
 {
     return this->last_x;
 }
 
-double ACQ_handler::get_MoveY()
+int ACQ_handler::get_MoveY()
 {
     return this->last_y;
 }

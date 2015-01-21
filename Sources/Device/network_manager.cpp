@@ -88,3 +88,9 @@ void Network_manager :: send_ready_packet(uint8_t errorCode)
     t_encap t = encap_ready();
     this->send_packet(&t);
 }
+
+void Network_manager :: send_data_packet(uint8_t v1, uint8_t v2, uint8_t v3)
+{
+	t_encap t = encap_acq_data(v1,v2,v3);
+	this->send_packet(&t);
+}

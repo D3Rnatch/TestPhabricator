@@ -45,6 +45,17 @@
 
 #define FRAMELENGTH 324
 
+
+		const byte regConfig    = 0x00;
+		const byte regStatus    = 0x01;
+		const byte regPixelData = 0x08;
+		const byte maskNoSleep  = 0x01;
+		const byte maskPID      = 0xE0;
+		const byte regDeltaX    = 0x02;
+		const byte regDeltaY    = 0x03;
+		const byte regSqual     = 0x04;
+
+
 // #define CALL_MEMBER_FN(object,ptrToMember) ((object).*(ptrToMember))
 /**
  * \class ACQ_handler
@@ -60,9 +71,9 @@ class ACQ_handler
 		void run_the_magic();
 
 		/** \brief Returns the x distance since last acq in cm.*/
-		double get_MoveX();
+		int get_MoveX();
 		/** \brief Returns the y distance since last acq in cm.*/
-		double get_MoveY();
+		int get_MoveY();
 
 		/** \brief Returns the exact distance (X and Y) since last acq in cm.*/
 		double get_MoveXY();
@@ -144,19 +155,10 @@ class ACQ_handler
 
 		byte flop;
 
-		const byte regConfig    = 0x00;
-		const byte regStatus    = 0x01;
-		const byte regPixelData = 0x08;
-		const byte maskNoSleep  = 0x01;
-		const byte maskPID      = 0xE0;
-		const byte regDeltaX    = 0x02;
-		const byte regDeltaY    = 0x03;
-		const byte regSqual     = 0x04;
-
 		double actual_r; // r
 		double actual_theta; // deg
-		double last_x;
-		double last_y;
+		int last_x;
+		int last_y;
 /*
 		MPU6050 *mpu;
 		boolean mpuInterrupt;

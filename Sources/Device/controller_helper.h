@@ -130,13 +130,14 @@ void Process_Com(uint8_t id, uint8_t * b);
 	// Services
 	Network_manager *net;/*!< Network service */
 	ACQ_handler *acq;/*!< Acquisition service */
+	uint8_t acq_system;
 
 	unsigned long time;/*!< Time save */
 	unsigned long last_time;/*!< Save last time */
-	boolean motor_last_set = false;/*!< Is motors on ? */
-	uint8_t motor_off_cpt = 0;/*!< Motor off since. */
-	boolean scaner_last_set = false;/*!< Is scanner on ? */
-	uint8_t scaner_off_cpt = 0;/*!< Scanner on since. */
+	boolean motor_last_set;/*!< Is motors on ? */
+	uint8_t motor_off_cpt;/*!< Motor off since. */
+	boolean scaner_last_set;/*!< Is scanner on ? */
+	uint8_t scaner_off_cpt;/*!< Scanner on since. */
 
 };
 

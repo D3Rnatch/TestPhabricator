@@ -97,6 +97,14 @@ class Network_manager
 	*/
 	void send_ready_packet(uint8_t errorCode);
 	
+	/**
+	* \brief Reply by sending data packet to computer
+	* \param : v1, adns X value
+	* \param : v2, adns Y value
+	* \param : v3, Gyro Z sensor
+	*/
+	void send_data_packet(uint8_t v1, uint8_t v2, uint8_t v3);
+	
     private :
 	t_frame_bytes last_extraction;/*!< Last extracted frame.*/
 	t_encap encapsulation_stack[10];/*!< Encapsulated frames stack. */
