@@ -15,9 +15,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         void CreerLog();
         void qInstallMsgHandler();
 
-
-
-
     public slots:
         void quitterApp();
         void connexion();
@@ -36,7 +33,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         void envoieModeManuel();
         void creationLogs();
         void ajoutLogs();
-        void dateHeure();
+
 
     signals:
         void signal_parse();
@@ -54,8 +51,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         int batterie_index_1;
         int batterie_index_2;
         QFile file;
-        QTextStream flux;
         QString messageLogs;
+        QString nomLog;
+        QTime heure;
 
 };
 
