@@ -1,7 +1,7 @@
 ## @file Scanner.py
 #  @brief Scanner laser module.
 #  @author Loic Dalloz
-#  @version 2.1
+#  @version 3.0
 #
 #import picamera
 #import picamera.array
@@ -47,33 +47,35 @@ class Scanner:
         self.x = 0
         self.y = 0
         self.half = 0
+	self.kernel_erode = np.ones((1, 1), np.uint8)
+	self.kernel_dilate = np.ones((6, 6), np.uint8)
 
     ## Start everything we need to capture photos.
     #  @param self The object pointer.
     def start_module(self):
         # Start the camera.
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(1)
 	ret = self.cap.set(3, 670)
 	ret = self.cap.set(4, 480)
 	ret = self.cap.set(11, 0.5)
         compteur = 30
         max2 = 0
         # Calibrate
-        while compteur > 0:
-            ret, image = self.cap.read()
-            if ret:
-                compteur = compteur - 1
-                if compteur > 10:
-                    b, g, r = cv2.split(image)
-                    max = np.amax(r)
-                    if max > max2:
-                        max2 = max
+        #while compteur > 0:
+        #    ret, image = self.cap.read()
+        #    if ret:
+        #        compteur = compteur - 1
+        #        if compteur > 10:
+        #            b, g, r = cv2.split(image)
+        #            max = np.amax(r)
+        #            if max > max2:
+        #                max2 = max
 
-        if max2 > 254:
-            max2 = 254
+        # if max2 > 254:
+        #    max2 = 254
 
         # Init mask threshold.
-	max2 = 254
+	max2 = 250
         self.lower_red = np.array([0, 0, max2])
         self.upper_red = np.array([255, 255, 255])
 
@@ -90,48 +92,28 @@ class Scanner:
     ## Take a picture.
     #  @param self The object pointer.
     def take_picture(self):
-	time.sleep(0.01)
         ret, self.image = self.cap.read()
         while ret == False:
-	    time.sleep(0.01)
             ret, self.image = self.cap.read()
-	time.sleep(0.01)
         ret, self.image = self.cap.read()
         while ret == False:
-	    time.sleep(0.01)
             ret, self.image = self.cap.read()
-	time.sleep(0.01)
         ret, self.image = self.cap.read()
         while ret == False:
-	    time.sleep(0.01)
             ret, self.image = self.cap.read()
-	time.sleep(0.01)
         ret, self.image = self.cap.read()
         while ret == False:
-	    time.sleep(0.01)
             ret, self.image = self.cap.read()
-	time.sleep(0.01)
         ret, self.image = self.cap.read()
         while ret == False:
-	    time.sleep(0.01)
-            ret, self.image = self.cap.read()
-	time.sleep(0.01)
-        ret, self.image = self.cap.read()
-        while ret == False:
-	    time.sleep(0.01)
-            ret, self.image = self.cap.read()
-	time.sleep(0.01)
-        ret, self.image = self.cap.read()
-        while ret == False:
-	    time.sleep(0.01)
             ret, self.image = self.cap.read()
 
     ## build the mask.
     #  @param self The object pointer.
     def make_mask(self):
         mask_temp = cv2.inRange(self.image, self.lower_red, self.upper_red)
-	kernel = np.ones((2,2), np.uint8)
-	self.mask = cv2.dilate(mask_temp, kernel, iterations=1)
+	mask_eroded = cv2.erode(mask_temp, self.kernel_erode)
+	self.mask = cv2.dilate(mask_eroded, self.kernel_dilate, iterations=1)
 
     ## Get U (position of the laser in image)
     #  @param self The object pointer
@@ -141,12 +123,26 @@ class Scanner:
         #rows, col = self.mask.shape
         #liste = [j for j in xrange(col) if self.mask.item(self.half, j)==255]
         #return np.mean(liste)
+	f_x = 0
+	f_y = 0
+	f_w = 0
+	f_h = 0
+	compteur = 0
 	contours, hierarchy = cv2.findContours(self.mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 	return_value = 0
 	for contour in contours:
 		x, y, w, h = cv2.boundingRect(contour)
-		return_value = (x + w/2)
-	return return_value
+		if (w < h + 3) and (w > h - 3) and w > 0 and h > 0 and y > 208 and y < 220 and x > 220:
+			compteur = compteur + 1
+			f_x = x
+			f_y = y
+			f_w = w
+			f_h = h
+	if compteur == 1:
+		return x + (w/2)
+	else:
+		return 0
+	
 
     ## Calibrate the scanner
     #  @param self The object pointer.
