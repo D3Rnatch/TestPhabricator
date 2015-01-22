@@ -51,7 +51,7 @@ MPU_Handler :: MPU_Handler()
 
 void MPU_Handler :: run_the_magic()
 {
-	if(this->isDisponible) {
+	if(this->isDisponible()) {
 		mpuInterrupt = false;
 		mpuIntStatus = mpu->getIntStatus();
 
