@@ -160,32 +160,34 @@ class Robot:
     #  @param self The object pointer.
     #  @param joystick_movement Tuple of joystick informations.
     def move_tick(self, joystick_movement):
-	    if self.ai_mode == self.AI_MANUAL:
-	        self.logs_arduino.write_log("Movement tick.")
-	        data1 = joystick_movement[0]*10
-	        data2 = joystick_movement[1]*10
-	        data3 = joystick_movement[2]*10
-	        byte1 = 0
-	        byte2 = 0
-	        byte3 = 0
-	        byte4 = 0
-	        byte5 = data3
-	        if byte5 > 126:
-		        byte5 = 126
-	        if data1 > 100:
-		        byte1 = data1-100
-		        byte4 = data1-100
-	        elif data1 < 100:
-		        byte2 = 100-data1
-		        byte3 = 100-data1
-	        if data2 > 100:
-		        byte1 = data2-100
-		        byte2 = data2-100
-	        elif data2 < 100:
-		        byte4 = 100 - data2
-		        byte3 = 100 - data2
-	        frame = self.send_to_arduino(self.serial_manager.create_move_frame(byte1, byte2, byte3, byte4, byte5))
-	    elif self.ai_mode == self.AI_AUTO:
+    	ret = self.read_from_arduino(self.GET_ODO)
+        self.logs_arduino.write_log("Understood: " + str(ret[0]) + " : " + str(ret[1]) + " : " + str(ret[2]))
+	if self.ai_mode == self.AI_MANUAL:
+	    self.logs_arduino.write_log("Movement tick.")
+	    data1 = joystick_movement[0]*10
+	    data2 = joystick_movement[1]*10
+	    data3 = joystick_movement[2]*10
+	    byte1 = 0
+	    byte2 = 0
+	    byte3 = 0
+	    byte4 = 0
+	    byte5 = data3
+	    if byte5 > 126:
+	        byte5 = 126
+	    if data1 > 100:
+		byte1 = data1-100
+		byte4 = data1-100
+	    elif data1 < 100:
+		byte2 = 100-data1
+		byte3 = 100-data1
+	    if data2 > 100:
+		byte1 = data2-100
+		byte2 = data2-100
+	    elif data2 < 100:
+		byte4 = 100 - data2
+		byte3 = 100 - data2
+	    frame = self.send_to_arduino(self.serial_manager.create_move_frame(byte1, byte2, byte3, byte4, byte5))
+	elif self.ai_mode == self.AI_AUTO:
 	        pass
 
     ## Stop routine.
