@@ -321,6 +321,7 @@ class Robot:
         self.logs_arduino.write_log("Send: " + str(frame))
         self.serial_manager.send(str(frame))
         frame2 = self.serial_manager.read()
+	print str(frame2)
         self.logs_arduino.write_log("Received: " + str(frame2))
         if id == self.GET_READY:
             return (frame2[1], frame2[2])
