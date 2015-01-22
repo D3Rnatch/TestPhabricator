@@ -13,7 +13,6 @@ INCLUDEPATH += usr/include
 }
 
 HEADERS += mainwindow.h \
-    sdl.h \
     libraries.h \
     joystick.h
 
