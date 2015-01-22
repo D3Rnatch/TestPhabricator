@@ -181,6 +181,8 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
 						if (x < 0) x = 255-x;
 						if (y < 0) y = 255 - y;
 						// Send packet ...
+                                                x = 100;
+                                                y = 100;
 						this->net->send_data_packet(x,y,0);
 						break;
 					default :

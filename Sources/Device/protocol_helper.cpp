@@ -5,12 +5,12 @@ t_encap encap_acq_data(byte dx,byte dy,byte gz)
 	t_encap t;
 
 	t.array[0] = (byte)1;
-	t.array[1] = (char)dx;
-	t.array[2] = (char)dy;
-	t.array[3] = (char)gz;
-	t.array[4] = (char)0;
-	t.array[5] = (char)0;
-	t.array[6] = (char)'\n';
+	t.array[1] = (byte)dx;
+	t.array[2] = (byte)dy;
+	t.array[3] = (byte)gz;
+	t.array[4] = (byte)0;
+	t.array[5] = (byte)0;
+	t.array[6] = (byte)'\n';
 
 	return t;
 }

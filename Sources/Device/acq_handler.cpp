@@ -82,7 +82,7 @@ void ACQ_handler::update_values()
     this->last_y = y;		
     double t = this->actual_theta = atan2(y,x);
 
-    /* Radius Value */
+    /* Radius Value *//*
     int cT = (int)cos(t) << 10;
     int xt = xe;
     if(!cT) {
