@@ -28,7 +28,7 @@
 #include <qlogging.h>
 #include <qloggingcategory.h>
 
-#include <qApplication.h>
+#include <qapplication.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <QtGlobal>
@@ -36,7 +36,9 @@
 
 #include "libraries.h"
 #include "mainwindow.h"
-#include "log.h"
+#include "joystick.h"
+#include <SDL/SDL.h>
+//#include "log.h"
 
 #endif // LIBRARIES
 
