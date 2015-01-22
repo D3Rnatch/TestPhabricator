@@ -4,7 +4,7 @@ t_encap encap_acq_data(byte dx,byte dy,byte gz)
 {
 	t_encap t;
 
-	t.array[0] = (byte)1;
+	t.array[0] = (byte)7;
 	t.array[1] = (byte)dx;
 	t.array[2] = (byte)dy;
 	t.array[3] = (byte)gz;

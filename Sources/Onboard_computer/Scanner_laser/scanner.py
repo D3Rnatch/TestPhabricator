@@ -54,7 +54,7 @@ class Scanner:
     #  @param self The object pointer.
     def start_module(self):
         # Start the camera.
-        self.cap = cv2.VideoCapture(1)
+        self.cap = cv2.VideoCapture(0)
 	ret = self.cap.set(3, 670)
 	ret = self.cap.set(4, 480)
 	ret = self.cap.set(11, 0.5)

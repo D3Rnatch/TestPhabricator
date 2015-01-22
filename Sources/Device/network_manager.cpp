@@ -54,10 +54,10 @@ void Network_manager :: send(byte b0,byte b1,byte b2,byte b3,byte b4,byte b5)
     this->encapsulation_stack[0].array[3] = b3;
     this->encapsulation_stack[0].array[4] = b4;
     for(int i=0;i<5;i++) {
-	Serial.print(this->encapsulation_stack[0].array[i]);
+	Serial.write(this->encapsulation_stack[0].array[i]);
 	//Serial.print(":"); 
      }
-     Serial.print("\n");
+     Serial.write('\n');
 }
 
 void Network_manager :: send_full(uint8_t id,byte b0,byte b1,byte b2,byte b3,byte b4,byte b5)
@@ -67,20 +67,20 @@ void Network_manager :: send_full(uint8_t id,byte b0,byte b1,byte b2,byte b3,byt
     this->encapsulation_stack[0].array[2] = b2;
     this->encapsulation_stack[0].array[3] = b3;
     this->encapsulation_stack[0].array[4] = b4;
-    Serial.print(id);
+    Serial.write(id);
     for(int i=0;i<5;i++) {
-	Serial.print(this->encapsulation_stack[0].array[i]);
+	Serial.write(this->encapsulation_stack[0].array[i]);
 	//Serial.print(":"); 
     }
-    Serial.print("\n");
+    Serial.write('\n');
 }
 
 void Network_manager :: send_packet(t_encap * packet)
 {
     for(int i=0;i<6;i++) {
         this->encapsulation_stack[0].array[0] = packet->array[i];
-        Serial.print(packet->array[i]); }
-    Serial.print("\n");
+        Serial.write(packet->array[i]+48); }
+    Serial.write('\n');
 }
 
 void Network_manager :: send_ready_packet(uint8_t errorCode)

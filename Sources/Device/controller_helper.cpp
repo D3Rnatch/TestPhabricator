@@ -155,7 +155,7 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
                                                 int y = 0;
 	if (id != 200) {
 		if(id != 7)
-			this->net->send_full(id,b[0],b[1],b[2],b[3],b[4],'\n');
+			this->net->send_full(id+48,b[0]+48,b[1]+48,b[2]+48,b[3]+48,b[4]+48,'\n');
 
               switch(id) {
          

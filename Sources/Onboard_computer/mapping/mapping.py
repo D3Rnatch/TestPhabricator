@@ -77,9 +77,9 @@ class mapping:
         x_final = rounded_x + robot_position[1]
         y_final = rounded_y + robot_position[0]
         self.signal_a_hit((x_final, y_final))
-        print "Infos angle calc :"
-        print "\tAngle : " + str(angle) + "deg\t" + str(rad) + "rad"
-        print "\tX = " + str(x_final) + "\tY = " + str(y_final)
+        #print "Infos angle calc :"
+        #print "\tAngle : " + str(angle) + "deg\t" + str(rad) + "rad"
+        #print "\tX = " + str(x_final) + "\tY = " + str(y_final)
 
     ## Destroy averything.
     #  @param self The object pointer.
