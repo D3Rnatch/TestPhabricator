@@ -10,11 +10,11 @@ Controller :: Controller()
   
 	this->net = new Network_manager(9600);
 
-	this->escenter[0].attach(2);
+	this->escenter[0].attach(3);
     	this->escenter[1].attach(4);
-    	this->escenter[2].attach(6);
-    	this->escenter[3].attach(8);
-	this->LaserScaner.attach(3);
+    	this->escenter[2].attach(5);
+    	this->escenter[3].attach(6);
+	this->LaserScaner.attach(7);
         // Serial.println("OK esc.");
 	// Starting The Acq manager
 	this->acq = new ACQ_handler();
