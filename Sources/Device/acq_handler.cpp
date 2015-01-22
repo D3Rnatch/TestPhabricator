@@ -70,7 +70,10 @@ void ACQ_handler::acquire_mpu()
 void ACQ_handler::update_values()
 {
     /* Theta Angle */
-    int e = (int)ALPHA << 10;
+	this->last_x += this->delta_x_adns;
+	this->last_y += this->delta_y_adns;
+	
+    /*int e = (int)ALPHA << 10;
     int xe = this->delta_x_adns * e;
     int ye = this->delta_y_adns * e;
     double x = (double)(xe >> 10);
@@ -86,7 +89,7 @@ void ACQ_handler::update_values()
 	cT = (int)sin(t) << 10;
 	xt = ye;
     }
-    this->actual_r = (double)((xt/cT) >> 10);
+    this->actual_r = (double)((xt/cT) >> 10); */
 }
 
 void ACQ_handler::mpuCalibrate()
@@ -106,12 +109,16 @@ double ACQ_handler::get_MoveAngle()
 
 int ACQ_handler::get_MoveX()
 {
-    return this->last_x;
+	int x = this->last_x;
+	this->last_x = 0;
+    return x;
 }
 
 int ACQ_handler::get_MoveY()
 {
-    return this->last_y;
+	int y = this->last_y;
+	this->last_y = 0;
+    return y;
 }
 
 ///////////////////////////////////////////////////////
