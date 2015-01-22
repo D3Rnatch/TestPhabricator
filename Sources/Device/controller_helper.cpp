@@ -20,6 +20,7 @@ Controller :: Controller()
 	this->acq = new ACQ_handler();
 	this->acq_system = 0;
         // Serial.println("End OF INIT");
+        this->imu = new MPU_Handler();
 }
 
 void Controller :: init()
@@ -36,7 +37,9 @@ void Controller :: init()
 	// Sending OK ready packet.
 
         // Serial.print("TEST");
-	this->net->send_ready_packet(0);
+        uint8_t errorCode = 0;
+        errorCode = this->imu->getErrorCode();
+	this->net->send_ready_packet(errorCode);
 
 }
 
@@ -152,7 +155,8 @@ void Controller ::  reset_Services()
 void Controller ::  Process_Com(uint8_t id, uint8_t * b)
 {
   int x = 0;
-                                                int y = 0;
+  int y = 0;
+  int g = 0;
 	if (id != 200) {
 		if(id != 7)
 			this->net->send_full(id+48,b[0]+48,b[1]+48,b[2]+48,b[3]+48,b[4]+48,'\n');
@@ -178,12 +182,13 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
 						// Rechange the data :
 						x = this->acq->get_MoveX();
 						y = this->acq->get_MoveY();
+                                                g = this->imu->getGValue();
 						if (x < 0) x = 255-x;
 						if (y < 0) y = 255 - y;
 						// Send packet ...
-                                                x = 100;
-                                                y = 100;
-						this->net->send_data_packet(x,y,0);
+                                                // x = 100;
+                                                // y = 100;
+						this->net->send_data_packet(x,y,g);
 						break;
 					default :
 						this->controllerState = Idle;
@@ -198,14 +203,15 @@ void Controller ::  Process_Acq()
 {
 	// ACQUISITION UPDATE
 	this->acq->run_the_magic(); // update values...
+        this->imu->run_the_magic();
 	this->acq_system++;
 	// Process PID
-	if(this->acq_system%2 == 0)
+      /*if(this->acq_system%2 == 0)
 		// PID ADNS
-		delay(8);
+		delay(4);
 	else
-                delay(8);
+                delay(4);
 		// PID MPU
-		// delay(8);
+		// delay(8);*/
 }
 

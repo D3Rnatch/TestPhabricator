@@ -86,6 +86,7 @@ void Network_manager :: send_packet(t_encap * packet)
 void Network_manager :: send_ready_packet(uint8_t errorCode)
 {
     t_encap t = encap_ready();
+    t.array[1] = (byte)errorCode;
     this->send_packet(&t);
 }
 

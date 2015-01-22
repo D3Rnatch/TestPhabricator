@@ -17,6 +17,7 @@
 
 #include "network_manager.h"
 #include "acq_handler.h"
+#include "mpu_handler.h"
 
 #define MIN 10
 #define MAX 90
@@ -130,7 +131,8 @@ void Process_Com(uint8_t id, uint8_t * b);
 	// Services
 	Network_manager *net;/*!< Network service */
 	ACQ_handler *acq;/*!< Acquisition service */
-	uint8_t acq_system;
+	MPU_Handler *imu;/*!< IMU Service */
+        uint8_t acq_system;
 
 	unsigned long time;/*!< Time save */
 	unsigned long last_time;/*!< Save last time */

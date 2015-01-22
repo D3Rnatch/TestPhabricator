@@ -11,6 +11,11 @@
 
 #include <Arduino.h>
 #include <Servo.h>
+#include <I2Cdev.h>
+#include <Wire.h>
+#include "MPU6050_6Axis_MotionApps20.h"
+#include "MPU6050.h"
+
 #include "controller_helper.h"
 
 uint8_t cpt = 0;
