@@ -20,25 +20,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(erreurSocket(QAbstractSocket::SocketError)));//Traitement des erreurs du socket
     connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(messageErreur()));//Lancement de la Fenêtre Erreur
 
-    QObject::connect(boutonLog,SIGNAL(clicked()),this,SLOT(creationLogs()));//tests sur la creation de logs
-
 
 //------------------JSON--------------------------------------------------
 
-    QObject::connect(this,SIGNAL(signal_parse()),this,SLOT(parserReception()));//Lancement du parse automatique
+    QObject::connect(this,SIGNAL(signal_parse()),this,SLOT(parserReception()));//Lancement du parse automatique après reception de données
 
 
 
      tailleMessage = 0;
 
-//--------------DATE & HEURE------------------------------------------
-
-    //Actualisation de l'heure
-  QDateTime date_heure = QDateTime::currentDateTime();
-
-    //Tests sur l'heure actuelle
-   QTextStream out(stdout);
-   out << "Current date is " << date_heure.toString() << endl;
 
 //------------------MENU----------------------------------------------------
 
@@ -70,23 +60,37 @@ MainWindow::MainWindow(QWidget *parent) :
    //Mode Manuel
    QObject::connect(boutonManuel,SIGNAL(clicked()),this, SLOT(envoieModeManuel()));
 
+   //------------------------------LOGS-----------------------------------------------
+
+   QObject::connect(boutonLog,SIGNAL(clicked()),this,SLOT(creationLogs()));//tests sur la creation de logs
+   QObject::connect(this,SIGNAL(signal_ajoutLogs()),this,SLOT(ajoutLogs()));//tests sur l'ajout de logs
+
 }
 
 
-
+//Ce Slot est envoyé lorsque'on clique sur Fermer
 void MainWindow::quitterApp()
 {
     qDebug()<<"\nquitter App() : exit app\n";
+
+    //Emission des logs
+    messageLogs = QDateTime::currentDateTime().toString()+" : Application Fermée \n ";
+    emit signal_ajoutLogs();
+
     exit(0);
 }
 
 
-
+//Ce slot est envoyé lorsqu'on clique sur Se Connecter
 void MainWindow::connexion()
 {
 
     socket->abort();//On désactive les connexions précédentes s'il y en a
     socket->connectToHost(adr_ip->text(), numero_port_serveur->value());//On se connecte au serveur demandé
+
+    //Emission des logs
+    messageLogs = QDateTime::currentDateTime().toString()+" : connexion au serveur "+adr_ip->text()+"...\r\n";
+    emit signal_ajoutLogs();
 
 }
 
@@ -102,7 +106,11 @@ void MainWindow::connexion()
      //On nettoie la zone de reception
      message_envoie->clear();
 
-     }
+     //Emission des logs
+     messageLogs = QDateTime::currentDateTime().toString()+" : connecté au serveur "+adr_ip->text()+"\r\n";
+     emit signal_ajoutLogs();
+ }
+
 
 //Envoie d'un messsage au serveur
 void MainWindow::on_boutonEnvoyer_clicked()
@@ -122,7 +130,6 @@ void MainWindow::on_boutonEnvoyer_clicked()
 
     if(envoie == -1)
         QMessageBox::critical(this,"Erreur","Message non envoyé");
-
 }
 
 
@@ -152,15 +159,18 @@ void MainWindow::donneesRecues()
 
     qDebug()<<"\nreturn donnees recues messageRecu :\n"<<messageRecu<<"\n";
 
+    //Emission des logs
+    messageLogs = QDateTime::currentDateTime().toString()+" : Reception de la trame : "+messageRecu+"+\r\n";
+    emit signal_ajoutLogs();
 
-    //Séparation de
     QStringList list = QString(messageRecu).split(" ");
     message_1 = QString(list.at(0));
     list.removeFirst();
     message_2 = list.join(QString(" "));
 
-    qDebug()<<"\nmessage 1 :\n"<<message_1<<"\n";
-    qDebug()<<"\nmessage 2 :\n"<<message_2<<"\n";
+
+   qDebug()<<"\nmessage 1 :\n"<<message_1<<"\n";
+   qDebug()<<"\nmessage 2 :\n"<<message_2<<"\n";
 
     emit signal_parse();//Lancement du signal d'execution du parse
 }
@@ -180,6 +190,7 @@ void MainWindow::deconnexion()
     message_recu->clear();
 
     qDebug() << "\nDeconnexion\n";
+
 }
 
 
@@ -194,6 +205,10 @@ void MainWindow::deconnexion()
 
       //On nettoie la zone de reception
      message_recu->clear();
+
+     //Emission des logs
+     messageLogs = QDateTime::currentDateTime().toString()+" : déconnecté du serveur "+adr_ip->text()+"\r\n";
+     emit signal_ajoutLogs();
  }
 
 
@@ -206,18 +221,25 @@ void MainWindow::erreurSocket(QAbstractSocket::SocketError problem)
      {
          case QAbstractSocket::HostNotFoundError:
             qDebug()<<"ERREUR : le serveur n'a pas pu être trouvé. Vérifiez l'IP et le port.";
-
             break;
+
          case QAbstractSocket::ConnectionRefusedError:
            qDebug()<<"ERREUR : le serveur a refusé la connexion. Vérifiez si le programme \"serveur\" a bien été lancé. Vérifiez aussi l'IP et le port.";
-            break;
+           break;
+
          case QAbstractSocket::RemoteHostClosedError:
             qDebug()<<"ERREUR : le serveur a coupé la connexion.";
             break;
+
           default:
              qDebug()<<"ERREUR : " + socket->errorString();
             break;
      }
+
+    //Emission des logs
+    messageLogs = "\n"+QDateTime::currentDateTime().toString()+ " : erreur : "+ socket->errorString()+" \r\n";
+    emit signal_ajoutLogs();
+
 }
 
 
@@ -244,6 +266,11 @@ void MainWindow::envoie_arret_urgence()
 
     if(envoie == -1)
         QMessageBox::critical(this,"Erreur","Message non envoyé");
+
+    //Emission des logs
+    messageLogs = QDateTime::currentDateTime().toString()+" : arrêt d'urgence enclenché !\r\n";
+    emit signal_ajoutLogs();
+
 }
 
 
@@ -286,10 +313,11 @@ void MainWindow::envoie_message_hello()
     //Test Erreur
     if(envoie == -1)
         QMessageBox::critical(this,"Erreur","Message non envoyé");
+
+    //Emission des logs
+    messageLogs = QDateTime::currentDateTime().toString()+" : Emission du message \"Hello\" au serveur "+adr_ip->text()+"\r\n";
+    emit signal_ajoutLogs();
 }
-
-
-
 
 
 
@@ -316,7 +344,13 @@ void MainWindow::stop()
     if(envoie == -1)
         QMessageBox::critical(this,"Erreur","Message non envoyé");
 
+    //Emission des logs
+    messageLogs = QDateTime::currentDateTime().toString()+" : demande d'arrêt du drone \r\n";
+    emit signal_ajoutLogs();
+
 }
+
+
 
 //Ce slot est envoyer lorsqu'on appuis sur le bouton parser
 void MainWindow::parserReception()
@@ -397,11 +431,11 @@ void MainWindow::parserReception()
     box_y->setValue(Y_value_1);
     box_t->setValue(T_value_1);// A CORRIGER
     box_r->setValue(T_value_1);
-
 }
 
+
 //Ce slot est envoyé lorsqu'on clique sur le bouton Manuel
-void MainWindow::envoieModeAuto()//----------------------- A TESTER--------------------
+void MainWindow::envoieModeAuto()
 {
     qDebug()<<"Bouton Auto cliqué";
     QString messageAuto = "{\"message\":{\"type\":\"set_ai\",\"content\":\"auto\"}} ";
@@ -418,11 +452,15 @@ void MainWindow::envoieModeAuto()//----------------------- A TESTER-------------
     //Test erreur
     if(envoie == -1)
         QMessageBox::critical(this,"Erreur","Message non envoyé");
+
+    //Emission des logs
+    messageLogs = QDateTime::currentDateTime().toString()+" : mode automatique enclenché \r\n";
+    emit signal_ajoutLogs();
 }
 
 
 
-//Ce slot est envoyé lorsqu'on clique sur le bouton Auto
+//Ce slot est envoyé lorsqu'on clique sur le bouton Manuel
 void MainWindow::envoieModeManuel()
 {
     qDebug()<<"Bouton Manuel cliqué";
@@ -440,16 +478,25 @@ void MainWindow::envoieModeManuel()
     //Test erreur
     if(envoie == -1)
         QMessageBox::critical(this,"Erreur","Message non envoyé");
+
+    //Emission des logs
+    messageLogs = QDateTime::currentDateTime().toString()+" : mode manuel enclenché \r\n";
+    emit signal_ajoutLogs();
 }
 
 
-
+//Fonction initiale
 void MainWindow::creationLogs()
 {
- qDebug()<<"Création d'un objet QFile";
 
-// Création d'un objet QFile
-QFile file("Logs.txt");
+//Création d'un nom de log
+nomLog = "Logs.txt";
+
+qDebug()<<"nom du nouveau fichier :"<< nomLog;
+
+//création d'un object QFile
+QFile file(nomLog);
+
 // On ouvre notre fichier en lecture seule et on vérifie l'ouverture
 if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
 {
@@ -458,11 +505,27 @@ if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
 }
 // Création d'un objet QTextStream à partir de notre objet QFile
 QTextStream flux(&file);
+
 // On choisit le codec correspondant au jeu de caractère que l'on souhaite ; ici, UTF-8
 flux.setCodec("UTF-8");
+
 // Écriture des différentes lignes dans le fichier
-flux << "Bonjour," << endl << "Nous sommes le " << 3 << " avril " << 2009 << endl;
+flux << "Fichier Log Hovercraft" << endl;
+
+qDebug()<<"Ecriture dans le fichier log : C:/Users/Damien/Documents/PFE/build-Hovercraft-Desktop_Qt_5_4_0_MinGW_32bit-Debug";
 }
 
 
+//Ce slot en envoyé systematique lorsqu'il y a un evenement
+void MainWindow::ajoutLogs()
+{
+qDebug()<<"\nAjout d'un nouveau log\n";
+
+file.setFileName("Logs.txt");
+file.open(QIODevice::WriteOnly | QIODevice::Append);
+
+QTextStream out(&file);
+
+out << endl << messageLogs << endl;
+}
 

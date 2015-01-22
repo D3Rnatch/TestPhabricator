@@ -237,17 +237,17 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="boutonParse">
+   <widget class="QPushButton" name="ajouterLogs">
     <property name="geometry">
      <rect>
       <x>720</x>
-      <y>380</y>
+      <y>400</y>
       <width>93</width>
       <height>28</height>
      </rect>
     </property>
     <property name="text">
-     <string>Parser</string>
+     <string>Ajouter Logs</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="box_message_content_1">
@@ -263,27 +263,27 @@
    <widget class="QLabel" name="label_message_content_1">
     <property name="geometry">
      <rect>
-      <x>400</x>
+      <x>380</x>
       <y>300</y>
-      <width>101</width>
-      <height>16</height>
+      <width>121</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>message content</string>
+     <string>message content 1</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_message_content_2">
     <property name="geometry">
      <rect>
-      <x>400</x>
+      <x>380</x>
       <y>330</y>
-      <width>101</width>
-      <height>16</height>
+      <width>121</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>message content</string>
+     <string>message content 2</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="box_message_content_2">
@@ -391,14 +391,14 @@
    <widget class="QPushButton" name="boutonLog">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>380</y>
-      <width>93</width>
+      <x>20</x>
+      <y>400</y>
+      <width>171</width>
       <height>28</height>
      </rect>
     </property>
     <property name="text">
-     <string>Générer Logs</string>
+     <string>Générer Nouveaux Logs</string>
     </property>
    </widget>
   </widget>

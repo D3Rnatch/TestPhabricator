@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <QtGlobal>
 #include <iostream>
+#include <qfile.h>
 
 #include "libraries.h"
 #include "mainwindow.h"

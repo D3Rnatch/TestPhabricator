@@ -15,8 +15,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         void CreerLog();
         void qInstallMsgHandler();
 
-
-
     public slots:
         void quitterApp();
         void connexion();
@@ -29,16 +27,17 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         void envoie_arret_urgence();
         void messageErreur();
         void envoie_message_hello();
-        //void receptionDonneesJoyStick();
-       // void parserDonneesDrone();
         void stop();
         void parserReception();
         void envoieModeAuto();
         void envoieModeManuel();
         void creationLogs();
+        void ajoutLogs();
+
 
     signals:
         void signal_parse();
+        void signal_ajoutLogs();
 
 
     private:
@@ -49,8 +48,12 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         QString messageRecu;
         QString message_1;
         QString message_2;
-        int batterie_index_1=50;
-        int batterie_index_2=50;
+        int batterie_index_1;
+        int batterie_index_2;
+        QFile file;
+        QString messageLogs;
+        QString nomLog;
+        QTime heure;
 
 };
 
