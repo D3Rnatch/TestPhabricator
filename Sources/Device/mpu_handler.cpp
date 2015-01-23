@@ -168,3 +168,8 @@ int MPU_Handler :: getGValue()
 {
 	return this->g_value;
 }
+
+int MPU_Handler :: getErrorCode()
+{
+       return dmpReady; 
+}

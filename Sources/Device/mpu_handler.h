@@ -34,6 +34,8 @@ class MPU_Handler
 		
 		int getGValue();
 
+                int getErrorCode();
+
 		// int treshold;
 		// float mean;
 		int g_value;
