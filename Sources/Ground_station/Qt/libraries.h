@@ -39,7 +39,8 @@
 #include "libraries.h"
 #include "mainwindow.h"
 #include "joystick.h"
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_joystick.h>
 //#include "log.h"
 
 

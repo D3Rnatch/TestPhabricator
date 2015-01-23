@@ -1,7 +1,8 @@
 //Adresse Serveur : 10.5.133.185
 
 #include "libraries.h"
-#include "mainwindow.h"
+
+#undef main
 
 int main(int argc, char *argv[])
 {

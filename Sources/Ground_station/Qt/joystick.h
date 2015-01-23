@@ -16,10 +16,6 @@ class joystick: public QObject
         void signal_sdl_quitter();
         void signal_sdl_mode_auto();
 
-
-
-
-
 };
 
 #endif // JOYSTICK_H
