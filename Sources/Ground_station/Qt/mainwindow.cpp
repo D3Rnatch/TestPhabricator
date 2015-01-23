@@ -66,6 +66,10 @@ MainWindow::MainWindow(QWidget *parent) :
    QObject::connect(boutonLog,SIGNAL(clicked()),this,SLOT(creationLogs()));//tests sur la creation de logs
    QObject::connect(this,SIGNAL(signal_ajoutLogs()),this,SLOT(ajoutLogs()));//tests sur l'ajout de logs
 
+   //------------------------------INTERFACE JOYSTICK/SERVEUR-------------------------
+
+   qDebug()<<"\n X: "<<joystick_x <<" Y: "<< joystick_y <<" T: "<< joystick_t <<"\n";
+
 }
 
 
@@ -123,7 +127,7 @@ void MainWindow::on_boutonEnvoyer_clicked()
 
     //On prépare le paquet à envoyer
 
-    QString messageAEnvoyer = "{\"robot\":{\"X\":" + QString(joystick_x) + ",\"Y\":"+ QString(joystick_y) +",\"T\":"+ QString(joystick_t) +"},\"message\":{\"type\":\"system\",\"content\":\"hello\"}} ";
+    QString messageAEnvoyer = "{\"robot\":{\"X\":" + QString(this->joystick_x) + ",\"Y\":"+ QString(this->joystick_y) +",\"T\":"+ QString(this->joystick_t) +"},\"message\":{\"type\":\"system\",\"content\":\"hello\"}} ";
 
     int envoie = socket->write(messageAEnvoyer.toStdString().c_str()); // On envoie le paquet convertie
 

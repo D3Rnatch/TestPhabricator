@@ -15,6 +15,15 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         void CreerLog();
         void qInstallMsgHandler();
 
+        float getJoystick_x(){return joystick_x;}
+        float getJoystick_y(){return joystick_y;}
+        float getJoystick_t(){return joystick_t;}
+
+        void setJoystick_x(float x){joystick_x=x;}
+        void setJoystick_y(float y){joystick_y=y;}
+        void setJoystick_t(float t){joystick_t=t;}
+
+
     public slots:
         void quitterApp();
         void connexion();
@@ -57,6 +66,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         int joystick_x;
         int joystick_y;
         int joystick_t;
+
 
 };
 

@@ -10,11 +10,18 @@ int main(int argc, char *argv[])
 
        MainWindow *w = new MainWindow();
        w->show();
-       joystick* jo = new joystick ();
+       joystick* j = new joystick ();
 
-       QObject::connect(jo,SIGNAL(signal_sdl_quitter()), w, SLOT(quitterApp()));
-       QObject::connect(jo,SIGNAL(signal_sdl_mode_manuel()),w,SLOT(envoieModeManuel()));
-       QObject::connect(jo,SIGNAL(signal_sdl_mode_auto()),w,SLOT(envoieModeAuto()));
+       //Connections des touches du Joystick vers l'interface
+       QObject::connect(j,SIGNAL(signal_sdl_quitter()), w, SLOT(quitterApp()));
+       QObject::connect(j,SIGNAL(signal_sdl_mode_manuel()),w,SLOT(envoieModeManuel()));
+       QObject::connect(j,SIGNAL(signal_sdl_mode_auto()),w,SLOT(envoieModeAuto()));
+
+       //Transferts de données du Joystick vers les serveur
+       w->setJoystick_x(j->getJoystick_x());
+       w->setJoystick_y(j->getJoystick_y());
+       w->setJoystick_t(j->getJoystick_t());
+
 
        return app.exec();
 }
