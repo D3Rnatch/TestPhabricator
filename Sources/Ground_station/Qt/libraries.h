@@ -27,6 +27,7 @@
 #include <QLoggingCategory>
 #include <qlogging.h>
 #include <qloggingcategory.h>
+#include <QDataStream>
 
 #include <qApplication.h>
 #include <stdio.h>
@@ -36,8 +37,6 @@
 #include <qfile.h>
 
 #include "libraries.h"
-#include "mainwindow.h"
-#include "log.h"
 
 #endif // LIBRARIES
 

@@ -1,6 +1,7 @@
 //Adresse Serveur : 10.5.133.185
 
 #include "libraries.h"
+#include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {
@@ -8,8 +9,6 @@ int main(int argc, char *argv[])
 
        MainWindow w;
        w.show();
-       //Log l;
-       //l.creerLog();
 
        return app.exec();
 }

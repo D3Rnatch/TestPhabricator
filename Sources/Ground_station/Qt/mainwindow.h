@@ -54,6 +54,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         QString messageLogs;
         QString nomLog;
         QTime heure;
+        int joystick_x;
+        int joystick_y;
+        int joystick_t;
 
 };
 
@@ -61,16 +64,3 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 
 
 #endif // MAINWINDOW_H
-
-
-
-
-
-
-
-
-
-
-
-
-
