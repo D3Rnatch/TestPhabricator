@@ -17,6 +17,8 @@
 */
 class MPU6050;
 
+void dmpDataReady();
+
 class MPU_Handler
 {
 	public :
@@ -25,23 +27,21 @@ class MPU_Handler
 		void run_the_magic();
 		
 		bool isDisponible();
+
+                bool isStabilized();
 		
 		void calibrate_IMU();
 		
 		int getGValue();
 
-                static void dmpDataReady();
-
-                // Error : 12 <=> WARNING IMU not connected
-                // Error : 22 <=> WARNING IMU dmp not reachable
-                int getErrorCode();
-
-		int treshold;
-		float mean;
+		// int treshold;
+		// float mean;
 		int g_value;
 		
 	private :
 		
+                void checkStabilization();
+
 		MPU6050 *mpu;
 		float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 		VectorFloat gravity;    // [x, y, z]            gravity vector
@@ -55,6 +55,11 @@ class MPU_Handler
                 bool isConnected;
                 bool dmpReady;  // set true if DMP init was successful
 
+                int threshold;
+                float prec;
+                float actual;
+                bool stabilized;
+                uint8_t nb;
 };
 
 

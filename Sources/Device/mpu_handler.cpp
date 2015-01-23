@@ -2,8 +2,9 @@
 #include "MPU_Handler.h"
 
 volatile bool mpuInterrupt = false;
-void MPU_Handler :: dmpDataReady()
+void dmpDataReady()
 {
+    // //Serial.println("INTERRUPT !");
     mpuInterrupt = true;
 }
 
@@ -11,9 +12,14 @@ void MPU_Handler :: dmpDataReady()
 MPU_Handler :: MPU_Handler()
 {
         dmpReady = false;  // set true if DMP init was successful
-        
+        fifoCount = 0; // INIT DAMN
 	// INIT OF MPU
 	this->mpu = new MPU6050(0x69); // AD0 High for ATMEGA2650
+        this->prec = 0.0;
+        this->actual = -1.0;
+        this->stabilized = false;
+        this->g_value = 0;
+        this->threshold = 0;
 
 	// join I2C bus (I2Cdev library doesn't do this automatically)
     #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
@@ -26,8 +32,10 @@ MPU_Handler :: MPU_Handler()
 	mpu->initialize();
 	
 	mpu->testConnection() ? this->isConnected = true : this->isConnected = false;
-	
+	////Serial.println("Passed connection");
 	if(this->isConnected) {	
+  	  //      //Serial.println("Passed connection");
+
 			this->devStatus = mpu->dmpInitialize();
 		    // supply your own gyro offsets here, scaled for min sensitivity
 			mpu->setXGyroOffset(220);
@@ -36,11 +44,12 @@ MPU_Handler :: MPU_Handler()
 			mpu->setZAccelOffset(1788); // 1688 factory default for my test chip
 			
 			if (devStatus == 0) {
+                        //        //Serial.println("DMP reached.");
 			// turn on the DMP, now that it's ready
 			mpu->setDMPEnabled(true);
 
 			// enable Arduino interrupt detection
-			attachInterrupt(0, MPU_Handler::dmpDataReady, RISING);
+			attachInterrupt(0, dmpDataReady, RISING);
 			mpuIntStatus = mpu->getIntStatus();
 
 			// set our DMP Ready flag so the main loop() function knows it's okay to use it
@@ -54,11 +63,24 @@ MPU_Handler :: MPU_Handler()
 			// (if it's going to break, usually the code will be 1)
 		}
 	}
+      
+  //  //Serial.print("fifoCount is : ");
+   // //Serial.println(fifoCount,DEC);
+
+   // //Serial.print("fifoCount is : ");
+  //  //Serial.println(packetSize,DEC);
+      // if(dmpReady) this->calibrate_IMU();
 }
 
 void MPU_Handler :: run_the_magic()
 {
-	if(this->isDisponible()) {
+        if(!dmpReady) return;
+        
+        if( mpuInterrupt && fifoCount < packetSize){
+                // check if stabilized
+                this->checkStabilization();
+                
+                ////Serial.println("Here we are here.");
 		mpuInterrupt = false;
 		mpuIntStatus = mpu->getIntStatus();
 
@@ -82,21 +104,27 @@ void MPU_Handler :: run_the_magic()
 			fifoCount -= packetSize;
 			
 			// récupération des données YPR
-            // display Euler angles in degrees
-            mpu->dmpGetQuaternion(&q, fifoBuffer);
-            mpu->dmpGetGravity(&gravity, &q);
-            mpu->dmpGetYawPitchRoll(ypr, &q, &gravity);
+                        // display Euler angles in degrees
+                        mpu->dmpGetQuaternion(&q, fifoBuffer);
+                        mpu->dmpGetGravity(&gravity, &q);
+                        mpu->dmpGetYawPitchRoll(ypr, &q, &gravity);
 			ypr[0] = ypr[0]*180/M_PI;
 			ypr[1] = ypr[1]*180/M_PI;
 			ypr[2] = ypr[2]*180/M_PI;
+
+                        if(this->stabilized)
+                            ypr[0] -= this->threshold;
+                        this->g_value = ypr[0];
 		}
-	}
+	}//*/
 }
 		
 bool MPU_Handler :: isDisponible()
 {
 	// Test for stabilization and determine the Offset...
-	if(!mpuInterrupt && fifoCount < packetSize && !dmpReady)
+        ////Serial.print("DmpReady is :");
+        ////Serial.println(dmpReady);
+	if(mpuInterrupt && fifoCount < packetSize)
 		return true;
 	else
 		return false;
@@ -104,23 +132,39 @@ bool MPU_Handler :: isDisponible()
 		
 void MPU_Handler :: calibrate_IMU()
 {
-	// TO BE IMPLEMENTED
+  // TO BE IMPLEMENTED
 }
-		
+
+bool MPU_Handler :: isStabilized()
+{
+    return this->stabilized;
+}
+
+void MPU_Handler :: checkStabilization()
+{
+ if(!this->stabilized)
+  {
+   this->prec = this->actual;
+   int g = this->getGValue();
+   this->actual = g;
+   if(prec == actual && nb <200)
+          nb++;
+   else if (prec != actual)
+         nb = 0;
+   else {
+        
+        ////Serial.print////Serial.println("HERE.");
+        this->stabilized = true;
+         this->threshold = this->actual;        
+  }  
+}
+//else
+  ////Serial.println("Stab ok.");
+  ////Serial.println(this->threshold,DEC);
+}
+
+	
 int MPU_Handler :: getGValue()
 {
 	return this->g_value;
 }
-
-// Error : 12 <=> WARNING IMU not connected
-// Error : 22 <=> WARNING IMU dmp not reachable
-// Error : 2 <=> Both
-int MPU_Handler :: getErrorCode()
-{
-   uint8_t id = 0;
-   if(!this->isConnected)
-         return 12;
-   else if( devStatus == 0)
-         return 22;
-}
-
