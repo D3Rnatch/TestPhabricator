@@ -74,7 +74,7 @@ joystick::joystick()
                         if(evenements.jaxis.axis == 0) //axe des absisses
                         {
 
-                            int x = evenements.jaxis.value;
+                            float x = evenements.jaxis.value;
                             qDebug()<<"\nValeur de x :"<<x<<"\n";
 
 
@@ -100,9 +100,15 @@ joystick::joystick()
                             int y = evenements.jaxis.value;
                             qDebug()<<"\nValeur de y :"<<y<<"\n";
 
+<<<<<<< Updated upstream
                             //Calcule de la conversion 32767 to 20
                             float joystick_y = coeff*y+10;
                             qDebug()<<"\nValeur de joystick_y :"<<joystick_y<<"\n";
+=======
+                            //int joystick_y = (20*65534)/y;
+
+                            //qDebug()<<"\nValeur de Y :"<<joystick_y<<"\n";
+>>>>>>> Stashed changes
 
                                 if(evenements.jaxis.value < 0)
                                     qDebug()<<"\nEn avant !"<<evenements.jaxis.value<<"\n";
@@ -119,9 +125,24 @@ joystick::joystick()
                             int t = evenements.jaxis.value;
                             qDebug()<<"\nValeur de t :"<<t<<"\n";
 
+<<<<<<< Updated upstream
                             //Calcule de la conversion 32767 to 100
                             float joystick_t = coeff_t*t+10;
                             qDebug()<<"\nValeur de joystick_x :"<<joystick_t<<"\n";
+=======
+                            //int joystick_t = (100*65534)/t;
+
+                            //qDebug()<<"\nValeur de X :"<<joystick_t<<"\n";
+
+                                //if(evenements.jaxis.value < 0)
+                                    //qDebug()<<"\nEn avant !"<<evenements.jaxis.value<<"\n";
+
+                                //else if(evenements.jaxis.value >0)
+                                    //qDebug()<<"\nEn arrière !"<<evenements.jaxis.value<<"\n";
+
+                                //else
+                                   //qDebug()<<"\ntout droit: "<<evenements.jaxis.value<<"\n";
+>>>>>>> Stashed changes
                         }
 
                       break;
