@@ -24,8 +24,8 @@ joystick::joystick()
 
     static SDL_Event evenements;
 
-    float coeff = (1/3276,7);
-    float coeff_t = (50/32767);
+    float coeff = 0.0003518509476;
+    float coeff_t = (0.0015259254738);
 
     while (SDL_WaitEvent(&evenements))
     {
@@ -74,13 +74,14 @@ joystick::joystick()
                         if(evenements.jaxis.axis == 0) //axe des absisses
                         {
 
-                            float x = evenements.jaxis.value;
+                            x = evenements.jaxis.value;
                             qDebug()<<"\nValeur de x :"<<x<<"\n";
 
 
                             //Calcule de la conversion 32767 to 20
-                            float joystick_x = coeff*x+10;
+                            joystick_x = coeff*float(x)+10;
                             qDebug()<<"\nValeur de joystick_x :"<<joystick_x<<"\n";
+                            qDebug()<<"\nValeur de joystick_y :"<<joystick_y<<"\n";
 
                             if(evenements.jaxis.value < 0)
                                     qDebug()<<"\nA gauche !: "<<evenements.jaxis.value<<"\n";
@@ -97,18 +98,15 @@ joystick::joystick()
                         else if(evenements.jaxis.axis == 1) //axe des ordonnées
                         {
 
-                            int y = evenements.jaxis.value;
+                            y = evenements.jaxis.value;
                             qDebug()<<"\nValeur de y :"<<y<<"\n";
 
-<<<<<<< Updated upstream
-                            //Calcule de la conversion 32767 to 20
-                            float joystick_y = coeff*y+10;
-                            qDebug()<<"\nValeur de joystick_y :"<<joystick_y<<"\n";
-=======
-                            //int joystick_y = (20*65534)/y;
 
-                            //qDebug()<<"\nValeur de Y :"<<joystick_y<<"\n";
->>>>>>> Stashed changes
+                            //Calcule de la conversion 32767 to 20
+                            joystick_y = coeff*float(y)+10;
+                            qDebug()<<"\nValeur de joystick_y :"<<joystick_y<<"\n";
+                            qDebug()<<"\nValeur de joystick_x :"<<joystick_x<<"\n";
+
 
                                 if(evenements.jaxis.value < 0)
                                     qDebug()<<"\nEn avant !"<<evenements.jaxis.value<<"\n";
@@ -122,27 +120,17 @@ joystick::joystick()
 
                         else if(evenements.jaxis.axis == 3) //axe de lévitation
                         {
-                            int t = evenements.jaxis.value;
+                            t = evenements.jaxis.value;
                             qDebug()<<"\nValeur de t :"<<t<<"\n";
 
-<<<<<<< Updated upstream
+
                             //Calcule de la conversion 32767 to 100
-                            float joystick_t = coeff_t*t+10;
-                            qDebug()<<"\nValeur de joystick_x :"<<joystick_t<<"\n";
-=======
-                            //int joystick_t = (100*65534)/t;
+                            joystick_t = coeff_t*float(-t)+50;
+                            qDebug()<<"\nValeur de joystick_t :"<<joystick_t<<"\n";
+                            qDebug()<<"\nValeur de joystick_x :"<<joystick_x<<"\n";
+                            qDebug()<<"\nValeur de joystick_y :"<<joystick_y<<"\n";
 
-                            //qDebug()<<"\nValeur de X :"<<joystick_t<<"\n";
 
-                                //if(evenements.jaxis.value < 0)
-                                    //qDebug()<<"\nEn avant !"<<evenements.jaxis.value<<"\n";
-
-                                //else if(evenements.jaxis.value >0)
-                                    //qDebug()<<"\nEn arrière !"<<evenements.jaxis.value<<"\n";
-
-                                //else
-                                   //qDebug()<<"\ntout droit: "<<evenements.jaxis.value<<"\n";
->>>>>>> Stashed changes
                         }
 
                       break;

@@ -10,6 +10,9 @@ class joystick: public QObject
     public:
         joystick();
         void pause();
+        float joystick_x;
+        float joystick_y;
+        float joystick_t;
 
     signals:
         void signal_sdl_mode_manuel();
@@ -17,7 +20,10 @@ class joystick: public QObject
         void signal_sdl_mode_auto();
 
     private:
-        float joystick_x;
+        float x;
+        float y;
+        float t;
+
 };
 
 #endif // JOYSTICK_H

@@ -305,11 +305,8 @@ void MainWindow::envoie_message_hello()
     QDataStream out(&packet, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
 
     //On prépare le paquet à envoyer
-<<<<<<< Updated upstream
     QString messageHello = "{\"robot\":{\"X\":"+QString(joystick_x) +",\"Y\":"+ QString(joystick_y) +",\"T\":"+ QString(joystick_t) +"},\"message\":{\"type\":\"system\",\"content\":\"hello\"}} ";
-=======
-    QString messageHello = "{\"robot\":{\"X\":"+ QString(joystick_x) +",\"Y\":"+ QString(joystick_y) +",\"T\":"+ QString(joystick_t) +"},\"message\":{\"type\":\"system\",\"content\":\"hello\"}} ";
->>>>>>> Stashed changes
+
 
     int envoie = socket->write(messageHello.toStdString().c_str()); // On envoie le paquet converti
 
@@ -332,11 +329,8 @@ void MainWindow::envoie_message_hello()
 void MainWindow::stop()
 {
     qDebug()<<"Bouton Stop cliqué";
-<<<<<<< Updated upstream
+
     QString messageStop = "{\"robot\":{\"X\":"+ QString(joystick_x) +",\"Y\":"+QString(joystick_y)+",\"T\":"+QString(joystick_t)+"},\"message\":{\"type\":\"system\",\"content\":\"stop\"}} ";
-=======
-    QString messageStop = "{\"robot\":{\"X\":"+ QString(joystick_x) +",\"Y\":0,\"T\":0},\"message\":{\"type\":\"system\",\"content\":\"stop\"}} ";
->>>>>>> Stashed changes
 
     QByteArray paquet_stop;
     QDataStream out(&paquet_stop, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
