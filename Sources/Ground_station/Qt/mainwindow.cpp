@@ -127,7 +127,11 @@ void MainWindow::on_boutonEnvoyer_clicked()
 
     //On prépare le paquet à envoyer
 
+<<<<<<< HEAD
     QString messageAEnvoyer = "{\"robot\":{\"X\":" + QString(this->joystick_x) + ",\"Y\":"+ QString(this->joystick_y) +",\"T\":"+ QString(this->joystick_t) +"},\"message\":{\"type\":\"system\",\"content\":\"hello\"}} ";
+=======
+    QString messageAEnvoyer = "{\"robot\":{\"X\":"+ QString(joystick_x) +",\"Y\":"+ QString(joystick_y) +",\"T\":"+ QString(joystick_t) +"},\"message\":{\"type\":\"system\",\"content\":\"hello\"}} ";
+>>>>>>> origin/IHM
 
     int envoie = socket->write(messageAEnvoyer.toStdString().c_str()); // On envoie le paquet convertie
 
@@ -311,6 +315,7 @@ void MainWindow::envoie_message_hello()
     //On prépare le paquet à envoyer
     QString messageHello = "{\"robot\":{\"X\":"+QString(joystick_x) +",\"Y\":"+ QString(joystick_y) +",\"T\":"+ QString(joystick_t) +"},\"message\":{\"type\":\"system\",\"content\":\"hello\"}} ";
 
+
     int envoie = socket->write(messageHello.toStdString().c_str()); // On envoie le paquet converti
 
     //on afiche le message envoyé dans la zone d'Emission Texte
@@ -332,6 +337,7 @@ void MainWindow::envoie_message_hello()
 void MainWindow::stop()
 {
     qDebug()<<"Bouton Stop cliqué";
+
     QString messageStop = "{\"robot\":{\"X\":"+ QString(joystick_x) +",\"Y\":"+QString(joystick_y)+",\"T\":"+QString(joystick_t)+"},\"message\":{\"type\":\"system\",\"content\":\"stop\"}} ";
 
     QByteArray paquet_stop;
