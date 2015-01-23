@@ -29,7 +29,7 @@
 #include <qloggingcategory.h>
 #include <QDataStream>
 
-#include <qApplication.h>
+#include <qapplication.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <QtGlobal>
@@ -37,6 +37,11 @@
 #include <qfile.h>
 
 #include "libraries.h"
+#include "mainwindow.h"
+#include "joystick.h"
+#include <SDL/SDL.h>
+//#include "log.h"
+
 
 #endif // LIBRARIES
 
