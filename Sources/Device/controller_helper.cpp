@@ -3,24 +3,26 @@
 
 Controller :: Controller()
 {
+      
   	 motor_last_set = false;
 	 motor_off_cpt = 0;
 	 scaner_last_set = false;
 	 scaner_off_cpt = 0;
   
-	this->net = new Network_manager(9600);
-
+	this->net = new Network_manager(38400);
+        
 	this->escenter[0].attach(3);
     	this->escenter[1].attach(4);
     	this->escenter[2].attach(5);
     	this->escenter[3].attach(6);
 	this->LaserScaner.attach(7);
-        // Serial.println("OK esc.");
+        ////Serial.println("OK esc.");
 	// Starting The Acq manager
 	this->acq = new ACQ_handler();
 	this->acq_system = 0;
-        // Serial.println("End OF INIT");
+        ////Serial.println("End OF INIT. UP FOR IMU");
         this->imu = new MPU_Handler();
+        ////Serial.println("OK IMU.");
 }
 
 void Controller :: init()
@@ -36,7 +38,7 @@ void Controller :: init()
 	// Controller finished init 
 	// Sending OK ready packet.
 
-        // Serial.print("TEST");
+        // //Serial.print("TEST");
         uint8_t errorCode = 0;
         errorCode = this->imu->getErrorCode();
 	this->net->send_ready_packet(errorCode);
@@ -157,6 +159,7 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
   int x = 0;
   int y = 0;
   int g = 0;
+  uint8_t g2 = 0;
 	if (id != 200) {
 		if(id != 7)
 			this->net->send_full(id+48,b[0]+48,b[1]+48,b[2]+48,b[3]+48,b[4]+48,'\n');
@@ -188,7 +191,17 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
 						// Send packet ...
                                                 // x = 100;
                                                 // y = 100;
-						this->net->send_data_packet(x,y,g);
+                                                //Serial.print("G SENSOR IS :");
+                                                //Serial.println(g,DEC);
+                                                // G sensor value trasnformation into 2 parts (360 being to high for a byte data : split into two)
+                                                if(g < 0)
+                                                    g = 180 - g; // 0 à 360°
+                                                if(g > 255) {
+                                                  g2 = g-255; // on sature à 255 et on enlève le reste que l'on stocke dans g2
+                                                  g  = g-g2; // ici : on récupère la prmeière partie
+						
+                                                }
+                                                this->net->send_data_packet(x,y,g,g2);
 						break;
 					default :
 						this->controllerState = Idle;

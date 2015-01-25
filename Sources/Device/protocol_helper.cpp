@@ -1,6 +1,6 @@
 #include "protocol_helper.h"
 
-t_encap encap_acq_data(byte dx,byte dy,byte gz)
+t_encap encap_acq_data(byte dx,byte dy,byte gz, byte gz2)
 {
 	t_encap t;
 
@@ -8,7 +8,7 @@ t_encap encap_acq_data(byte dx,byte dy,byte gz)
 	t.array[1] = (byte)dx;
 	t.array[2] = (byte)dy;
 	t.array[3] = (byte)gz;
-	t.array[4] = (byte)0;
+	t.array[4] = (byte)gz2;
 	t.array[5] = (byte)0;
 	t.array[6] = (byte)'\n';
 

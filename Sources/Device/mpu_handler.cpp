@@ -4,7 +4,7 @@
 volatile bool mpuInterrupt = false;
 void dmpDataReady()
 {
-    // //Serial.println("INTERRUPT !");
+    // ////Serial.println("INTERRUPT !");
     mpuInterrupt = true;
 }
 
@@ -20,21 +20,12 @@ MPU_Handler :: MPU_Handler()
         this->stabilized = false;
         this->g_value = 0;
         this->threshold = 0;
-
-	// join I2C bus (I2Cdev library doesn't do this automatically)
-    #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
-        Wire.begin();
-        TWBR = 24; // 400kHz I2C clock (200kHz if CPU is 8MHz)
-    #elif I2CDEV_IMPLEMENTATION == I2CDEV_BUILTIN_FASTWIRE
-        Fastwire::setup(400, true);
-    #endif
-
 	mpu->initialize();
 	
 	mpu->testConnection() ? this->isConnected = true : this->isConnected = false;
-	////Serial.println("Passed connection");
+	//////Serial.println("Passed connection");
 	if(this->isConnected) {	
-  	  //      //Serial.println("Passed connection");
+  	  //      ////Serial.println("Passed connection");
 
 			this->devStatus = mpu->dmpInitialize();
 		    // supply your own gyro offsets here, scaled for min sensitivity
@@ -44,7 +35,7 @@ MPU_Handler :: MPU_Handler()
 			mpu->setZAccelOffset(1788); // 1688 factory default for my test chip
 			
 			if (devStatus == 0) {
-                        //        //Serial.println("DMP reached.");
+                        //        ////Serial.println("DMP reached.");
 			// turn on the DMP, now that it's ready
 			mpu->setDMPEnabled(true);
 
@@ -64,23 +55,28 @@ MPU_Handler :: MPU_Handler()
 		}
 	}
       
-  //  //Serial.print("fifoCount is : ");
-   // //Serial.println(fifoCount,DEC);
-
-   // //Serial.print("fifoCount is : ");
-  //  //Serial.println(packetSize,DEC);
-      // if(dmpReady) this->calibrate_IMU();
+        delay(2);
+        // Stabilize mpu :
+        while(!this->isStabilized()){ this->run_the_magic(); }
+        //Serial.print("init finished. : ");
+        //Serial.println(this->threshold,DEC);
 }
 
 void MPU_Handler :: run_the_magic()
 {
         if(!dmpReady) return;
         
-        if( mpuInterrupt && fifoCount < packetSize){
+        // Didnot find a better idea....
+        while( !mpuInterrupt && fifoCount < packetSize){ 
+        
+        // For looop optimization, feel free to hook here some functions
+          
+        }
+        
                 // check if stabilized
                 this->checkStabilization();
                 
-                ////Serial.println("Here we are here.");
+                //Serial.println("Here we are here.");
 		mpuInterrupt = false;
 		mpuIntStatus = mpu->getIntStatus();
 
@@ -116,14 +112,14 @@ void MPU_Handler :: run_the_magic()
                             ypr[0] -= this->threshold;
                         this->g_value = ypr[0];
 		}
-	}//*/
+	// }//*/
 }
 		
 bool MPU_Handler :: isDisponible()
 {
 	// Test for stabilization and determine the Offset...
-        ////Serial.print("DmpReady is :");
-        ////Serial.println(dmpReady);
+        //////Serial.print("DmpReady is :");
+        //////Serial.println(dmpReady);
 	if(mpuInterrupt && fifoCount < packetSize)
 		return true;
 	else
@@ -153,14 +149,14 @@ void MPU_Handler :: checkStabilization()
          nb = 0;
    else {
         
-        ////Serial.print////Serial.println("HERE.");
+        //Serial.println("HERE.");
         this->stabilized = true;
          this->threshold = this->actual;        
   }  
 }
 //else
-  ////Serial.println("Stab ok.");
-  ////Serial.println(this->threshold,DEC);
+  //////Serial.println("Stab ok.");
+  //////Serial.println(this->threshold,DEC);
 }
 
 	
@@ -171,5 +167,5 @@ int MPU_Handler :: getGValue()
 
 int MPU_Handler :: getErrorCode()
 {
-       return dmpReady; 
+       return this->devStatus; 
 }

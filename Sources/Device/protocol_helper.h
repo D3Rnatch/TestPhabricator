@@ -63,7 +63,7 @@ typedef struct recept_frame_doubles
  * \brief encap_acq_data, encaps the acquisition data in format
  *
  */
-t_encap encap_acq_data(byte, byte, byte);
+t_encap encap_acq_data(byte, byte, byte, byte);
 
 /**
  * \fn t_encap encap_ready()

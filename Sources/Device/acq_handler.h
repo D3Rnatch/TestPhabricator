@@ -11,7 +11,7 @@
  * In case of problematic calculation
  * for F_DIST = 1,06
  * Alpha is the number permitting the transition between : Dx (Range : -128 ; 127) towards a distance value in cm.
- * /!\ WARNING : there is a problème of distance calculation : error range : Dist € [-10%;+10%].
+ * /!\ WARNING : there is a problem of distance calculation : error range : Dist € [-10%;+10%].
  *
  */
 #include <Arduino.h>

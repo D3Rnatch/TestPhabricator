@@ -31,10 +31,10 @@ class MPU_Handler
                 bool isStabilized();
 		
 		void calibrate_IMU();
-		
-		int getGValue();
 
                 int getErrorCode();
+		
+		int getGValue();
 
 		// int treshold;
 		// float mean;

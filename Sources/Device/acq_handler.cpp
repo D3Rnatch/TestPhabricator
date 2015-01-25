@@ -72,6 +72,21 @@ void ACQ_handler::update_values()
     /* Theta Angle */
 	this->last_x += this->delta_x_adns;
 	this->last_y += this->delta_y_adns;
+
+    /* Distance calculation */
+    // Source is : 
+    	//Calculate x,y,omega
+/*
+	xval = deltaX_X1_coef*acc_x[0] + deltaX_X2_coef*acc_x[1] + deltaX_Y1_minus_Y2_coef*(acc_y[0]-acc_y[1]);
+	xval2 += xval;	//this cured a problem with doing xval += ...
+	yval += deltaY_X1_coef*acc_x[0] + deltaY_X2_coef*acc_x[1] + deltaY_Y1_coef*acc_y[0] + deltaY_Y2_coef*acc_y[1];
+	omega += omega_X1_minus_X2_coef*(acc_x[0]-acc_x[1]) + omega_Y1_minus_Y2_coef*(acc_y[0]-acc_y[1]);
+		
+	//Reset the accumulated x and y values for both sensors
+	acc_x[0] = 0;
+	acc_x[1] = 0;	
+	acc_y[0] = 0;
+	acc_y[1] = 0;	*/
 	
     /*int e = (int)ALPHA << 10;
     int xe = this->delta_x_adns * e;

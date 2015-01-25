@@ -40,7 +40,7 @@ class Network_manager
     	/**
 	 * \brief Constructor.
 	 */
-	Network_manager(int);
+	Network_manager(long);
 	
 	/**
 	 * \brief Run a magical code on the serial port.
@@ -103,7 +103,7 @@ class Network_manager
 	* \param : v2, adns Y value
 	* \param : v3, Gyro Z sensor
 	*/
-	void send_data_packet(uint8_t v1, uint8_t v2, uint8_t v3);
+	void send_data_packet(uint8_t v1, uint8_t v2, uint8_t v3, uint8_t v4);
 	
     private :
 	t_frame_bytes last_extraction;/*!< Last extracted frame.*/

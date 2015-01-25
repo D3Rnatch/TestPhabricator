@@ -107,9 +107,13 @@ II. Serial protocol
 
 			DX : Delta X
 			DY : Delta Y
-			GZ : Gyro Z
+			GZ : Gyro Z 
+			Concerning the Gyro value : calculation made on degrees from 0 to 360 (no negative)
+			Splitted into two bytes : first is 0 to 255 ° and second is 256 to 360 °
+			To obtain initial value : add both to the same number.
+			IOW : GZ = GZ + GZ;
 			+-----------------+
-			|ID|DX|DY|GZ|--|--|
+			|ID|DX|DY|GZ|GZ|--|
 			+-----------------+
 		Byte :   0  1  2  3  4  5
 
