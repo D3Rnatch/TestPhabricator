@@ -24,6 +24,7 @@ class Serial_Manager :
 		try :
 			self.ser = serial.Serial(port,baud)
 			handshack = self.read()
+			print "handshack : " + str(handshack)
 
 			# Testing handshack
 			if handshack[0] == 0 and handshack[1] == 10 :
