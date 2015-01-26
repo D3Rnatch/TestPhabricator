@@ -57,9 +57,9 @@ MPU_Handler :: MPU_Handler()
       
         delay(2);
         // Stabilize mpu :
-        while(!this->isStabilized()){ this->run_the_magic(); }
-        //Serial.print("init finished. : ");
-        //Serial.println(this->threshold,DEC);
+        // while(!this->isStabilized()){ this->run_the_magic(); }
+        // Serial.print("init finished. : ");
+        // Serial.println(this->threshold,DEC);
 }
 
 void MPU_Handler :: run_the_magic()

@@ -3,7 +3,8 @@
 
 Controller :: Controller()
 {
-      
+         int start = millis();
+         int actual = 0;
   	 motor_last_set = false;
 	 motor_off_cpt = 0;
 	 scaner_last_set = false;
@@ -23,8 +24,11 @@ Controller :: Controller()
 
         this->arm();
         this->calibrate_laserscaner();
-
+        // Serial.println("End of INIT Go for IMU.");
         this->imu = new MPU_Handler();
+        actual = millis();
+        // Serial.println("Loop time is : ");
+        // Serial.println(actual-start);
 }
 
 void Controller :: init()
@@ -55,12 +59,12 @@ void Controller ::  setSpeedcent(int a, int spd){
 void Controller ::  setSpeedFans(uint8_t * b)
 {
   int vit[4]; 
- for(int i=0;i<4;i++) {
+ for(int i=0;i<5;i++) {
      if(b[i]>MAX) b[i] = MAX;
      else if (b[i] < MIN) b[i] = MIN;
      vit[i] = map(b[i],0,100,0,180);
   }
- for(int j=0;j<4;j++)
+ for(int j=0;j<5;j++)
      this->escenter[j].write(vit[j]);  
 }
 
@@ -87,19 +91,19 @@ void Controller ::  arm(){
   setSpeedcent(1,MIN);
   setSpeedcent(2,MIN);
   setSpeedcent(3,MIN);
-  // setSpeedcent(4,MIN);
+  setSpeedcent(4,MIN);
   delay(1200);
   setSpeedcent(0,MAX);
   setSpeedcent(1,MAX);
   setSpeedcent(2,MAX);
   setSpeedcent(3,MAX);
-  // setSpeedcent(4,MAX);
+  setSpeedcent(4,MAX);
   delay(1200);
   setSpeedcent(0,MIN);
   setSpeedcent(1,MIN);
   setSpeedcent(2,MIN);
   setSpeedcent(3,MIN);
-  // setSpeedcent(4,MIN);
+  setSpeedcent(4,MIN);
   delay(1200);
 }
 
@@ -123,9 +127,9 @@ void Controller ::  Process_Scan(uint8_t * b)
 		 this->scaner_last_set = true;
 	}
 	setAngleLaserScaner (b[0]);
-	for(int i=0;i<4;i++) {
+	/*for(int i=0;i<4;i++) {
 		b[i] = 0;
-	}
+	}*/
 
 }
 
