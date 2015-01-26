@@ -71,11 +71,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
      QObject::connect(bouton_coord_refresh,SIGNAL(clicked()),this,SLOT(recuperationCoordonnees())); //Rafraichissement Coordonnées par le bouton
 
-       joystick_x =0;
-       joystick_y =0;
-       joystick_t =0;
-
-       qDebug()<<"\n initialisation de x y t : "<<joystick_x << joystick_y <<joystick_t <<"\n";
 }
 
 
@@ -617,7 +612,5 @@ void MainWindow::envoie_coordonnees()
     messageLogs = QDateTime::currentDateTime().toString()+" : Emission des coordonnées au serveur "+adr_ip->text()+"\r\n";
     emit signal_ajoutLogs();
 }
-
-
 
 

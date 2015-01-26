@@ -17,7 +17,7 @@ joystick::joystick()
     static SDL_Event evenements;
 
     float coeff = 0.0003518509476;
-    float coeff_t = (0.0015259254738);
+    float coeff_t = 0.0015259254738;
 
     while (SDL_WaitEvent(&evenements))
     {
@@ -128,6 +128,8 @@ joystick::joystick()
         }
       }
     }
+
+
     SDL_JoystickClose(Joystick);
    // pause();
     qDebug () << "exit failure \n ";
