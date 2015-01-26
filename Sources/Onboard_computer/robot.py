@@ -78,6 +78,8 @@ class Robot:
         self.logs.set_name("system")
 	self.logs_arduino = logManager()
 	self.logs_arduino.set_name("arduino_com")
+	self.logs_angle = logManager()
+	self.logs_angle.set_name("angle")
         self.ai_mode = self.AI_MANUAL
         self.state_mode = self.STATE_WAIT
 	self.scan_angle = 0
@@ -162,6 +164,7 @@ class Robot:
     def move_tick(self, joystick_movement):
     	ret = self.read_from_arduino(self.GET_ODO)
         self.logs_arduino.write_log("Understood: " + str(ret[0]) + " : " + str(ret[1]) + " : " + str(ord(ret[2])-48))
+	self.logs_angle.write_log(str(ord(ret[2])-48))
 	if self.ai_mode == self.AI_MANUAL:
 	    self.logs_arduino.write_log("Movement tick.")
 	    data1 = joystick_movement[0]*10
