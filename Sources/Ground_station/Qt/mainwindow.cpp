@@ -614,5 +614,3 @@ void MainWindow::envoie_coordonnees()
 }
 
 
-
-
