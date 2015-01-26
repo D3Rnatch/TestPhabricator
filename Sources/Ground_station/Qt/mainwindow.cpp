@@ -71,10 +71,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
      QObject::connect(bouton_coord_refresh,SIGNAL(clicked()),this,SLOT(recuperationCoordonnees())); //Rafraichissement Coordonnées par le bouton
 
-       joystick_x =0;
-       joystick_y =0;
-       joystick_t =0;
-
        qDebug()<<"\n initialisation de x y t : "<<joystick_x << joystick_y <<joystick_t <<"\n";
 }
 
@@ -175,7 +171,6 @@ void MainWindow::donneesRecues()
     //Emission des logs
     messageLogs = QDateTime::currentDateTime().toString()+" : Reception de la trame : "+messageRecu+"+\r\n";
     emit signal_ajoutLogs();
-
     QStringList list = QString(messageRecu).split(" ");
     message_1 = QString(list.at(0));
     list.removeFirst();

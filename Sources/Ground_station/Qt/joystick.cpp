@@ -94,6 +94,7 @@ joystick::joystick()
                             qDebug()<<"\nValeur de joystick_t :"<<joystick_t<<"\n";
 
                                 if(evenements.jaxis.value < 0)
+
                                     qDebug()<<"\nEn avant !"<<evenements.jaxis.value<<"\n";
 
                                 else if(evenements.jaxis.value >0)
