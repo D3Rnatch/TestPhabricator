@@ -103,7 +103,7 @@ class Robot:
         self.is_running = True
         self.logs.write_log("Start serial manager.")
         try:
-            self.serial_manager = Serial_Manager("/dev/ttyACM0", 9600)
+            self.serial_manager = Serial_Manager("/dev/ttyACM0", 115200)
         except Exception, e:
 	        print "Connection to arduino failed !\nSee logs file."
 	        self.logs.write_log("Fatal error: connection to arduino failed :\n\t" + str(e))
@@ -161,7 +161,7 @@ class Robot:
     #  @param joystick_movement Tuple of joystick informations.
     def move_tick(self, joystick_movement):
     	ret = self.read_from_arduino(self.GET_ODO)
-        self.logs_arduino.write_log("Understood: " + str(ret[0]) + " : " + str(ret[1]) + " : " + str(ret[2]))
+        self.logs_arduino.write_log("Understood: " + str(ret[0]) + " : " + str(ret[1]) + " : " + str(ord(ret[2])-48))
 	if self.ai_mode == self.AI_MANUAL:
 	    self.logs_arduino.write_log("Movement tick.")
 	    data1 = joystick_movement[0]*10
