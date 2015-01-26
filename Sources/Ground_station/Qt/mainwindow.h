@@ -44,6 +44,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         void ajoutLogs();
         void recuperationCoordonnees();
         void timer();
+        void envoie_coordonnees();
 
 
     signals:

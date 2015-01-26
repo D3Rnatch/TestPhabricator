@@ -69,10 +69,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
    //----------------------------------COORDONNEES DRONE----------------------------------
 
-   //QObject::connect(this,SIGNAL(/*signal fin timer*/),this,SLOT(recuperationCoordonnees()));   //Rafraichissement Coordonnées par le timer
-   //QObject::connect(this,SIGNAL(signal_recup_coord_ok()),this,SLOT(timer()));                  //Redemarrage du timer
-   QObject::connect(bouton_coord_refresh,SIGNAL(cliked()),this,SLOT(recuperationCoordonnees())); //Rafraichissement Coordonnées par le bouton
+     QObject::connect(bouton_coord_refresh,SIGNAL(clicked()),this,SLOT(recuperationCoordonnees())); //Rafraichissement Coordonnées par le bouton
 
+       joystick_x =0;
+       joystick_y =0;
+       joystick_t =0;
+
+       qDebug()<<"\n initialisation de x y t : "<<joystick_x << joystick_y <<joystick_t <<"\n";
 }
 
 
@@ -249,7 +252,6 @@ void MainWindow::erreurSocket(QAbstractSocket::SocketError problem)
     //Emission des logs
     messageLogs = "\n"+QDateTime::currentDateTime().toString()+ " : erreur : "+ socket->errorString()+" \r\n";
     emit signal_ajoutLogs();
-
 }
 
 
@@ -548,21 +550,7 @@ void MainWindow::ajoutLogs()
 void MainWindow::recuperationCoordonnees()
 {
 
-//Envoie du message Hello
-    message_envoie->clear();
-
-    QByteArray packet;
-    QDataStream out(&packet, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
-
-    //On prépare le paquet à envoyer
-    QString messageHello = "{\"robot\":{\"X\":"+QString(joystick_x) +",\"Y\":"+ QString(joystick_y) +",\"T\":"+ QString(joystick_t) +"},\"message\":{\"type\":\"system\",\"content\":\"hello\"}} ";
-
-
-    int envoie = socket->write(messageHello.toStdString().c_str()); // On envoie le paquet converti
-
-    //Test Erreur
-    if(envoie == -1)
-        QMessageBox::critical(this,"Erreur","Coordonnees non recuperees");
+void donneesRecues();
 
 //Parsing des coordonnées
 
@@ -590,8 +578,8 @@ void MainWindow::recuperationCoordonnees()
     box_t->setValue(joystick_t);
     box_r->setValue(R_value_1);
 
-    //Emission du signal pour relancer le timer
-    emit signal_recup_coord_ok();
+    //on relance le timer
+    timer();
 }
 
 
@@ -600,11 +588,35 @@ void MainWindow::recuperationCoordonnees()
 void MainWindow::timer()
 {
 
-
-
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(recuperationCoordonnees()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(envoie()));
+    timer->start(1000);
 }
 
 
+void MainWindow::envoie_coordonnees()
+{
+    QByteArray packet;
+    QDataStream out(&packet, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
+
+    //On prépare le paquet à envoyer
+    QString messageCoordonnees = "{\"robot\":{\"X\":"+QString(joystick_x) +",\"Y\":"+ QString(joystick_y) +",\"T\":"+ QString(joystick_t) +"}";
+
+
+    int envoie = socket->write(messageCoordonnees.toStdString().c_str()); // On envoie le paquet converti
+
+    //on afiche le message envoyé dans la zone d'Emission Texte
+    message_envoie->setText(messageCoordonnees);
+
+    //Test Erreur
+    if(envoie == -1)
+        QMessageBox::critical(this,"Erreur","Message non envoyé");
+
+    //Emission des logs
+    messageLogs = QDateTime::currentDateTime().toString()+" : Emission des coordonnées au serveur "+adr_ip->text()+"\r\n";
+    emit signal_ajoutLogs();
+}
 
 
 

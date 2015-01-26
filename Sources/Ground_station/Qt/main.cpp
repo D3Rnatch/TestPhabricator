@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
        QObject::connect(j,SIGNAL(signal_sdl_mode_auto()),w,SLOT(envoieModeAuto()));
 
        //Transferts de données du Joystick vers les serveur
-       w->setJoystick_x(j->getJoystick_x());
+       w->setJoystick_x(j->getJoystick_x());;
        w->setJoystick_y(j->getJoystick_y());
        w->setJoystick_t(j->getJoystick_t());
 
