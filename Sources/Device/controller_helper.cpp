@@ -20,17 +20,15 @@ Controller :: Controller()
 	// Starting The Acq manager
 	this->acq = new ACQ_handler();
 	this->acq_system = 0;
+
+        this->arm();
+        this->calibrate_laserscaner();
+
         this->imu = new MPU_Handler();
 }
 
 void Controller :: init()
 {
-
-
-	this->calibrate_laserscaner();
-    	
-        this->arm();
-
 	this->controllerState = Idle;
 
 	// Controller finished init 
@@ -40,7 +38,6 @@ void Controller :: init()
         uint8_t errorCode = 0;
         errorCode = this->imu->getErrorCode();
 	this->net->send_ready_packet(errorCode);
-
 }
 
 //////////////////////////////////
@@ -90,19 +87,19 @@ void Controller ::  arm(){
   setSpeedcent(1,MIN);
   setSpeedcent(2,MIN);
   setSpeedcent(3,MIN);
-  setSpeedcent(4,MIN);
+  // setSpeedcent(4,MIN);
   delay(1200);
   setSpeedcent(0,MAX);
   setSpeedcent(1,MAX);
   setSpeedcent(2,MAX);
   setSpeedcent(3,MAX);
-  setSpeedcent(4,MAX);
+  // setSpeedcent(4,MAX);
   delay(1200);
   setSpeedcent(0,MIN);
   setSpeedcent(1,MIN);
   setSpeedcent(2,MIN);
   setSpeedcent(3,MIN);
-  setSpeedcent(4,MIN);
+  // setSpeedcent(4,MIN);
   delay(1200);
 }
 
