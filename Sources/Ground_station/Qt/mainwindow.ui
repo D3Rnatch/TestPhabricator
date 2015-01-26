@@ -237,24 +237,11 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="ajouterLogs">
-    <property name="geometry">
-     <rect>
-      <x>720</x>
-      <y>400</y>
-      <width>93</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Ajouter Logs</string>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="box_message_content_1">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>300</y>
+      <x>790</x>
+      <y>360</y>
       <width>113</width>
       <height>22</height>
      </rect>
@@ -263,8 +250,8 @@
    <widget class="QLabel" name="label_message_content_1">
     <property name="geometry">
      <rect>
-      <x>380</x>
-      <y>300</y>
+      <x>650</x>
+      <y>360</y>
       <width>121</width>
       <height>20</height>
      </rect>
@@ -276,8 +263,8 @@
    <widget class="QLabel" name="label_message_content_2">
     <property name="geometry">
      <rect>
-      <x>380</x>
-      <y>330</y>
+      <x>650</x>
+      <y>390</y>
       <width>121</width>
       <height>20</height>
      </rect>
@@ -289,8 +276,8 @@
    <widget class="QLineEdit" name="box_message_content_2">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>330</y>
+      <x>790</x>
+      <y>390</y>
       <width>113</width>
       <height>22</height>
      </rect>
@@ -299,8 +286,8 @@
    <widget class="QLabel" name="label_x">
     <property name="geometry">
      <rect>
-      <x>770</x>
-      <y>260</y>
+      <x>810</x>
+      <y>140</y>
       <width>55</width>
       <height>16</height>
      </rect>
@@ -312,8 +299,8 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>770</x>
-      <y>290</y>
+      <x>810</x>
+      <y>170</y>
       <width>51</width>
       <height>16</height>
      </rect>
@@ -325,8 +312,8 @@
    <widget class="QLabel" name="label_T">
     <property name="geometry">
      <rect>
-      <x>780</x>
-      <y>320</y>
+      <x>820</x>
+      <y>200</y>
       <width>55</width>
       <height>16</height>
      </rect>
@@ -338,8 +325,8 @@
    <widget class="QLabel" name="label_T_2">
     <property name="geometry">
      <rect>
-      <x>780</x>
-      <y>350</y>
+      <x>820</x>
+      <y>230</y>
       <width>55</width>
       <height>16</height>
      </rect>
@@ -351,8 +338,8 @@
    <widget class="QSpinBox" name="box_x">
     <property name="geometry">
      <rect>
-      <x>830</x>
-      <y>260</y>
+      <x>870</x>
+      <y>140</y>
       <width>42</width>
       <height>22</height>
      </rect>
@@ -361,8 +348,8 @@
    <widget class="QSpinBox" name="box_y">
     <property name="geometry">
      <rect>
-      <x>830</x>
-      <y>290</y>
+      <x>870</x>
+      <y>170</y>
       <width>42</width>
       <height>22</height>
      </rect>
@@ -371,8 +358,8 @@
    <widget class="QSpinBox" name="box_t">
     <property name="geometry">
      <rect>
-      <x>830</x>
-      <y>320</y>
+      <x>870</x>
+      <y>200</y>
       <width>42</width>
       <height>22</height>
      </rect>
@@ -381,8 +368,8 @@
    <widget class="QSpinBox" name="box_r">
     <property name="geometry">
      <rect>
-      <x>830</x>
-      <y>350</y>
+      <x>870</x>
+      <y>230</y>
       <width>42</width>
       <height>22</height>
      </rect>
@@ -399,6 +386,19 @@
     </property>
     <property name="text">
      <string>Générer Nouveaux Logs</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="bouton_coord_refresh">
+    <property name="geometry">
+     <rect>
+      <x>842</x>
+      <y>260</y>
+      <width>71</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Rafraichir</string>
     </property>
    </widget>
   </widget>

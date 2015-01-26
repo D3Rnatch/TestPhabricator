@@ -42,11 +42,14 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         void envoieModeManuel();
         void creationLogs();
         void ajoutLogs();
+        void recuperationCoordonnees();
+        void timer();
 
 
     signals:
         void signal_parse();
         void signal_ajoutLogs();
+        void signal_recup_coord_ok();
 
 
     private:
@@ -67,10 +70,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         int joystick_y;
         int joystick_t;
 
-
 };
-
-
-
 
 #endif // MAINWINDOW_H

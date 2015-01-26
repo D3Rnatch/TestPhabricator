@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     setupUi(this); //initialision de l'IHM
 
-//-----------------NETWORK---------------------------------------------
+//----------------------------------NETWORK---------------------------------------------
 
     socket = new QTcpSocket(this);//Création du socket
 
@@ -22,16 +22,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(messageErreur()));//Lancement de la Fenêtre Erreur
 
 
-//------------------JSON--------------------------------------------------
+    tailleMessage = 0;
+
+ //----------------------------------JSON--------------------------------------------------
 
     QObject::connect(this,SIGNAL(signal_parse()),this,SLOT(parserReception()));//Lancement du parse automatique après reception de données
 
-
-
-     tailleMessage = 0;
-
-
-//------------------MENU----------------------------------------------------
+//------------------------------------MENU----------------------------------------------------
 
     //Action Fermer
    QObject::connect(actionFermer, SIGNAL(triggered()), this, SLOT(quitterApp()));
@@ -61,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
    //Mode Manuel
    QObject::connect(boutonManuel,SIGNAL(clicked()),this, SLOT(envoieModeManuel()));
 
-   //------------------------------LOGS-----------------------------------------------
+   //--------------------------------------LOGS-----------------------------------------------
 
    QObject::connect(boutonLog,SIGNAL(clicked()),this,SLOT(creationLogs()));//tests sur la creation de logs
    QObject::connect(this,SIGNAL(signal_ajoutLogs()),this,SLOT(ajoutLogs()));//tests sur l'ajout de logs
@@ -69,6 +66,12 @@ MainWindow::MainWindow(QWidget *parent) :
    //------------------------------INTERFACE JOYSTICK/SERVEUR-------------------------
 
    qDebug()<<"\n X: "<<joystick_x <<" Y: "<< joystick_y <<" T: "<< joystick_t <<"\n";
+
+   //----------------------------------COORDONNEES DRONE----------------------------------
+
+   //QObject::connect(this,SIGNAL(/*signal fin timer*/),this,SLOT(recuperationCoordonnees()));   //Rafraichissement Coordonnées par le timer
+   //QObject::connect(this,SIGNAL(signal_recup_coord_ok()),this,SLOT(timer()));                  //Redemarrage du timer
+   QObject::connect(bouton_coord_refresh,SIGNAL(cliked()),this,SLOT(recuperationCoordonnees())); //Rafraichissement Coordonnées par le bouton
 
 }
 
@@ -79,7 +82,7 @@ void MainWindow::quitterApp()
     qDebug()<<"\nquitter App() : exit app\n";
 
     //Emission des logs
-    messageLogs = QDateTime::currentDateTime().toString()+" : Application Fermée \n ";
+    messageLogs = QDateTime::currentDateTime().toString()+" : Application Fermée \r\n ";
     emit signal_ajoutLogs();
 
     exit(0);
@@ -127,11 +130,8 @@ void MainWindow::on_boutonEnvoyer_clicked()
 
     //On prépare le paquet à envoyer
 
-<<<<<<< HEAD
-    QString messageAEnvoyer = "{\"robot\":{\"X\":" + QString(this->joystick_x) + ",\"Y\":"+ QString(this->joystick_y) +",\"T\":"+ QString(this->joystick_t) +"},\"message\":{\"type\":\"system\",\"content\":\"hello\"}} ";
-=======
     QString messageAEnvoyer = "{\"robot\":{\"X\":"+ QString(joystick_x) +",\"Y\":"+ QString(joystick_y) +",\"T\":"+ QString(joystick_t) +"},\"message\":{\"type\":\"system\",\"content\":\"hello\"}} ";
->>>>>>> origin/IHM
+
 
     int envoie = socket->write(messageAEnvoyer.toStdString().c_str()); // On envoie le paquet convertie
 
@@ -387,13 +387,14 @@ void MainWindow::parserReception()
     qDebug() << "\nX="<<X_value_1;
     int Y_value_1 = JsonObj_1["robot"].toObject()["Y"].toInt();
     qDebug() << "\nY="<<Y_value_1;
-    int T_value_1 = JsonObj_1["robot"].toObject()["R"].toInt();
-    qDebug() << "\nT="<<T_value_1;
+    int R_value_1 = JsonObj_1["robot"].toObject()["R"].toInt();
+    qDebug() << "\nR="<<R_value_1;
+
 
     //Informations Batteries
     int batterie_index_1 = JsonObj_1["batteries"].toObject()["batterie"].toInt();
     qDebug() << "\nindex batterie="<<batterie_index_1;
-    int batterie_value_1 = JsonObj_1["batteries"].toObject()["value"].toInt();
+    int batterie_value_1 = JsonObj_1["batteries"].toObject()["value"].toInt();//Inutile car le serveur ne renvoie pas la valeur de la batterie
     qDebug() << "\nvalue_batterie="<<batterie_value_1;
 
     //Informations angle
@@ -415,8 +416,8 @@ void MainWindow::parserReception()
     qDebug() << "\nX="<<X_value_2;
     int Y_value_2 = JsonObj_2["robot"].toObject()["Y"].toInt();
     qDebug() << "\nY="<<Y_value_2;
-    int T_value_2 = JsonObj_2["robot"].toObject()["R"].toInt();
-    qDebug() << "\nR="<<T_value_2;
+    int R_value_2 = JsonObj_2["robot"].toObject()["R"].toInt();
+    qDebug() << "\nR="<<R_value_2;
 
     //Informations Batteries
     int batterie_index_2 = JsonObj_2["robot"].toObject()["batterie"].toInt();
@@ -441,8 +442,8 @@ void MainWindow::parserReception()
     box_message_content_2->setText(message_content_2);
     box_x->setValue(X_value_1);
     box_y->setValue(Y_value_1);
-    box_t->setValue(T_value_1);// A CORRIGER
-    box_r->setValue(T_value_1);
+    box_t->setValue(joystick_t);
+    box_r->setValue(R_value_1);
 }
 
 
@@ -497,46 +498,114 @@ void MainWindow::envoieModeManuel()
 }
 
 
-//Fonction initiale
+
+//Ce slot est appelé à chaque fois que l'on désire creer de nouveaux logs
 void MainWindow::creationLogs()
 {
 
-//Création d'un nom de log
-nomLog = "Logs.txt";
+    //Création d'un nom de log
+    nomLog = "Logs.txt";
 
-qDebug()<<"nom du nouveau fichier :"<< nomLog;
+    qDebug()<<"nom du nouveau fichier :"<< nomLog;
 
-//création d'un object QFile
-QFile file(nomLog);
+    //création d'un object QFile
+    QFile file(nomLog);
 
-// On ouvre notre fichier en lecture seule et on vérifie l'ouverture
-if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-{
-    qDebug()<<"fichier non créé";
-    return;
-}
-// Création d'un objet QTextStream à partir de notre objet QFile
-QTextStream flux(&file);
+    // On ouvre notre fichier en lecture seule et on vérifie l'ouverture
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        qDebug()<<"fichier non créé";
+        return;
+    }
+    // Création d'un objet QTextStream à partir de notre objet QFile
+    QTextStream flux(&file);
 
-// On choisit le codec correspondant au jeu de caractère que l'on souhaite ; ici, UTF-8
-flux.setCodec("UTF-8");
+    // On choisit le codec correspondant au jeu de caractère que l'on souhaite ; ici, UTF-8
+    flux.setCodec("UTF-8");
 
-// Écriture des différentes lignes dans le fichier
-flux << "Fichier Log Hovercraft" << endl;
+    // Écriture des différentes lignes dans le fichier
+    flux << "Fichier Log Hovercraft" << endl;
 
-qDebug()<<"Ecriture dans le fichier log : C:/Users/Damien/Documents/PFE/build-Hovercraft-Desktop_Qt_5_4_0_MinGW_32bit-Debug";
+    qDebug()<<"Ecriture dans le fichier log : C:/Users/Damien/Documents/PFE/build-Hovercraft-Desktop_Qt_5_4_0_MinGW_32bit-Debug";
 }
 
 
 //Ce slot en envoyé systematique lorsqu'il y a un evenement
 void MainWindow::ajoutLogs()
 {
-qDebug()<<"\nAjout d'un nouveau log\n";
+    qDebug()<<"\nAjout d'un nouveau log\n";
 
-file.setFileName("Logs.txt");
-file.open(QIODevice::WriteOnly | QIODevice::Append);
+    file.setFileName("Logs.txt");
+    file.open(QIODevice::WriteOnly | QIODevice::Append);
 
-QTextStream out(&file);
+    QTextStream out(&file);
 
-out << endl << messageLogs << endl;
+    out << endl << messageLogs << endl;
 }
+
+
+//Ce slot est envoyé lorsqu'on désire récupérer les coordonéees du robot
+void MainWindow::recuperationCoordonnees()
+{
+
+//Envoie du message Hello
+    message_envoie->clear();
+
+    QByteArray packet;
+    QDataStream out(&packet, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
+
+    //On prépare le paquet à envoyer
+    QString messageHello = "{\"robot\":{\"X\":"+QString(joystick_x) +",\"Y\":"+ QString(joystick_y) +",\"T\":"+ QString(joystick_t) +"},\"message\":{\"type\":\"system\",\"content\":\"hello\"}} ";
+
+
+    int envoie = socket->write(messageHello.toStdString().c_str()); // On envoie le paquet converti
+
+    //Test Erreur
+    if(envoie == -1)
+        QMessageBox::critical(this,"Erreur","Coordonnees non recuperees");
+
+//Parsing des coordonnées
+
+    qDebug()<<"\nParser Coordonnées";
+    qDebug()<<"\nmessage Recu 1 avant parse=\n"<<message_1;
+
+    QJsonDocument doc_1 = QJsonDocument::fromJson(message_1.toUtf8());
+
+    qDebug()<< doc_1.isNull();
+
+    QJsonObject JsonObj_1= doc_1.object();
+
+    //Informations Coordonnées
+    int X_value_1 = JsonObj_1["robot"].toObject()["X"].toInt();
+    qDebug() << "\nX="<<X_value_1;
+    int Y_value_1 = JsonObj_1["robot"].toObject()["Y"].toInt();
+    qDebug() << "\nY="<<Y_value_1;
+    int R_value_1 = JsonObj_1["robot"].toObject()["R"].toInt();
+    qDebug() << "\nR="<<R_value_1;
+
+//Afichage des données dans l'IHM
+
+    box_x->setValue(X_value_1);
+    box_y->setValue(Y_value_1);
+    box_t->setValue(joystick_t);
+    box_r->setValue(R_value_1);
+
+    //Emission du signal pour relancer le timer
+    emit signal_recup_coord_ok();
+}
+
+
+
+//Ce slot est envoyé lorsqu'on désire lancer le timer
+void MainWindow::timer()
+{
+
+
+
+}
+
+
+
+
+
+

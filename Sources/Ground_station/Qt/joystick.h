@@ -10,9 +10,6 @@ class joystick: public QObject
     public:
         joystick();
         void pause();
-        float joystick_x;
-        float joystick_y;
-        float joystick_t;
 
         float getJoystick_x(){return joystick_x;}
         float getJoystick_y(){return joystick_y;}
@@ -27,22 +24,18 @@ class joystick: public QObject
         void signal_sdl_quitter();
         void signal_sdl_mode_auto();
 
-<<<<<<< HEAD
-    private :
-=======
+
     private:
->>>>>>> origin/IHM
+
         float x;
         float y;
         float t;
 
-<<<<<<< HEAD
+
         float joystick_x;
         float joystick_y;
         float joystick_t;
 
-=======
->>>>>>> origin/IHM
 };
 
 #endif // JOYSTICK_H

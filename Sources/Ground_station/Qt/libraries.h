@@ -1,7 +1,6 @@
 #ifndef LIBRARIES
 #define LIBRARIES
 
-
 #include <QApplication>
 #include <QWidget>
 #include <QPushButton>
@@ -19,7 +18,6 @@
 #include <QIcon>
 #include <QCoreApplication>
 #include <QDebug>
-//#include "parser.h"
 #include <QPalette>
 #include <QJsonValue>
 #include <QJsonDocument>
@@ -39,9 +37,8 @@
 #include "libraries.h"
 #include "mainwindow.h"
 #include "joystick.h"
-#include <SDL/SDL.h>
-//#include <SDL2/SDL_joystick.h>
-//#include "log.h"
+#include <SDL2/SDL_joystick.h>
+#include <SDL2/SDL.h>
 
 
 #endif // LIBRARIES
