@@ -122,7 +122,7 @@ void reset_Services();
 void Process_Com(uint8_t id, uint8_t * b);
 
 	// Servo :
-	Servo escenter[4];/*!< Servo speed map. */
+	Servo escenter[5];/*!< Servo speed map. */
 	Servo LaserScaner;/*!< Scanner servo. */
 	
 	// State :	

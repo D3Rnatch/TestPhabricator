@@ -9,20 +9,18 @@ Controller :: Controller()
 	 scaner_last_set = false;
 	 scaner_off_cpt = 0;
   
-	this->net = new Network_manager(38400);
+	this->net = new Network_manager(115200);
         
 	this->escenter[0].attach(3);
     	this->escenter[1].attach(4);
     	this->escenter[2].attach(5);
     	this->escenter[3].attach(6);
-	this->LaserScaner.attach(7);
-        ////Serial.println("OK esc.");
+        this->escenter[4].attach(7);
+	this->LaserScaner.attach(8);
 	// Starting The Acq manager
 	this->acq = new ACQ_handler();
 	this->acq_system = 0;
-        ////Serial.println("End OF INIT. UP FOR IMU");
         this->imu = new MPU_Handler();
-        ////Serial.println("OK IMU.");
 }
 
 void Controller :: init()
@@ -38,7 +36,7 @@ void Controller :: init()
 	// Controller finished init 
 	// Sending OK ready packet.
 
-        // //Serial.print("TEST");
+        // ////Serial.print("TEST");
         uint8_t errorCode = 0;
         errorCode = this->imu->getErrorCode();
 	this->net->send_ready_packet(errorCode);
@@ -92,16 +90,19 @@ void Controller ::  arm(){
   setSpeedcent(1,MIN);
   setSpeedcent(2,MIN);
   setSpeedcent(3,MIN);
+  setSpeedcent(4,MIN);
   delay(1200);
   setSpeedcent(0,MAX);
   setSpeedcent(1,MAX);
   setSpeedcent(2,MAX);
   setSpeedcent(3,MAX);
+  setSpeedcent(4,MAX);
   delay(1200);
   setSpeedcent(0,MIN);
   setSpeedcent(1,MIN);
   setSpeedcent(2,MIN);
   setSpeedcent(3,MIN);
+  setSpeedcent(4,MIN);
   delay(1200);
 }
 
@@ -112,7 +113,7 @@ void Controller ::  Process_Motor(uint8_t * b)
         // we set fans power.
         setSpeedFans(b);
                 
-        for(int i=0;i<4;i++) {
+        for(int i=0;i<5;i++) {
                b[i] = 0;
         }
 }
@@ -138,9 +139,11 @@ void Controller ::  reset_Services()
 	switch(this->controllerState)
 	{
 		case Idle :
+                        setSpeedcent(4,MIN);
 			break;
 
 		case Scan :
+                        setSpeedcent(4,MIN);
 			break;
 
 		case Manual :
@@ -171,14 +174,17 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
 						break;
 					case 3 : // Move frame
 						this->controllerState = Manual;
+                                                //Serial.println("Controller State to Manual.");
 						break;
 					case 4 : // Move + Acq frame
 						// this->controllerState = Manual_Acquisition;
 						break;
 					case 5 : // Move + Acq frame
+                                                //Serial.println("Controller State to Manual Acquisition.");
 						this->controllerState = Manual_Acquisition;
 						break;
 					case 6 : // Scanning
+                                                //Serial.println("Controller State to Scanning.");
 						this->controllerState = Scan;
 						break;
 					case 7 : // Request for acquisition
@@ -189,18 +195,16 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
 						if (x < 0) x = 255-x;
 						if (y < 0) y = 255 - y;
 						// Send packet ...
-                                                // x = 100;
-                                                // y = 100;
-                                                //Serial.print("G SENSOR IS :");
-                                                //Serial.println(g,DEC);
                                                 // G sensor value trasnformation into 2 parts (360 being to high for a byte data : split into two)
                                                 if(g < 0)
-                                                    g = 180 - g; // 0 à 360°
+                                                    g = g + 360; // 0 à 360°
                                                 if(g > 255) {
                                                   g2 = g-255; // on sature à 255 et on enlève le reste que l'on stocke dans g2
                                                   g  = g-g2; // ici : on récupère la prmeière partie
-						
                                                 }
+                                                
+                                                //Serial.print("ACQ request : ");
+                                                //Serial.println(g+g2,DEC);
                                                 this->net->send_data_packet(x,y,g,g2);
 						break;
 					default :
@@ -216,15 +220,8 @@ void Controller ::  Process_Acq()
 {
 	// ACQUISITION UPDATE
 	this->acq->run_the_magic(); // update values...
-        this->imu->run_the_magic();
+        // this->imu->run_the_magic();
 	this->acq_system++;
 	// Process PID
-      /*if(this->acq_system%2 == 0)
-		// PID ADNS
-		delay(4);
-	else
-                delay(4);
-		// PID MPU
-		// delay(8);*/
 }
 

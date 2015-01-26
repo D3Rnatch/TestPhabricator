@@ -38,7 +38,7 @@ void setup()
 
        controller = new Controller(); 
        controller->init();
-       //Serial.println("END OF SETUP. GOING MAIN LOOP");
+      //Serial.println("End of Init.");
 }
 
 /**
@@ -51,58 +51,52 @@ void loop()
 {
         actual = millis();
         
+        // Run the IMU unstack process
         controller->imu->run_the_magic();
-        // while(!Serial.available()) Serial.println("attente");
-        // Serial.println("AVANT NET");
-	//controller->net->run_the_magic();
-       // Serial.println("APRES NET");
-       // imu->run_the_magic();
         
-        //Serial.print(" G value is : ");
-        //Serial.println(controller->imu->getGValue(),DEC);
-       // Serial.println(imu->getGValue(),DEC);
+        // Run the Serial Manager : Gets the computer's entries.
+        controller->net->run_the_magic();
         
-	// resend data
+	// Extract frame's id.
 	uint8_t id = (byte)controller->net->get_last_frame_id();
-	uint8_t * b = controller->net->get_array();
+	// Extract frame's byte array
+        uint8_t * b = controller->net->get_array();
 		
-	// Processing Communication
+	// Processing Communication : switching state of autopilot
 	controller->Process_Com(id, b);	
-	
-        ////Serial.print("Attention : ");
-        ////Serial.println(id,DEC);
 
-	// If controllerState is : 
+        // On manual and Acquisition state : Process the ACQ (get the distance calculated) and the Motor update.
 	if(controller->controllerState == Manual_Acquisition) {
-                ////Serial.println("MANUAL_ACQ MODE");
 		controller->Process_Acq();
 		if(id == 3)
 			controller->Process_Motor(b);
 	}
-
+        
+        // On manual only Motors are updated
 	if(controller->controllerState == Manual) {
-                ////Serial.println("MANUAL_ACQ MODE");
 		if(id == 3)
 			controller->Process_Motor(b);
 	}
-
+        
+        // On scan mode we process the environment scan process
 	if(controller->controllerState == Scan) {
+                controller->reset_Services();
 		controller->Process_Scan(b);
 	}
 
+        // TO BE IMPLEMENTED
 	if(controller->controllerState == Automatic) {
 		// TO BE IMPLEMENTED
 	}
 
+        // On Idle mode : reset of services and idle state for controller.
 	if(controller->controllerState == Idle) {
-                ////Serial.println("Idle State.");
+                controller->reset_Services();
 		// TO BE IMPLEMENTED
-	}// */
+	}
 
         prec = actual;
         actual = millis();
-        //Serial.print("Time loop is : ");
-        //Serial.println(actual-prec,DEC);
 }
 
 

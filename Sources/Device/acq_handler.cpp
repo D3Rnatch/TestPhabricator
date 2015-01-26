@@ -176,11 +176,6 @@ void ACQ_handler::ADNSdumpDiag(void)
   unsigned int val;
 
   val = ADNSreadRegister(regStatus);
-/*
-  Serial.print("Product ID: ");
-  Serial.println( (unsigned int)((val & maskPID) >> 5));
-  Serial.println("Ready.");
-  Serial.flush();*/
 }
 
 void ACQ_handler::ADNSwriteRegister(byte addr, byte data)

@@ -64,23 +64,58 @@
 class ACQ_handler
 {
 	public :
-		/** \brief Constructor.*/
+		/**
+                * \fn void ACQ_handler()
+                * \brief Setup of the mouse sensor.
+                *   Start a SPI bus on ICSP pins of the Arduino Mega.
+                *   Also test the readings of the optical sens
+                */
 		ACQ_handler();
 		
-		/** \brief Updates every values.*/
+		/**
+                * \fn void run_the_magic()
+                * \brief Updates readings of optical mouse sensor.
+                */
 		void run_the_magic();
 
-		/** \brief Returns the x distance since last acq in cm.*/
-		int get_MoveX();
-		/** \brief Returns the y distance since last acq in cm.*/
-		int get_MoveY();
+                /**
+                * \fn int get_MoveX()
+                * \brief Returns the actual stack of reading of the optical sensor.
+                *     Returns the actual stack of reading of the optical sensor. Empties the register on reading.
+                * \return stacked register value read (NEXT IMPLEMENTED : distance made by mobile).
+                */		
+                int get_MoveX();
+		
+                /**
+                * \fn int get_MoveY()
+                * \brief Returns the actual stack of reading of the optical sensor.
+                *     Returns the actual stack of reading of the optical sensor. Empties the register on reading.
+                * \return stacked register value read (NEXT IMPLEMENTED : distance made by mobile).
+                */int get_MoveY();
 
-		/** \brief Returns the exact distance (X and Y) since last acq in cm.*/
+		/**
+                * \fn int get_MoveXY()
+                * \brief Returns the actual distance on both axis.
+                *     Returns the actual distance on both axis. Empties the register on reading.
+                * \return stacked distance value read (NEXT IMPLEMENTED : the actual reading).
+                */
 		double get_MoveXY();
-		/** \brief Returns the exact angle since last acq in cm.*/
+
+		/**
+                * \fn int get_MoveAngle()
+                * \brief Outdated
+                *     -
+                * \return -
+                */
 		double get_MoveAngle();
-		/** \brief Updates all values.*/
-		void update_values();
+
+		/**
+                * \fn void update_values()
+                * \brief Returns the actual distance on both axis.
+                *     Returns the actual distance on both axis. Empties the register on reading.
+                * \return stacked distance value read (NEXT IMPLEMENTED : the actual reading).
+                */		
+                void update_values();
 
 		// For lib PID synchronization.
 		/** \brief Mouse X speed measurement (RAW).*/
