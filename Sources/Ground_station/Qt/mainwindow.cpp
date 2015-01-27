@@ -125,12 +125,6 @@ void MainWindow::connexion()
 //Envoie d'un messsage au serveur
 void MainWindow::on_boutonEnvoyer_clicked()
 {
-    timer();
-
-    qDebug()<<"\nIncrémentation des variable dans la timer\njoystick_x = "<<joystick_x<<"\njoystick_y = "<<joystick_y<<"\njoystick_t = "<<joystick_t;
-    joystick_x = joystick_x+1;
-    joystick_y = joystick_y+3;
-    joystick_t = joystick_t+2;
 
     message_envoie->clear();
 
@@ -139,7 +133,7 @@ void MainWindow::on_boutonEnvoyer_clicked()
 
     //On prépare le paquet à envoyer
 
-    QString messageAEnvoyer = "{\"robot\":{\"X\":"+ QString(joystick_x) +",\"Y\":"+ QString(joystick_y) +",\"T\":"+ QString(joystick_t) +"},\"message\":{\"type\":\"system\",\"content\":\"hello\"}} ";
+    QString messageAEnvoyer = "{\"robot\":{\"X\":"+ QString::number(joystick_x) +",\"Y\":"+ QString::number(joystick_y) +",\"T\":"+ QString::number(joystick_t) +"},\"message\":{\"type\":\"system\",\"content\":\"hello\"}} ";
 
 
     int envoie = socket->write(messageAEnvoyer.toStdString().c_str()); // On envoie le paquet convertie
@@ -271,7 +265,7 @@ void MainWindow::envoie_arret_urgence()
     QDataStream out(&paquet_urgence, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
 
     //On prépare le paquet à envoyer
-    QString messageAEnvoyer_urgence = "{\"robot\":{\"X\":"+ QString(joystick_x) +",\"Y\":"+QString(joystick_y) +",\"T\":"+QString(joystick_t)+"},\"message\":{\"type\":\"system\",\"content\":\"stop\"}} ";
+    QString messageAEnvoyer_urgence = "{\"robot\":{\"X\":"+ QString::number(joystick_x) +",\"Y\":"+QString::number(joystick_y) +",\"T\":"+QString::number(joystick_t)+"},\"message\":{\"type\":\"system\",\"content\":\"stop\"}} ";
 
     // On envoie le paquet convertie
     int envoie = socket->write(messageAEnvoyer_urgence.toStdString().c_str());
@@ -283,8 +277,8 @@ void MainWindow::envoie_arret_urgence()
     message_recu->clear();
 
     if(envoie == -1)
-        QMessageBox::critical(this,"Erreur","Message non envoyé");
-        message_envoie->clear();
+    {QMessageBox::critical(this,"Erreur","Message non envoyé");
+        message_envoie->clear();}
 
     //Emission des logs
     messageLogs = QDateTime::currentDateTime().toString()+" : arrêt d'urgence enclenché !\r\n";
@@ -323,7 +317,7 @@ void MainWindow::envoie_message_hello()
     QDataStream out(&packet, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
 
     //On prépare le paquet à envoyer
-    QString messageHello = "{\"robot\":{\"X\":"+QString(joystick_x) +",\"Y\":"+ QString(joystick_y) +",\"T\":"+ QString(joystick_t) +"},\"message\":{\"type\":\"system\",\"content\":\"hello\"}} ";
+    QString messageHello = "{\"robot\":{\"X\":"+QString::number(joystick_x) +",\"Y\":"+ QString::number(joystick_y) +",\"T\":"+ QString::number(joystick_t) +"},\"message\":{\"type\":\"system\",\"content\":\"hello\"}} ";
 
 
     int envoie = socket->write(messageHello.toStdString().c_str()); // On envoie le paquet converti
@@ -333,8 +327,8 @@ void MainWindow::envoie_message_hello()
 
     //Test Erreur
     if(envoie == -1)
-        QMessageBox::critical(this,"Erreur","Message non envoyé");
-        message_envoie->clear();
+       { QMessageBox::critical(this,"Erreur","Message non envoyé");
+        message_envoie->clear();}
 
     //Emission des logs
     messageLogs = QDateTime::currentDateTime().toString()+" : Emission du message \"Hello\" au serveur "+adr_ip->text()+"\r\n";
@@ -349,7 +343,7 @@ void MainWindow::stop()
 {
     qDebug()<<"Bouton Stop cliqué";
 
-    QString messageStop = "{\"robot\":{\"X\":"+ QString(joystick_x) +",\"Y\":"+QString(joystick_y)+",\"T\":"+QString(joystick_t)+"},\"message\":{\"type\":\"system\",\"content\":\"stop\"}} ";
+    QString messageStop = "{\"robot\":{\"X\":"+ QString::number(joystick_x) +",\"Y\":"+QString::number(joystick_y)+",\"T\":"+QString::number(joystick_t)+"},\"message\":{\"type\":\"system\",\"content\":\"stop\"}} ";
 
     QByteArray paquet_stop;
     QDataStream out(&paquet_stop, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
@@ -364,9 +358,9 @@ void MainWindow::stop()
     message_envoie->setText(messageStop);
 
     //Test erreur
-    if(envoie == -1)
+    if(envoie == -1){
         QMessageBox::critical(this,"Erreur","Message non envoyé");
-        message_envoie->clear();
+        message_envoie->clear();}
 
     //Emission des logs
     messageLogs = QDateTime::currentDateTime().toString()+" : demande d'arrêt du drone \r\n";
@@ -475,9 +469,9 @@ void MainWindow::envoieModeAuto()
     message_envoie->setText(messageAuto);
 
     //Test erreur
-    if(envoie == -1)
+    if(envoie == -1){
         QMessageBox::critical(this,"Erreur","Message non envoyé");
-        message_envoie->clear();
+        message_envoie->clear();}
 
     //Emission des logs
     messageLogs = QDateTime::currentDateTime().toString()+" : mode automatique enclenché \r\n";
@@ -502,9 +496,9 @@ void MainWindow::envoieModeManuel()
     message_envoie->setText(messageManuel);
 
     //Test erreur
-    if(envoie == -1)
+    if(envoie == -1){
         QMessageBox::critical(this,"Erreur","Message non envoyé");
-        message_envoie->clear();
+        message_envoie->clear();}
 
     //Emission des logs
     messageLogs = QDateTime::currentDateTime().toString()+" : mode manuel enclenché \r\n";
@@ -599,26 +593,22 @@ void MainWindow::timer()
 {
     qDebug()<<"\nLancement du timer\n";
     QTimer *timer = new QTimer(this);
-    //connect(timer, SIGNAL(timeout()), this, SLOT(recuperationCoordonnees()));
     connect(timer, SIGNAL(timeout()), this, SLOT(envoie_coordonnees()));
-    timer->start(9000);
+    timer->start(7000);
 
 }
 
 
 void MainWindow::envoie_coordonnees()
 {
-    //Conversion
-    QString x = QString(joystick_x);
-    QString y = QString(joystick_y);
-    QString t = QString(joystick_t);
 
     QByteArray packet;
     QDataStream out(&packet, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
 
     //On prépare le paquet à envoyer
-    QString messageCoordonnees = "{\"robot\":{\"X\":"+QString(joystick_x)+",\"Y\":"+QString(joystick_y)+",\"T\":"+QString(joystick_t)+"}";
+    QString messageCoordonnees = "{\"robot\":{\"X\":"+QString::number(joystick_x)+",\"Y\":"+QString::number(joystick_y)+",\"T\":"+QString::number(joystick_t)+"}";
 
+    qDebug()<<"messageCoordonnees"<<messageCoordonnees;
 
     int envoie = socket->write(messageCoordonnees.toStdString().c_str()); // On envoie le paquet converti
 
@@ -626,9 +616,9 @@ void MainWindow::envoie_coordonnees()
     message_envoie->setText(messageCoordonnees);
 
     //Test Erreur
-    if(envoie == -1)
-        QMessageBox::critical(this,"Erreur","Message non envoyé");
-        message_envoie->clear();
+    if(envoie == -1){
+       QMessageBox::critical(this,"Erreur","Message non envoyé");
+       message_envoie->clear();}
 
     //Emission des logs
     messageLogs = QDateTime::currentDateTime().toString()+" : Emission des coordonnées au serveur "+adr_ip->text()+"\r\n";
