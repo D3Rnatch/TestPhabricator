@@ -147,10 +147,12 @@ class Robot:
     def scan_tick(self):
         self.logs_arduino.write_log("Scan tick.")
 	frame = self.send_to_arduino(self.serial_manager.create_update_scaner_frame(self.scan_angle))
+	time.sleep(0.5)
+	frame = self.send_to_arduino(self.serial_manager.create_update_scaner_frame(self.scan_angle))
 	self.scan_angle = self.scan_angle + 15
 	if self.scan_angle == 0 :
 	    time.sleep(1)	
-	time.sleep(0.1)
+	time.sleep(0.4)
 	dist = self.scaner_module.get_plan_distance()
 	if dist > 0:
 	    self.mapping_module.update_map((self.x, self.y, self.tetha), (self.scan_angle, dist))
@@ -174,8 +176,8 @@ class Robot:
 	    byte2 = 0
 	    byte3 = 0
 	    byte4 = 0
-	    if data3 > 100:
-	    	data3 = 100
+	    if data3 > 60:
+	    	data3 = 60
 	    byte5 = data3
 	    if byte5 > 126:
 	        byte5 = 126
@@ -292,6 +294,7 @@ class Robot:
         if self.state_mode == self.STATE_MOVE:
             self.logs.write_log("Send the stop frame to robot.")
 	    frame = self.send_to_arduino(self.serial_manager.create_stop_frame())
+	    frame = self.send_to_arduino(self.serial_manager.create_update_scaner_frame(0))
 	    self.logs.write_log("Set scan mode.")
 	    self.state_mode = self.STATE_SCAN
 	    self.json_module.add_custom_message("state_info", "scan")
