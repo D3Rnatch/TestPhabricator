@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 
        MainWindow *w = new MainWindow();
        w->show();
-       joystick* j = new joystick ();
+      joystick* j = new joystick ();
 
 
        //Connections des touches du Joystick vers l'interface
@@ -22,7 +22,6 @@ int main(int argc, char *argv[])
        w->setJoystick_x(j->getJoystick_x());
        w->setJoystick_y(j->getJoystick_y());
        w->setJoystick_t(j->getJoystick_t());
-
 
        return app.exec();
 }

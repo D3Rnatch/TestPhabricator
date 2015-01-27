@@ -39,3 +39,4 @@ class joystick: public QObject
 };
 
 #endif // JOYSTICK_H
+
