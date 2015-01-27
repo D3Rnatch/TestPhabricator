@@ -1,4 +1,4 @@
-#define SDIO 50
+#define SDIO 51
 #define SCLK 52
 //#define SDIO 3
 //#define SCLK 2

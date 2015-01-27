@@ -36,7 +36,7 @@ void loop()
       Serial.print(dX, DEC);
       Serial.print(":");
       Serial.println(dY, DEC);
-      Serial.println("");
+      Serial.println("");/*
       Serial.print("Addr : 0x01");
       Serial.println(readRegister(0x01),BIN);
       Serial.print("Addr : 0x04");
@@ -52,6 +52,6 @@ void loop()
       Serial.print("Addr : 0x09");
       Serial.println(readRegister(0x09),BIN);
       Serial.print("Addr : 0x0A");
-      Serial.println(readRegister(0x0A),BIN);
+      Serial.println(readRegister(0x0A),BIN);*/
      delay(100);
 }

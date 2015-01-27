@@ -13,22 +13,27 @@ Controller :: Controller()
 	this->net = new Network_manager(115200);
         
 	this->escenter[0].attach(3);
-    	this->escenter[1].attach(4);
-    	this->escenter[2].attach(5);
-    	this->escenter[3].attach(6);
-        this->escenter[4].attach(7);
-	this->LaserScaner.attach(8);
+    	this->escenter[1].attach(5);
+    	this->escenter[2].attach(7);
+    	this->escenter[3].attach(11);
+        this->escenter[4].attach(12);
+	
+        this->arm();
+        
+        delay(10);
+        
+        // this->imu = new MPU_Handler();
+        
+        this->LaserScaner.attach(9);
 	// Starting The Acq manager
 	this->acq = new ACQ_handler();
 	this->acq_system = 0;
 
-        this->arm();
         this->calibrate_laserscaner();
         // Serial.println("End of INIT Go for IMU.");
-        this->imu = new MPU_Handler();
         actual = millis();
-        // Serial.println("Loop time is : ");
-        // Serial.println(actual-start);
+       //Serial.println("Loop time is : ");
+       //Serial.println(actual-start);
 }
 
 void Controller :: init()
@@ -40,7 +45,7 @@ void Controller :: init()
 
         // ////Serial.print("TEST");
         uint8_t errorCode = 0;
-        errorCode = this->imu->getErrorCode();
+        // errorCode = this->imu->getErrorCode();
 	this->net->send_ready_packet(errorCode);
 }
 
@@ -58,7 +63,7 @@ void Controller ::  setSpeedcent(int a, int spd){
 
 void Controller ::  setSpeedFans(uint8_t * b)
 {
-  int vit[4]; 
+  int vit[5]; 
  for(int i=0;i<5;i++) {
      if(b[i]>MAX) b[i] = MAX;
      else if (b[i] < MIN) b[i] = MIN;
@@ -87,24 +92,29 @@ void Controller ::  calibrate_laserscaner()
 }
 
 void Controller ::  arm(){
+ // Serial.println("Starting ARM : ");
+  delay(5000);
   setSpeedcent(0,MIN);
   setSpeedcent(1,MIN);
   setSpeedcent(2,MIN);
   setSpeedcent(3,MIN);
   setSpeedcent(4,MIN);
-  delay(1200);
+//Serial.println("Begin MIN.");
+  delay(5000);
   setSpeedcent(0,MAX);
   setSpeedcent(1,MAX);
   setSpeedcent(2,MAX);
   setSpeedcent(3,MAX);
   setSpeedcent(4,MAX);
-  delay(1200);
+//Serial.println("After MAX.");
+  delay(5000);
   setSpeedcent(0,MIN);
   setSpeedcent(1,MIN);
   setSpeedcent(2,MIN);
   setSpeedcent(3,MIN);
   setSpeedcent(4,MIN);
-  delay(1200);
+  delay(1302);
+//Serial.println("After ARM.");
 }
 
 void Controller ::  Process_Motor(uint8_t * b)
@@ -113,6 +123,7 @@ void Controller ::  Process_Motor(uint8_t * b)
 		       
         // we set fans power.
         setSpeedFans(b);
+        // Serial.println("Fans Set.");
                 
         for(int i=0;i<5;i++) {
                b[i] = 0;
@@ -156,6 +167,12 @@ void Controller ::  reset_Services()
 		default :
 			break;
 	}
+
+        if(this->lastState == Scan) {
+             // reattachinterrupt on IMU :
+             // attachInterrupt(0,MPU_Handler::dmpDataReady,RISING);
+             // this->lastState = Idle; 
+        }
 }
 
 void Controller ::  Process_Com(uint8_t id, uint8_t * b)
@@ -165,9 +182,12 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
   int g = 0;
   uint8_t g2 = 0;
 	if (id != 200) {
-		if(id != 7)
+  //Serial.println("Packet Received.");
+  //Serial.println(id);
+		if(id != 7 && id != 0 && id != (uint8_t)'\n'){
 			this->net->send_full(id+48,b[0]+48,b[1]+48,b[2]+48,b[3]+48,b[4]+48,'\n');
-
+                        //Serial.println("In If");
+                 }
               switch(id) {
          
 					case 2 : // Stop frame
@@ -187,12 +207,15 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
 					case 6 : // Scanning
                                                 //Serial.println("Controller State to Scanning.");
 						this->controllerState = Scan;
+                                                // Obligation to detach the IMU interrupt.
+                                                // detachInterrupt(0);
+                                                // this->lastState = Scan;
 						break;
 					case 7 : // Request for acquisition
 						// Rechange the data :
 						x = this->acq->get_MoveX();
 						y = this->acq->get_MoveY();
-                                                g = this->imu->getGValue();
+                                                // g = this->imu->getGValue();
 						if (x < 0) x = 255-x;
 						if (y < 0) y = 255 - y;
 						// Send packet ...
@@ -205,8 +228,9 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
                                                 }
                                                 
                                                 //Serial.print("ACQ request : ");
-                                                //Serial.println(g+g2,DEC);
+                                                // Serial.println(g+g2,DEC);
                                                 this->net->send_data_packet(x,y,g,g2);
+                                                //Serial.println("Sent.");
 						break;
 					default :
 						this->controllerState = Idle;

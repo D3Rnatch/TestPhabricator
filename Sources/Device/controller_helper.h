@@ -141,6 +141,8 @@ void Process_Com(uint8_t id, uint8_t * b);
 	boolean scaner_last_set;/*!< Is scanner on ? */
 	uint8_t scaner_off_cpt;/*!< Scanner on since. */
 
+        State lastState;
+
 };
 
 

@@ -17,8 +17,6 @@
 */
 class MPU6050;
 
-void dmpDataReady();
-
 class MPU_Handler
 {
 	public :
@@ -35,6 +33,8 @@ class MPU_Handler
                 int getErrorCode();
 		
 		int getGValue();
+
+                static void dmpDataReady();
 
 		// int treshold;
 		// float mean;

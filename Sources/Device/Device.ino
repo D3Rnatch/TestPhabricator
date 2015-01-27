@@ -52,7 +52,7 @@ void loop()
         actual = millis();
         
         // Run the IMU unstack process
-        controller->imu->run_the_magic();
+        // controller->imu->run_the_magic();
         
         // Run the Serial Manager : Gets the computer's entries.
         controller->net->run_the_magic();
@@ -67,6 +67,7 @@ void loop()
 
         // On manual and Acquisition state : Process the ACQ (get the distance calculated) and the Motor update.
 	if(controller->controllerState == Manual_Acquisition) {
+                  controller->reset_Services();
 		controller->Process_Acq();
 		if(id == 3)
 			controller->Process_Motor(b);
@@ -74,6 +75,7 @@ void loop()
         
         // On manual only Motors are updated
 	if(controller->controllerState == Manual) {
+                  controller->reset_Services();
 		if(id == 3)
 			controller->Process_Motor(b);
 	}
@@ -86,6 +88,7 @@ void loop()
 
         // TO BE IMPLEMENTED
 	if(controller->controllerState == Automatic) {
+                  controller->reset_Services();
 		// TO BE IMPLEMENTED
 	}
 

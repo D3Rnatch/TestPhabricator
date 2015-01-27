@@ -2,7 +2,7 @@
 #include "MPU_Handler.h"
 
 volatile bool mpuInterrupt = false;
-void dmpDataReady()
+void MPU_Handler :: dmpDataReady()
 {
     // ////Serial.println("INTERRUPT !");
     mpuInterrupt = true;
@@ -57,7 +57,9 @@ MPU_Handler :: MPU_Handler()
       
         delay(2);
         // Stabilize mpu :
-        // while(!this->isStabilized()){ this->run_the_magic(); }
+        
+        while(!this->isStabilized()){ this->run_the_magic(); }
+        
         // Serial.print("init finished. : ");
         // Serial.println(this->threshold,DEC);
 }

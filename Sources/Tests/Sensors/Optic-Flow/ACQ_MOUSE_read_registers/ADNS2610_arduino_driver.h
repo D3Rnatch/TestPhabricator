@@ -1,7 +1,7 @@
-//#define SDIO 50
-//#define SCLK 52
-#define SDIO 3
-#define SCLK 2
+#define SDIO 51
+#define SCLK 52
+//#define SDIO 3
+//#define SCLK 2
 
 #define DLEDG 9
 #define DLEDR 10
