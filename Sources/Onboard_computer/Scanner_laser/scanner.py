@@ -1,7 +1,7 @@
 ## @file Scanner.py
 #  @brief Scanner laser module.
 #  @author Loic Dalloz
-#  @version 3.0
+#  @version 3.2
 #
 #import picamera
 #import picamera.array
@@ -135,7 +135,8 @@ class Scanner:
 	return_value = 0
 	for contour in contours:
 		x, y, w, h = cv2.boundingRect(contour)
-		if (w < h + 3) and (w > h - 3) and w > 0 and h > 0 and y > 180 and y < 280 and x > 200:
+		#if (w < h + 3) and (w > h - 3) and w > 0 and h > 0 and y > 180 and y < 280 and x > 200:
+		if y > 180 and y < 280 and x > 200:
 			compteur = compteur + 1
 			mean = mean + x
 			mean = mean + x + w
