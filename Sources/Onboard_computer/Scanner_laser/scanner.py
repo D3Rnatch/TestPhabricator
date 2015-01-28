@@ -45,6 +45,7 @@ class Scanner:
     #  @param self The object pointer.
     def __init__(self):
         self.x = 0
+	self.compteur = 0
         self.y = 0
         self.half = 0
 	self.kernel_erode = np.ones((1, 1), np.uint8)
@@ -75,7 +76,7 @@ class Scanner:
         #    max2 = 254
 
         # Init mask threshold.
-	max2 = 250
+	max2 = 253
         self.lower_red = np.array([0, 0, max2])
         self.upper_red = np.array([255, 255, 255])
 
@@ -123,6 +124,8 @@ class Scanner:
         #rows, col = self.mask.shape
         #liste = [j for j in xrange(col) if self.mask.item(self.half, j)==255]
         #return np.mean(liste)
+	retour = 0
+	mean = 0
 	f_x = 0
 	f_y = 0
 	f_w = 0
@@ -132,16 +135,28 @@ class Scanner:
 	return_value = 0
 	for contour in contours:
 		x, y, w, h = cv2.boundingRect(contour)
-		if (w < h + 3) and (w > h - 3) and w > 0 and h > 0 and y > 208 and y < 220 and x > 220:
+		if (w < h + 3) and (w > h - 3) and w > 0 and h > 0 and y > 180 and y < 280 and x > 200:
 			compteur = compteur + 1
+			mean = mean + x
+			mean = mean + x + w
 			f_x = x
 			f_y = y
 			f_w = w
 			f_h = h
+			cv2.rectangle(self.image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+		else:
+			cv2.rectangle(self.image, (x, y), (x+w, y+h), (255, 0, 0), 2)
+	cv2.rectangle(self.image, (200, 180), (640, 280), (255, 255, 255), 1)
+	cv2.putText(self.image, str(compteur), (50, 20), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 2)
+	cv2.imwrite("capture" + str(self.compteur) + ".png", self.image)
+	self.compteur = self.compteur + 1
 	if compteur == 1:
-		return x + (w/2)
+		retour =  f_x + (f_w/2)
+	elif compteur == 0:
+		retour =  0
 	else:
-		return 0
+		retour = (mean/2)/compteur
+	return retour
 	
 
     ## Calibrate the scanner
@@ -189,7 +204,10 @@ class Scanner:
         self.take_picture()
         self.make_mask()
         u = self.get_U()
-        dist = (self.N/((u*1.4)-self.k))/10
+	if u != 0:
+        	dist = (self.N/((u*1.4)-self.k))/10
+	else:
+		dist = 0
         return dist
 
     ## Load the calibration coefs

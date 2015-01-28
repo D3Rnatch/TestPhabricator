@@ -98,9 +98,9 @@ class Robot:
 	self.scaner_module.load_configs()
 	self.scaner_module.start_module()
 	self.logs.write_log("Start mapping manager.")
-	self.mapping_module = mapping((100, 100), 10)
-	self.x = 50
-	self.y = 50
+	self.mapping_module = mapping((200, 200), 10)
+	self.x = 100
+	self.y = 100
         self.logs.write_log("Start some variables.")
         self.is_running = True
         self.logs.write_log("Start serial manager.")
@@ -154,6 +154,7 @@ class Robot:
 	    time.sleep(1)	
 	time.sleep(0.4)
 	dist = self.scaner_module.get_plan_distance()
+	print "Distance = " + str(dist)
 	if dist > 0:
 	    self.mapping_module.update_map((self.x, self.y, self.tetha), (self.scan_angle, dist))
 	if self.scan_angle > 180:
@@ -165,8 +166,8 @@ class Robot:
     #  @param joystick_movement Tuple of joystick informations.
     def move_tick(self, joystick_movement):
     	ret = self.read_from_arduino(self.GET_ODO)
-        self.logs_arduino.write_log("Understood: " + str(ret[0]) + " : " + str(ret[1]) + " : " + str(ord(ret[2])-48))
-	self.logs_angle.write_log(str(ord(ret[2])-48))
+        self.logs_arduino.write_log("Understood: " + str(ret[0]) + " : " + str(ret[1]) + " : " + str(ret[2]))
+	self.logs_angle.write_log(str(ret[2]))
 	if self.ai_mode == self.AI_MANUAL:
 	    self.logs_arduino.write_log("Movement tick.")
 	    data1 = joystick_movement[0]*10
@@ -333,7 +334,7 @@ class Robot:
         if id == self.GET_READY:
             return (frame2[1], frame2[2])
         elif id == self.GET_ODO:
-            return (frame2[1], frame2[2], frame2[3])
+            return (ord(frame2[1])-48, ord(frame2[2])-48, ord(frame2[3])-48 + ord(frame2[4])-48)
         elif id == self.GET_BATTERY:
             return (frame2[1], frame2[2])
         else:

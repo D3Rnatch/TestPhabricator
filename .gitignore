@@ -5,6 +5,7 @@ __pycache__/
 *.o
 *.logfile
 *.db
+*.png
 *.swp
 *.h264
 Docs/Computer/*
