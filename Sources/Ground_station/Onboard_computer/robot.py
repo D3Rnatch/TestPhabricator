@@ -67,9 +67,9 @@ class Robot:
     ## Constructor.
     #  @param self The object pointer.
     def __init__(self):
-        self.x = 0
-        self.y = 0
-        self.tetha = 0
+        self.x = 100
+        self.y = 100
+        self.tetha = 10
         self.logs = logManager()
         self.logs.set_name("system")
 	#self.logs_arduino = logManager()
