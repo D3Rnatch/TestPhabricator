@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 *~
 *.o
+*.png
 *.logfile
 *.db
 *.swp
