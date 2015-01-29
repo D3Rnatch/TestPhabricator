@@ -25,6 +25,7 @@ joystick::joystick()
         {
             switch (evenements.type)
             {
+
                 case SDL_JOYBUTTONDOWN:
                     switch (evenements.jbutton.button)
                         {
@@ -157,3 +158,4 @@ void joystick::pause()
         }
     }
 }
+

@@ -33,12 +33,25 @@
 #include <QtGlobal>
 #include <iostream>
 #include <qfile.h>
+#include <SDL2/SDL_joystick.h>
+#include <SDL2/SDL.h>
+
+#include <QGraphicsObject>
+#include <QGraphicsItem>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneDragDropEvent>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QEvent>
+#include <QGraphicsLineItem>
+#include <QGraphicsScene>
+
 
 #include "libraries.h"
 #include "mainwindow.h"
 #include "joystick.h"
-#include <SDL2/SDL_joystick.h>
-#include <SDL2/SDL.h>
+#include "map.h"
+
 
 
 #endif // LIBRARIES

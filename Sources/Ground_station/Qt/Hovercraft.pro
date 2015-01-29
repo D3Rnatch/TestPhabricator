@@ -24,11 +24,13 @@ INCLUDEPATH += usr/include
 
 HEADERS += mainwindow.h \
     libraries.h \
-    joystick.h
+    joystick.h \
+    map.h
 
 SOURCES += mainwindow.cpp \
     main.cpp \
-    joystick.cpp
+    joystick.cpp \
+    map.cpp
 
 
 FORMS += mainwindow.ui
