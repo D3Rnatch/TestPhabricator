@@ -135,39 +135,52 @@ class Robot:
 	    if received == True:
 	        self.move_tick((r_x, r_y, r_t))
 
-        # Send the infos to the base station
-        #self.json_module.add_custom_message("Info", "Everything ok !")
-        if self.json_module.get_pending_messages() > 0:
-            self.net_module.send_to_base(self.json_module.build_message((self.x, self.y), self.tetha, (50, 50), 30, "") + " ")
+        # Send the infos to the base station if needed.
+        if self.json_module.get_pending_messages() > 0 or self.state_mode == self.STATE_MOVE or self.json_module.get_pending_obstacles() > 0:
+            self.net_module.send_to_base(self.json_module.build_message((self.x, self.y), self.tetha, (50, 50)) + " ")
 
         return self.is_running
 
     ## Scan tick.
+    #
+    #  This methos will scan the environment and updates the map from it.
+    #  It is calles on each loop tick.
+    #
     #  @param self The object pointer.
     def scan_tick(self):
         self.logs_arduino.write_log("Scan tick.")
 	frame = self.send_to_arduino(self.serial_manager.create_update_scaner_frame(self.scan_angle))
-	time.sleep(0.5)
-	frame = self.send_to_arduino(self.serial_manager.create_update_scaner_frame(self.scan_angle))
-	self.scan_angle = self.scan_angle + 15
+	#time.sleep(0.5)
+	#frame = self.send_to_arduino(self.serial_manager.create_update_scaner_frame(self.scan_angle))
 	if self.scan_angle == 0 :
 	    time.sleep(1)	
 	time.sleep(0.4)
 	dist = self.scaner_module.get_plan_distance()
-	print "Distance = " + str(dist)
+	#print "Distance = " + str(dist)
 	if dist > 0:
-	    self.mapping_module.update_map((self.x, self.y, self.tetha), (self.scan_angle, dist))
+	    obstacle = self.mapping_module.update_map((self.x, self.y, self.tetha), (self.scan_angle, dist))
+	    self.json_module.add_obstacle_position(obstacle)
+	    self.scan_angle = self.scan_angle + 15
 	if self.scan_angle > 180:
 	    self.scan_angle = 0
 	    self.set_wait()
 
     ## Move tick.
+    #
+    #  This method is called automatically in each loop tick when in move state.
+    #  It read odometry from device, update robot informations and compute it to adapt motors orders.
+    #  It should compute depending on AI state.
+    #  Only the manual state is implemented here (nothing is computed in any other state).
+    #
     #  @param self The object pointer.
     #  @param joystick_movement Tuple of joystick informations.
     def move_tick(self, joystick_movement):
     	ret = self.read_from_arduino(self.GET_ODO)
         self.logs_arduino.write_log("Understood: " + str(ret[0]) + " : " + str(ret[1]) + " : " + str(ret[2]))
 	self.logs_angle.write_log(str(ret[2]))
+	self.tetha = ret[2]
+	self.x = self.x + ret[0]
+	self.y = self.y + ret[1]
 	if self.ai_mode == self.AI_MANUAL:
 	    self.logs_arduino.write_log("Movement tick.")
 	    data1 = joystick_movement[0]*10

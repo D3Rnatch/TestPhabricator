@@ -1,7 +1,7 @@
 ## @file mapping.py
 #  @brief Map manager module.
 #  @author Loic Dalloz
-#  @version 1.0
+#  @version 1.1
 #
 from numpy import *
 import math
@@ -64,9 +64,14 @@ class mapping:
         save_file.write("EOF\n")
 
     ## Update map from scanner infos.
+    #
+    #  This methods uses mathematics from a dark age to determine from the robot's position and scanner infos the obstacle position in the global map.
+    #  It also updates the map.
+    #
     #  @param self The object pointer.
     #  @param robot_position The robot position (x, y, teta).
     #  @param scanner_infos The scanner infos (scanner_rotation, scanner distance).
+    #  @return A tuple with determined positions.
     def update_map(self, robot_position, scanner_infos):
         angle = robot_position[2] + scanner_infos[0]
         rad = math.pi * angle / 180
@@ -77,6 +82,7 @@ class mapping:
         x_final = rounded_x + robot_position[1]
         y_final = rounded_y + robot_position[0]
         self.signal_a_hit((x_final, y_final))
+	return (x_final, y_final)
         #print "Infos angle calc :"
         #print "\tAngle : " + str(angle) + "deg\t" + str(rad) + "rad"
         #print "\tX = " + str(x_final) + "\tY = " + str(y_final)

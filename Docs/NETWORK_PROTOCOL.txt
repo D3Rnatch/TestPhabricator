@@ -191,8 +191,8 @@ III. Wifi protocol
 	Y position
 	rotation angle
 	batteries state
-	scanner angle
-	scanner image
+	scanner detection X
+	scanner detection Y
 
 	The robot can also send some custom messages as "ready", acks...
 	System messages should be first in the queue.
@@ -210,8 +210,8 @@ III. Wifi protocol
 			]
 		},
 		"scanner":{
-			"angle":scanner_angle,
-			"image":image_in_binary_state
+			"X":obstacle_X,
+			"Y":obstacle_Y
 		},
 		"message":{
 			"type":"[message type]",

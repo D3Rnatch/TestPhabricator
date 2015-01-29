@@ -11,6 +11,7 @@ import numpy
 ## JSON management for the station communication
 #  Fields:
 #    - self.message_queue      => message to send queue 
+#    - self.obstacle_queue     => obstacle to send queue
 #    - self.my_message_type    => message type for custom messages to send
 #    - self.my_message_content => message content for next custom message to send
 #
@@ -21,20 +22,30 @@ class messages_sol:
         self.my_message_type = ""
         self.my_message_content = ""
         self.message_queue = list()
+	self.obstacle_queue = list()
 
     ## Construct the JSON message to send.
+    #
+    #  This method will construct the next message to send to the ground station.
+    #  It will construct the message as follow :
+    #   - always put robot position and batteries state
+    #   - add obstacle position if there is any obstacle position to send
+    #   - add message if there is any pending message
+    #
+    #  @see add_obstacle_position
+    #  @see add_custom_message
     #  @param self The object pointer.
     #  @param position The robot position in the form (x, y).
     #  @param robot_angle The robot's Z angle.
     #  @param batteries_state The batteries states in the form (batterie_1_state, batterie_2_state).
-    #  @param scanner_angle The scanner's angle from the standby position.
-    #  @param image The image from the scanner. Must be a string encoded in base 64 (see function encode_image()).
-    #  @see encode_image()
     #  @return The message string ready to be sent.
-    def build_message(self, position, robot_angle, batteries_state, scanner_angle, image):
+    def build_message(self, position, robot_angle, batteries_state):
 
-        if image != "":
-            scanner_message = ',"scanner":{"angle":%s,"image":%s}' % (str(scanner_angle), str(image))
+        if self.get_pending_obstacles() > 0:
+	    obstacle = self.pop_obstacle()
+	    scanner_x = obstacle[0]
+	    scanner_y = obstacle[1]
+            scanner_message = ',"scanner":{"X":%s,"Y":%s}' % (str(scanner_x), str(scanner_y))
         else:
             scanner_message = ""
 
@@ -58,7 +69,18 @@ class messages_sol:
         else:
             self.message_queue.append((message_type, message_content))
 
+    ## Add a detected obstacle to the next message.
+    #
+    #  This method will automaticaly add an obstacle position to the obstacle queue.
+    #  Obstacles will be popped from queue while messages will be sent.
+    #
+    #  @param self The object pointer.
+    #  @param obstacle Detected position (a tuple).
+    def add_obstacle_position(self, obstacle):
+    	self.obstacle_queue.append(obstacle)
+
     ## Encode a binary image in base64.
+    #  @deprecated We do not send image through JSON.
     #  @param self The object pointer.
     #  @param image The image to be encoded.
     #  @return The encoded image in string format.
@@ -67,6 +89,9 @@ class messages_sol:
         return base64.b64encode(data)
 
     ## Decode a message received from the station.
+    #
+    #  This method will take an input JSON and return a tuple with all informations received from the ground station.
+    #
     #  @param self The object pointer.
     #  @param message The received string.
     #  @return (X, Y, T, messages).
@@ -110,9 +135,27 @@ class messages_sol:
         else:
             self.my_message_content = ""
             self.my_message_type = ""
-
+    
+    ## Pop the next obstacle to send.
+    #
+    #  This method will pop the next obstacle to send from the obstacle_queue.
+    #  This action will remove the obstacle from the list.
+    #  DO NOT : use this function unless you know what you are doing.
+    #
+    def pop_obstacle(self):
+    	if len(self.obstacle_queue) > 0:
+	    return self.obstacle_queue.pop(0)
+	else
+	    return (0, 0)
+	    
     ## Get pending messages number.
     #  @param self The object pointer.
     #  @return Pending messages number.
     def get_pending_messages(self):
 	return len(self.message_queue)
+
+    ## Get pending obstacle number.
+    #  @param self The object pointer.
+    #  @return Pending obstacles numbers.
+    def get_pending_obstacles(self):
+    	return len(self.obstacle_queue)
