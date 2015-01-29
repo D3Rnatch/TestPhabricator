@@ -1,5 +1,5 @@
 
-#include "MPU_Handler.h"
+#include "mpu_handler.h"
 
 volatile bool mpuInterrupt = false;
 void MPU_Handler :: dmpDataReady()
