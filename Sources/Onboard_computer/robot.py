@@ -83,6 +83,7 @@ class Robot:
         self.ai_mode = self.AI_MANUAL
         self.state_mode = self.STATE_WAIT
 	self.scan_angle = 0
+	self.loop_cpt = 0
 
     ## Start routine for the robot.
     #  @param self The object pointer.
@@ -136,8 +137,11 @@ class Robot:
 	        self.move_tick((r_x, r_y, r_t))
 
         # Send the infos to the base station if needed.
-        if self.json_module.get_pending_messages() > 0 or self.state_mode == self.STATE_MOVE or self.json_module.get_pending_obstacles() > 0:
+        if (self.json_module.get_pending_messages() > 0 or self.state_mode == self.STATE_MOVE or self.json_module.get_pending_obstacles() > 0) and self.loop_cpt > 10000:
             self.net_module.send_to_base(self.json_module.build_message((self.x, self.y), self.tetha, (50, 50)) + " ")
+	    self.loop_cpt = 0
+	else:
+	    self.loop_cpt = self.loop_cpt + 1
 
         return self.is_running
 

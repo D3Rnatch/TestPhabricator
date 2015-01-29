@@ -145,7 +145,7 @@ class messages_sol:
     def pop_obstacle(self):
     	if len(self.obstacle_queue) > 0:
 	    return self.obstacle_queue.pop(0)
-	else
+	else:
 	    return (0, 0)
 	    
     ## Get pending messages number.
