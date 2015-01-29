@@ -83,7 +83,7 @@ class Robot:
         self.ai_mode = self.AI_MANUAL
         self.state_mode = self.STATE_WAIT
 	self.scan_angle = 0
-	self.loop_cpt = 0
+	self.last_time = 0
 
     ## Start routine for the robot.
     #  @param self The object pointer.
@@ -112,6 +112,7 @@ class Robot:
 	        self.logs.write_log("Fatal error: connection to arduino failed :\n\t" + str(e))
 	        exit()
         self.logs.write_log("End start routine.")
+	self.last_time = int(round(time.time() * 1000))
 
         
     ## Run the main program.
@@ -137,11 +138,10 @@ class Robot:
 	        self.move_tick((r_x, r_y, r_t))
 
         # Send the infos to the base station if needed.
-        if (self.json_module.get_pending_messages() > 0 or self.state_mode == self.STATE_MOVE or self.json_module.get_pending_obstacles() > 0) and self.loop_cpt > 10000:
+	current_time = int(round(time.time() * 1000))
+        if (self.json_module.get_pending_messages() > 0 or self.state_mode == self.STATE_MOVE or self.json_module.get_pending_obstacles() > 0) and self.last_time + 50 < current_time:
             self.net_module.send_to_base(self.json_module.build_message((self.x, self.y), self.tetha, (50, 50)) + " ")
-	    self.loop_cpt = 0
-	else:
-	    self.loop_cpt = self.loop_cpt + 1
+	    self.last_time = current_time
 
         return self.is_running
 
@@ -157,14 +157,14 @@ class Robot:
 	#time.sleep(0.5)
 	#frame = self.send_to_arduino(self.serial_manager.create_update_scaner_frame(self.scan_angle))
 	if self.scan_angle == 0 :
-	    time.sleep(1)	
+	    time.sleep(0.5)	
 	time.sleep(0.4)
 	dist = self.scaner_module.get_plan_distance()
 	#print "Distance = " + str(dist)
 	if dist > 0:
 	    obstacle = self.mapping_module.update_map((self.x, self.y, self.tetha), (self.scan_angle, dist))
 	    self.json_module.add_obstacle_position(obstacle)
-	    self.scan_angle = self.scan_angle + 15
+	self.scan_angle = self.scan_angle + 15
 	if self.scan_angle > 180:
 	    self.scan_angle = 0
 	    self.set_wait()
