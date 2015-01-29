@@ -68,7 +68,9 @@ MainWindow::MainWindow(QWidget *parent) :
    //--------------------------------------LOGS-----------------------------------------------
 
    QObject::connect(boutonLog,SIGNAL(clicked()),this,SLOT(creationLogs()));//tests sur la creation de logs
+   QObject::connect(boutonLog,SIGNAL(clicked()),this,SLOT(creationMapLogs()));//tests sur la creation de Maplogs
    QObject::connect(this,SIGNAL(signal_ajoutLogs()),this,SLOT(ajoutLogs()));//tests sur l'ajout de logs
+   QObject::connect(this,SIGNAL(signal_ajoutLogs()),this,SLOT(ajoutMapLogs()));//tests sur l'ajout de logs
 
    //------------------------------INTERFACE JOYSTICK/SERVEUR-------------------------
 
@@ -205,9 +207,6 @@ void MainWindow::donneesRecues()
 //Ce slot demande le déconexion du serveur
 void MainWindow::deconnexion()
 {
-
-
-
     socket->close();
 
     //On affiche l'information Deconnecté
@@ -224,15 +223,12 @@ void MainWindow::deconnexion()
 
     //On stop le timer
     emit signal_deconnecte();
-
-
-
 }
 
 
 //Ce slot est appelé lorsqu'on est déconnecté du serveur
  void MainWindow::deconnecte()
- {
+{
       //On affiche l'état de la connexion
      etat_connexion->setText("Déconnecté");
 
@@ -245,7 +241,16 @@ void MainWindow::deconnexion()
      //Emission des logs
      messageLogs = QDateTime::currentDateTime().toString()+" : déconnecté du serveur "+adr_ip->text()+"\r\n";
      emit signal_ajoutLogs();
- }
+
+     //On nettoye la carte
+     for(int i=0; i< 20; i++)
+     {
+         for(int j=0; j< 50; j++)
+         {
+              carte->Coord[i][j]->setText("-");
+         }
+     }
+}
 
 
 
@@ -326,8 +331,6 @@ void MainWindow::messageErreur()
 
                 qDebug()<<"Fermeture de la fenêtre d'Erreur";
 }
-
-
 
 
 //Slot envoyé systematiquement à chaque nouvelle connexion
@@ -413,9 +416,9 @@ void MainWindow::parserReception()
     //Message 1
     //Informations Coordonnées
     Coord_X = JsonObj_1["robot"].toObject()["X"].toInt();
-    qDebug() << "\nX="<<Coord_X;;
+    qDebug()<< "\nCoordX : "<<Coord_X;
     Coord_Y = JsonObj_1["robot"].toObject()["Y"].toInt();
-    qDebug() << "\nY="<<Coord_Y;
+    qDebug()<< "CoordY : "<<Coord_Y;
     R_value_1 = JsonObj_1["robot"].toObject()["R"].toInt();
     qDebug() << "\nR="<<R_value_1;
 
@@ -426,11 +429,11 @@ void MainWindow::parserReception()
     int batterie_value_1 = JsonObj_1["batteries"].toObject()["value"].toInt();//Inutile car le serveur ne renvoie pas la valeur de la batterie
     qDebug() << "\nvalue_batterie="<<batterie_value_1;
 
-    //Informations angle
-    int scaner_angle_1 = JsonObj_1["scaner"].toObject()["angle"].toInt();
-    qDebug() << "\nscaner angle ="<<scaner_angle_1;
-    int image_in_binary_state_1 = JsonObj_1["scaner"].toObject()["angle"].toInt();
-    qDebug() << "\nmessage content="<<image_in_binary_state_1;
+    //Informations obstacles
+    scanner_obstacle_X = JsonObj_1["scanner"].toObject()["X"].toInt();
+    qDebug() << "\nscaner angle ="<<scanner_obstacle_X;
+    scanner_obstacle_Y = JsonObj_1["scanner"].toObject()["Y"].toInt();
+    qDebug() << "\nmessage content="<<scanner_obstacle_Y;
 
     //Informations message
     QString type_of_message_1 = JsonObj_1["message"].toObject()["type"].toString();
@@ -653,12 +656,17 @@ void MainWindow::envoie_coordonnees()
     box_t->setValue(joystick_t);
     box_r->setValue(R_value_1);
 
+    qDebug()<<"\nCoord_X avant envoie dans map :"<<Coord_X;
+    qDebug()<<"\nCoord_Y avant envoie dans map :"<<Coord_Y;
 
     Coord_X = Coord_X+1;
     Coord_Y = Coord_Y+1;
 
    carte->Coord[x_old][y_old]->setText("x"); //on affiche les coordonnées anciennes
    carte->Coord[this->getCoord_X()][this->getCoord_Y()]->setText("o"); //on affiche les coordonnées actuelles
+
+   carte->Coord[scanner_obstacle_X][scanner_obstacle_Y]->setText("@");//Onaffiche les obstables
+
 
    x_old = Coord_X;
    y_old = Coord_Y;
@@ -671,6 +679,9 @@ void MainWindow::envoie_coordonnees()
     //Emission des logs
     messageLogs = QDateTime::currentDateTime().toString()+" : Emission des coordonnées au serveur "+adr_ip->text()+"\r\n";
     emit signal_ajoutLogs();
+
+    //Emission des MapLogs
+    messageMapLogs = QDateTime::currentDateTime().toString()+" : X: "+QString::number(Coord_X)+"; Y: +"+QString::number(Coord_Y)+"\r\n";
 }
 
 void MainWindow::joystick()
@@ -824,3 +835,43 @@ void joystick::pause()
     }
 }
 */
+
+void MainWindow::creationMapLogs()
+{
+    mapLog = "LogMap.txt";
+
+    //création d'un object QFile
+    QFile file(mapLog);
+
+    // On ouvre notre fichier en lecture seule et on vérifie l'ouverture
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        qDebug()<<"fichier non créé";
+        return;
+    }
+    // Création d'un objet QTextStream à partir de notre objet QFile
+    QTextStream flux(&file);
+
+    // On choisit le codec correspondant au jeu de caractère que l'on souhaite ; ici, UTF-8
+    flux.setCodec("UTF-8");
+
+    // Écriture des différentes lignes dans le fichier
+    flux << "Fichier Log Map Hovercraft" << endl;
+
+    qDebug()<<"Ecriture dans le fichier log : C:/Users/Damien/Documents/PFE/build-Hovercraft-Desktop_Qt_5_4_0_MinGW_32bit-Debug";
+}
+
+void MainWindow::ajoutMapLogs()
+{
+    qDebug()<<"\nAjout d'un nouveau Maplog\n";
+
+    file.setFileName("LogMap.txt");
+    file.open(QIODevice::WriteOnly | QIODevice::Append);
+
+    QTextStream out(&file);
+
+    out << endl << messageMapLogs << endl;
+}
+
+
+

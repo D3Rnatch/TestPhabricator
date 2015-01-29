@@ -56,6 +56,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         void timer();
         void envoie_coordonnees();
         void stopTimer();
+        void creationMapLogs();
+        void ajoutMapLogs();
 
 
         void joystick();
@@ -86,11 +88,16 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         int batterie_index_2;
         QFile file;
         QString messageLogs;
+        QString messageMapLogs;
         QString nomLog;
+        QString mapLog;
         QTime heure;
         int joystick_x;
         int joystick_y;
         int joystick_t;
+
+        int scanner_obstacle_X;
+        int scanner_obstacle_Y;
 
         float x;
         float y;
