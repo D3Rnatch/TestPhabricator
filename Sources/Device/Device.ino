@@ -36,10 +36,11 @@ void setup()
         #elif I2CDEV_IMPLEMENTATION == I2CDEV_BUILTIN_FASTWIRE
             Fastwire::setup(400, true);
         #endif
-
+//////Serial.print
        controller = new Controller(); 
+       //////Serial.println("END OF CONTROLLER. STARTING INIT.");
        controller->init();
-      //Serial.println("End of Init.");
+      //////Serial.println("End of Init.");
 }
 
 /**
@@ -48,14 +49,20 @@ void setup()
  */
 uint8_t prec = 0;
 uint8_t actual = 0;
+uint8_t ind = 0;
 void loop()
 {
         actual = millis();
         
         // Run the IMU unstack process
         // And the ADNS acquisition.
-        controller->imu->run_the_magic();
+        if(ind%2 == 0)
+        { 
+          controller->imu->run_the_magic();
+        }
+        
         controller->acq->run_the_magic();
+        ind++;
         
         // Run the Serial Manager : Gets the computer's entries.
         controller->net->run_the_magic();

@@ -39,8 +39,11 @@ void ACQ_handler::run_the_magic()
 {
     // update sensor readables :
     this->optical->updateStatus();
+    //Serial.print("Updated Status");
     this->delta_y_adns = ADNSgetFilteredValueY();
     this->delta_x_adns = ADNSgetFilteredValueX();
+    // this->delta_y_adns = this->optical->dx();
+    // this->delta_x_adns = this->optical->dy();
     this->update_values();
 }
 
@@ -108,29 +111,57 @@ int ACQ_handler::get_MoveY()
     return y;
 }
 
+
+		void ACQ_handler :: position_calculation()
+		{
+			/*
+				// POSITION VECTOR INWORLD
+			   tab[0] = X;
+			   tab[1] = Y;
+			   tab[2] = Theta;
+ 
+   X = Xt + DxCTheta - DySTheta
+   Y = Yt + DxSTheta - DyCTheta
+  Theta =  Thetat + DTheta			
+			*/
+		}
+				
+		void ACQ_handler :: speed_calculation(){
+			// to be implemented
+		}
+
 ///////////////////////////////////////////////////////
 // ADNS ZONE
 int ACQ_handler :: ADNSgetFilteredValueY()
 {
-	int Y = optical->dx();
-	if (Y <= TRESHOLD_MAX) Y = 0;
-	else if (Y >= TRESHOLD_MIN) Y = 0;
-	else {
-	    if(Y<0) Y = Y + TRESHOLD_MAX;
-            else if(Y>0) Y = Y - TRESHOLD_MAX;
-        }
-        return Y;
+	int Y = optical->dy();
+        //Serial.print("TEST is Y:");
+        //Serial.println(Y,DEC);
+	if(Y <= TRESHOLD_MAX && Y >= TRESHOLD_MIN)
+		return 0; 
+	else
+	{
+		if(Y < 0)
+			return (Y - TRESHOLD_MIN);
+		else
+			return (Y - TRESHOLD_MAX);
+	}
 }
 
 int ACQ_handler :: ADNSgetFilteredValueX()
 {
 	int X = optical->dx();
-	if (X <= TRESHOLD_MAX) X = 0;
-	else if (X >= TRESHOLD_MIN) X = 0;
-	else {
-	    if(X<0) X = X + TRESHOLD_MAX;
-            else if(X>0) X = X - TRESHOLD_MAX;
-        }
-        return X;
+        //Serial.print("TEST is X:");
+        //Serial.println(X,DEC);
+        
+        if(X <= TRESHOLD_MAX && X >= TRESHOLD_MIN)
+		return 0; 
+	else
+	{
+		if(X < 0)
+			return (X - TRESHOLD_MIN);
+		else
+			return (X - TRESHOLD_MAX);
+	}
 }
 

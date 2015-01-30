@@ -21,7 +21,7 @@ Controller :: Controller()
         this->arm();
         
         delay(10);
-        
+        //Serial.println("ESC ARMED.");
         this->imu = new MPU_Handler();
         
         this->LaserScaner.attach(9);
@@ -30,7 +30,7 @@ Controller :: Controller()
 	this->acq_system = 0;
 
         this->calibrate_laserscaner();
-        // Serial.println("End of INIT Go for IMU.");
+        //Serial.println("End of INIT Go for IMU.");
         actual = millis();
        //Serial.println("Loop time is : ");
        //Serial.println(actual-start);
@@ -228,7 +228,8 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
                                                 }
                                                 
                                                 //Serial.print("ACQ request : ");
-                                                // Serial.println(g+g2,DEC);
+                                                //Serial.println(x,DEC);
+                                                //Serial.println(y,DEC);
                                                 this->net->send_data_packet(x,y,g,g2);
                                                 //Serial.println("Sent.");
 						break;

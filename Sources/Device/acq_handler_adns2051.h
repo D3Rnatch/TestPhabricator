@@ -31,8 +31,8 @@
 //#define SDIO 3
 //#define SCLK 2
 
-#define TRESHOLD_MIN -20 /*!< Min treshold. */
-#define TRESHOLD_MAX 20 /*!< Max treshold. */
+#define TRESHOLD_MIN -5 /*!< Min treshold. */
+#define TRESHOLD_MAX 5 /*!< Max treshold. */
 
 // #define CALL_MEMBER_FN(object,ptrToMember) ((object).*(ptrToMember))
 /**
@@ -94,7 +94,13 @@ class ACQ_handler
                 * \return stacked distance value read (NEXT IMPLEMENTED : the actual reading).
                 */		
                 void update_values();
+				
+		inline void update_angle(int nangle) { this->g_z_mpu = nangle; }
 
+		void position_calculation();
+				
+		void speed_calculation();
+				
 		// For lib PID synchronization.
 		/** \brief Mouse X speed measurement (RAW).*/
 		int delta_x_adns; 
