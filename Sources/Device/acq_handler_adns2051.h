@@ -108,7 +108,7 @@ class ACQ_handler
 		//		ADNS ZONE
 		////////////////////////////////////////////:
 		// Object :
-		ADNS2051 optical1;
+		ADNS2051 *optical;
 
 		int ADNSgetFilteredValueY();
 		
@@ -116,9 +116,9 @@ class ACQ_handler
 	
 	private :
 
-		byte frame[FRAMELENGTH];
+		// byte frame[FRAMELENGTH];
 
-		byte flop;
+		// byte flop;
 
 		double actual_r; // r
 		double actual_theta; // deg

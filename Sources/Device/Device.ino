@@ -55,7 +55,7 @@ void loop()
         // And the ADNS acquisition.
         controller->imu->run_the_magic();
         controller->acq->run_the_magic();
-        /*
+        
         // Run the Serial Manager : Gets the computer's entries.
         controller->net->run_the_magic();
         
@@ -101,7 +101,7 @@ void loop()
 	}
 
         prec = actual;
-        actual = millis();*/
+        actual = millis();
 }
 
 

@@ -9,7 +9,8 @@ ACQ_handler::ACQ_handler()
     // ADNSmouseInit(); // Démarrage du capteur optique.
     // mpuInit(); // Démarrage du G sensor
     // Starting mouse object
-    optical.begin();                       // Resync (not really necessary?)
+    optical = new ADNS2051(SCLK,SDIO);
+    optical->begin();                       // Resync (not really necessary?)
     this->delta_x_adns = this->delta_y_adns = 0;
     this->g_z_mpu = 0;
     this->actual_r = this->actual_theta = last_x = last_y = 0.0;
@@ -37,7 +38,7 @@ ACQ_handler::ACQ_handler()
 void ACQ_handler::run_the_magic()
 {
     // update sensor readables :
-    this->optical.updateStatus();
+    this->optical->updateStatus();
     this->delta_y_adns = ADNSgetFilteredValueY();
     this->delta_x_adns = ADNSgetFilteredValueX();
     this->update_values();
@@ -109,24 +110,27 @@ int ACQ_handler::get_MoveY()
 
 ///////////////////////////////////////////////////////
 // ADNS ZONE
-int ACQhandler :: ADNSgetFilteredValueY()
+int ACQ_handler :: ADNSgetFilteredValueY()
 {
-	int Y = optical.dx();
+	int Y = optical->dx();
 	if (Y <= TRESHOLD_MAX) Y = 0;
 	else if (Y >= TRESHOLD_MIN) Y = 0;
-	else 
-		Y = Y - TRESHOLD_MAX;
-	return Y;
-
+	else {
+	    if(Y<0) Y = Y + TRESHOLD_MAX;
+            else if(Y>0) Y = Y - TRESHOLD_MAX;
+        }
+        return Y;
 }
 
-int ACQhandler :: ADNSgetFilteredValueX()
+int ACQ_handler :: ADNSgetFilteredValueX()
 {
-	int X = optical.dx();
+	int X = optical->dx();
 	if (X <= TRESHOLD_MAX) X = 0;
 	else if (X >= TRESHOLD_MIN) X = 0;
-	else 
-		X = X - TRESHOLD_MAX;
-	return X;
+	else {
+	    if(X<0) X = X + TRESHOLD_MAX;
+            else if(X>0) X = X - TRESHOLD_MAX;
+        }
+        return X;
 }
 
