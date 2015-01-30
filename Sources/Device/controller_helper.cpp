@@ -22,7 +22,7 @@ Controller :: Controller()
         
         delay(10);
         
-        // this->imu = new MPU_Handler();
+        this->imu = new MPU_Handler();
         
         this->LaserScaner.attach(9);
 	// Starting The Acq manager
@@ -45,7 +45,7 @@ void Controller :: init()
 
         // ////Serial.print("TEST");
         uint8_t errorCode = 0;
-        // errorCode = this->imu->getErrorCode();
+        errorCode = this->imu->getErrorCode();
 	this->net->send_ready_packet(errorCode);
 }
 
@@ -215,7 +215,7 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
 						// Rechange the data :
 						x = this->acq->get_MoveX();
 						y = this->acq->get_MoveY();
-                                                // g = this->imu->getGValue();
+                                                g = this->imu->getGValue();
 						if (x < 0) x = 255-x;
 						if (y < 0) y = 255 - y;
 						// Send packet ...
@@ -244,7 +244,7 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
 void Controller ::  Process_Acq()
 {
 	// ACQUISITION UPDATE
-	this->acq->run_the_magic(); // update values...
+	// this->acq->run_the_magic(); // update values...
         // this->imu->run_the_magic();
 	this->acq_system++;
 	// Process PID

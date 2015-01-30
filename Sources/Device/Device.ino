@@ -52,8 +52,10 @@ void loop()
         actual = millis();
         
         // Run the IMU unstack process
-        // controller->imu->run_the_magic();
-        
+        // And the ADNS acquisition.
+        controller->imu->run_the_magic();
+        controller->acq->run_the_magic();
+        /*
         // Run the Serial Manager : Gets the computer's entries.
         controller->net->run_the_magic();
         
@@ -99,7 +101,7 @@ void loop()
 	}
 
         prec = actual;
-        actual = millis();
+        actual = millis();*/
 }
 
 

@@ -126,14 +126,14 @@ int ACQ_handler::get_MoveX()
 {
 	int x = this->last_x;
 	this->last_x = 0;
-    return x;
+        return x;
 }
 
 int ACQ_handler::get_MoveY()
 {
 	int y = this->last_y;
 	this->last_y = 0;
-    return y;
+        return y;
 }
 
 ///////////////////////////////////////////////////////
