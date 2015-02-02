@@ -1,4 +1,4 @@
-#ifndef JOYSTICK_H
+/*#ifndef JOYSTICK_H
 #define JOYSTICK_H
 
 #include "libraries.h"
@@ -40,3 +40,4 @@ class joystick: public QObject
 
 #endif // JOYSTICK_H
 
+*/

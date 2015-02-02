@@ -105,7 +105,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>10.5.133.73</string>
+     <string>10.5.133.19</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -418,7 +418,7 @@
      <x>0</x>
      <y>0</y>
      <width>976</width>
-     <height>26</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">

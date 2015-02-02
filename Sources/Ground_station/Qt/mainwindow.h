@@ -59,9 +59,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         void creationMapLogs();
         void ajoutMapLogs();
 
-
-        void joystick();
-        //void pause();
+        void fonction_joystick();
+        void pause();
 
     signals:
         void signal_parse();
@@ -77,8 +76,10 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
     private:
         QTcpSocket *socket; // Représente le serveur
         quint16 tailleMessage;
+        SDL_Joystick *Joystick; // création du joystick
 
         Map *carte;
+
 
         bool ok;
         QString messageRecu;
@@ -92,9 +93,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         QString nomLog;
         QString mapLog;
         QTime heure;
-        int joystick_x;
-        int joystick_y;
-        int joystick_t;
+        int joystick_x=0;
+        int joystick_y=0;
+        int joystick_t=0;
 
         int scanner_obstacle_X;
         int scanner_obstacle_Y;

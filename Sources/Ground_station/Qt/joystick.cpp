@@ -1,4 +1,4 @@
-#include "libraries.h"
+/*#include "libraries.h"
 
 
 joystick::joystick()
@@ -157,5 +157,5 @@ void joystick::pause()
                 continuer = 0;
         }
     }
-}
+}*/
 
