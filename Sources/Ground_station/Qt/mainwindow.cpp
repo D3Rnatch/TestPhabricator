@@ -87,15 +87,14 @@ MainWindow::MainWindow(QWidget *parent) :
          connect(this,SIGNAL(signal_deconnecte()), this, SLOT(stopTimer()));
 
    //-------------------------------------SDL-------------------------------------------
-   SDL_Init(SDL_INIT_VIDEO|SDL_INIT_JOYSTICK)< 0;
+   SDL_Init(SDL_INIT_VIDEO|SDL_INIT_JOYSTICK);
    //int SDL_NumJoysticks();
-   SDL_JoystickEventState(SDL_ENABLE);
    Joystick = SDL_JoystickOpen(0); // assignation au numéro 0
    qDebug() << " nb de joystick :" << SDL_NumJoysticks() << " \n ";
    qDebug() << " nb de boutons : " << SDL_JoystickNumButtons(Joystick) << " \n";
-   qDebug() << " nb d'axe' : " << SDL_JoystickNumAxes(Joystick) << " \n";
-
-       qDebug()<<"\n initialisation de x y t : "<<joystick_x << joystick_y <<joystick_t <<"\n";
+   qDebug() << " nb d'axe' : " << SDL_JoystickNumAxes(Joystick) << " \n";   
+   SDL_JoystickEventState(SDL_ENABLE);
+   qDebug()<<"\n initialisation de x y t : "<<joystick_x << joystick_y <<joystick_t <<"\n";
 }
 
 
@@ -578,7 +577,7 @@ void MainWindow::creationLogs()
 //Ce slot en envoyé systematique lorsqu'il y a un evenement
 void MainWindow::ajoutLogs()
 {
-    qDebug()<<"\nAjout d'un nouveau log\n";
+    //qDebug()<<"\nAjout d'un nouveau log\n";
 
     file.setFileName("Logs.txt");
     file.open(QIODevice::WriteOnly | QIODevice::Append);
@@ -586,6 +585,8 @@ void MainWindow::ajoutLogs()
     QTextStream out(&file);
 
     out << endl << messageLogs << endl;
+
+    file.close();
 }
 
 
@@ -630,9 +631,9 @@ void MainWindow::timer()
 {
     qDebug()<<"\nLancement du timer\n";
     timer1 = new QTimer(this);
-    connect(timer1, SIGNAL(timeout()), this, SLOT(envoie_coordonnees()));
-    connect(timer1, SIGNAL(timeout()), this, SLOT(joystick()));
-    timer1->start(50);
+    //connect(timer1, SIGNAL(timeout()), this, SLOT(envoie_coordonnees()));
+    connect(timer1, SIGNAL(timeout()), this, SLOT(fonction_joystick()));
+    timer1->start(1);
 
 }
 //Ce slot est envoyé lorsqu'on se déconnecte du robot
@@ -649,15 +650,15 @@ void MainWindow::envoie_coordonnees()
 {
     qDebug()<<"\nenvoie coodonnees()\n";
     fonction_joystick();
-    qDebug()<<"on sort de joystick()";
+    //qDebug()<<"on sort de joystick()";
 
     QByteArray packet;
     QDataStream out(&packet, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
 
     //On prépare le paquet à envoyer
-    QString messageCoordonnees = "{\"robot\":{\"X\":"+QString::number(joystick_x)+",\"Y\":"+QString::number(joystick_y)+",\"T\":"+QString::number(joystick_t)+"}";
+    QString messageCoordonnees = "{\"robot\":{\"X\":"+QString::number(joystick_x)+",\"Y\":"+QString::number(joystick_y)+",\"T\":"+QString::number(joystick_t)+"}} ";
 
-    qDebug()<<"\nmessageCoordonnees : "<<messageCoordonnees;
+    //qDebug()<<"\nmessageCoordonnees : "<<messageCoordonnees;
 
     int envoie = socket->write(messageCoordonnees.toStdString().c_str()); // On envoie le paquet converti
 
@@ -707,14 +708,15 @@ void MainWindow::fonction_joystick()
 {
     static SDL_Event evenements;
     //void SDL_JoystickUpdate();
-    qDebug()<<"\nInitialisation du Joystick";
+    qDebug()<<"fonction_joystick\n";
     //On ignore le clavier et la souris
     //SDL_EventState(SDL_KEYDOWN,SDL_IGNORE);
     //SDL_EventState(SDL_KEYUP,SDL_IGNORE);
     float coeff = 0.0003518509476;
     float coeff_t = 0.0015259254738;
 
-    if(SDL_PollEvent(&evenements))
+    //SDL_WaitEventTimeout(&evenements, 4);
+    if(SDL_PollEvent(&evenements) == 1)
     {
         //if (Joystick != NULL)
         //{
@@ -817,6 +819,9 @@ void MainWindow::fonction_joystick()
             }
       //}
     }
+    else{
+        qDebug() << "Pas d'event :( \n";
+    }
 
 }
 
@@ -860,13 +865,14 @@ void MainWindow::creationMapLogs()
     flux << "Fichier Log Map Hovercraft" << endl;
 
     qDebug()<<"Ecriture dans le fichier log : C:/Users/Damien/Documents/PFE/build-Hovercraft-Desktop_Qt_5_4_0_MinGW_32bit-Debug";
+    file.close();
 }
 
 
 
 void MainWindow::ajoutMapLogs()
 {
-    qDebug()<<"\nAjout d'un nouveau Maplog\n";
+    //qDebug()<<"\nAjout d'un nouveau Maplog\n";
 
     file.setFileName("LogMap.txt");
     file.open(QIODevice::WriteOnly | QIODevice::Append);
@@ -874,6 +880,8 @@ void MainWindow::ajoutMapLogs()
     QTextStream out(&file);
 
     out << endl << messageMapLogs << endl;
+
+    file.close();
 }
 
 

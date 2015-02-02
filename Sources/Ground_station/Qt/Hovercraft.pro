@@ -18,7 +18,7 @@ LIBS+= -L"C:\Qt\5.4\mingw491_32\SDL2-2-1.0.3\lib\x86" -lSDL2main
 #LIBS+= -LC:\Users\Damien\Documents\PFE\build-Hovercraft-Desktop_Qt_5_4_0_MinGW_32bit-Debug\SDL2-2-1.0.3\lib\x86 -lSDL2 -lSDL2main
 }
 unix{
-LIBS += -L/usr/lib -lSDL
+LIBS += -L/usr/lib -lSDL2
 INCLUDEPATH += usr/include
 }
 

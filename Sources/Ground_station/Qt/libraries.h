@@ -35,7 +35,6 @@
 #include <qfile.h>
 #include <SDL2/SDL_joystick.h>
 #include <SDL2/SDL.h>
-#include <SDL/SDL.h>
 
 
 
