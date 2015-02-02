@@ -179,12 +179,12 @@ class Robot:
     #  @param self The object pointer.
     #  @param joystick_movement Tuple of joystick informations.
     def move_tick(self, joystick_movement):
-    	ret = self.read_from_arduino(self.GET_ODO)
-        self.logs_arduino.write_log("Understood: " + str(ret[0]) + " : " + str(ret[1]) + " : " + str(ret[2]))
-	self.logs_angle.write_log(str(ret[2]))
-	self.tetha = ret[2]
-	self.x = self.x + ret[0]
-	self.y = self.y + ret[1]
+    	#ret = self.read_from_arduino(self.GET_ODO)
+        #self.logs_arduino.write_log("Understood: " + str(ret[0]) + " : " + str(ret[1]) + " : " + str(ret[2]))
+	#self.logs_angle.write_log(str(ret[2]))
+	#self.tetha = ret[2]
+	#self.x = self.x + ret[0]
+	#self.y = self.y + ret[1]
 	if self.ai_mode == self.AI_MANUAL:
 	    self.logs_arduino.write_log("Movement tick.")
 	    data1 = joystick_movement[0]*10
@@ -334,8 +334,8 @@ class Robot:
     def send_to_arduino(self, frame):
         self.logs_arduino.write_log("Send: " + str(frame))
         self.serial_manager.send(str(frame))
-        frame = self.serial_manager.read()
-        self.logs_arduino.write_log("Received: " + str(frame) + "\n")
+        #frame = self.serial_manager.read()
+        #self.logs_arduino.write_log("Received: " + str(frame) + "\n")
         return frame
 
     ## Read data from the arduino.
