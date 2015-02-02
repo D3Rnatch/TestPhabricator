@@ -126,7 +126,7 @@ void Process_Com(uint8_t id, uint8_t * b);
 * \param angle IMU euler angle measurement
 *
 */
-void calculate_Position(int angle);
+void calculate_Position();
 
 int getXCoord();
 
@@ -149,7 +149,7 @@ int getTCoord();
 	int acq_x;
 	int acq_y;
 	int acq_g;
-
+        int prec_g;
 	unsigned long time;/*!< Time save */
 	unsigned long last_time;/*!< Save last time */
 	boolean motor_last_set;/*!< Is motors on ? */

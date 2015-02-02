@@ -62,7 +62,9 @@ void loop()
         }
         
         controller->acq->run_the_magic();
-		controller->Process_Acq();
+       /* if(ind%4 == 0){
+	controller->Process_Acq();
+        controller->calculate_Position(); }*/
         ind++;
         
         // Run the Serial Manager : Gets the computer's entries.
@@ -108,9 +110,17 @@ void loop()
                 controller->reset_Services();
 		// TO BE IMPLEMENTED
 	}
-
+// */
         prec = actual;
         actual = millis();
+       // Serial.print (" TIME IS : ");
+       // Serial.println(actual-prec, DEC);
+     /*   Serial.print (" Position is : ");
+        Serial.print(controller->getXCoord(),DEC);
+        Serial.print (" : ");
+        Serial.print(controller->getYCoord(),DEC);
+        Serial.print (" : ");
+        Serial.println(controller->getTCoord(),DEC);*/
 }
 
-
+  

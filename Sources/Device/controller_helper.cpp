@@ -10,9 +10,9 @@ Controller :: Controller()
 	scaner_last_set = false;
 	scaner_off_cpt = 0;
   
-    gridsize = 10; // 10 cm
-	coef_di_cos = 1;
-	coef_di_sin = 1;
+        gridsize = 10; // 10 cm
+	coef_di_cos = (int)((20*cos(90))*1024);
+	coef_di_sin = (int)((20*sin(90))*1024);
 	this-> delta_angle = 0;
 	this-> deltaX = 0;
 	this-> deltaY = 0;
@@ -26,6 +26,7 @@ Controller :: Controller()
 	this->acq_x = 0;
 	this->acq_y = 0;
 	this->acq_g = 0;
+        this->prec_g = 0;
 	
 	this->net = new Network_manager(115200);
         
@@ -272,70 +273,90 @@ void Controller ::  Process_Acq()
 	// Process PID
 	
 	// Update ACQuisition
-	this->delta_angle = this->imu->getGValue() - this->acq_g; // Delta Theta
-	this->acq_g = this->imu->getGValue();
+	/*Serial.print(" ::::::::::");
+        Serial.print(delta_angle,DEC);*/
+        this->acq_g = this->imu->getGValue();
 	this->acq_x = this->acq->get_MoveX();
-	this->acq_y = this->acq->get_MoveY();
+	this->delta_angle = this->acq_g - this->prec_g; // Delta Theta
+        this->acq_y = this->acq->get_MoveY();/*
+	Serial.print(" ::::::::::");
+        Serial.print(acq_x,DEC);
+        *///Serial.print(" ::::::::::");
+        // Serial.println(delta_angle,DEC);
+        this->prec_g = this->acq_g;
+	
 }
 
 
-void Controller :: calculate_Position(int angle)
+void Controller :: calculate_Position()
 {
 	int grid = gridsize; // 10 cm
-	float dicos = coef_di_cos;
-	float disin = coef_di_sin;
-	int dx = deltaX;
-	int dy = deltaY;
-	int px = precX;
-	int py = precY;
-	int pt = precT;
-	int ax = actualX;
-	int ay = actualY;
-	int at = actualT;
+	int dicos = (int)coef_di_cos;
+	int disin = (int)coef_di_sin;
+        int dx = this->deltaX;
+	int dy = this->deltaY;
+	int px = this->precX;
+	int py = this->precY;
+	int pt = this->precT;
+	int ax;
+	int ay;
+	int at;
 	
 	// calculation of delta-distance :
-	int alt = (int)((disin * ( angle - this->acq_y )) << 5);
-	alt = alt/1000;
-	int alt2 = (int)((dicos * this->acq_x) << 5);
-	alt2 = alt2/1000;
+	int alt = (disin * ( delta_angle - this->acq_y ))/1024;
+	int alt2 = (dicos * this->acq_x)/1024;
 	dx = alt + alt2;
-	alt = dicos * ( this->acq_y - angle );
-	alt2 = this->acq_x * disin;
+	alt = (dicos * ( this->acq_y - delta_angle ))/1024;
+	alt2 = (this->acq_x * disin)/1024;
 	dy = alt + alt2;
 	
 	// calculation of position :
-	alt = (int)(cos(pt) << 5);
-	alt = alt/1000;
-	alt2 = (int)(sin(pt) << 5);
-	alt2 = alt2/1000;
-	ax = px + dx*alt - dy*alt2;
-	ay = py + dx*alt2 + dy*alt;
-	at = pt + angle;
+	alt = (int)(cos(pt)*1024);
+	alt2 = (int)(sin(pt)*1024);
+	ax = px + (dx*alt - dy*alt2)/1024;
+	ay = py + (dx*alt2 + dy*alt)/1024;
+	at = pt + delta_angle;
 	
+        /*Serial.print(dx,DEC);
+        Serial.print(":");
+        Serial.print(dy,DEC);
+        Serial.print(":");
+        Serial.print(pt,DEC);
+        Serial.print(":");
+        Serial.print(delta_angle);
+        Serial.print(":");
+        */
 	// Setting up inner data :
-	this->actualX = ax;
-	this->actualY = ay;
+	this->actualX = ax;///this->gridsize;
+	this->actualY = ay;///this->gridsize;
 	this->actualT = at;
+        //Serial.print("DX,DY,DO :");
+        //Serial.print(ax,DEC);
+        //Serial.print(":");
+        //Serial.print(ay,DEC);
+        //Serial.print(":");
+        //Serial.println(at,DEC);
+        this->delta_angle = 0;
+	this->precX = this->actualX;
+	this->precY = this->actualY;
+	this->precT = this->actualT;
 }
 
 int Controller :: getXCoord()
 {
 	int t = this->actualX;
-	this->precX = this->actualX;
 	return t;
 }
 
 int Controller :: getYCoord()
 {
 	int t = this->actualY;
-	this->precY = this->actualY;
 	return t;
 }
 
 int Controller :: getTCoord()
 {
 	int t = this->actualT;
-	this->precT = this->actualT;
 	return t;
 }
 

@@ -40,10 +40,11 @@ void ACQ_handler::run_the_magic()
     // update sensor readables :
     this->optical->updateStatus();
     //Serial.print("Updated Status");
-    this->delta_y_adns = ADNSgetFilteredValueY();
-    this->delta_x_adns = ADNSgetFilteredValueX();
-    // this->delta_y_adns = this->optical->dx();
-    // this->delta_x_adns = this->optical->dy();
+    //this->delta_y_adns = ADNSgetFilteredValueY();
+    //this->delta_x_adns = ADNSgetFilteredValueX();
+    this->delta_y_adns = this->optical->dx();
+    this->delta_x_adns = this->optical->dy();
+    //Serial.println(this->delta_y_adns,DEC);
     this->update_values();
 }
 
@@ -135,7 +136,7 @@ int ACQ_handler :: ADNSgetFilteredValueY()
 	int Y = optical->dy();
         //Serial.print("TEST is Y:");
         //Serial.println(Y,DEC);
-	if(Y <= TRESHOLD_MAX && Y >= TRESHOLD_MIN)
+	if(Y <= TRESHOLD_MAX || Y >= TRESHOLD_MIN)
 		return 0; 
 	else
 	{
@@ -152,7 +153,7 @@ int ACQ_handler :: ADNSgetFilteredValueX()
         //Serial.print("TEST is X:");
         //Serial.println(X,DEC);
         
-        if(X <= TRESHOLD_MAX && X >= TRESHOLD_MIN)
+        if(X <= TRESHOLD_MAX || X >= TRESHOLD_MIN)
 		return 0; 
 	else
 	{
