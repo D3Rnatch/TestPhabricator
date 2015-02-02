@@ -121,6 +121,19 @@ void reset_Services();
  */
 void Process_Com(uint8_t id, uint8_t * b);
 
+/**
+* \fn void calculate_Position(int angle)
+* \param angle IMU euler angle measurement
+*
+*/
+void calculate_Position(int angle);
+
+int getXCoord();
+
+int getYCoord();
+
+int getTCoord();
+
 	// Servo :
 	Servo escenter[5];/*!< Servo speed map. */
 	Servo LaserScaner;/*!< Scanner servo. */
@@ -132,7 +145,10 @@ void Process_Com(uint8_t id, uint8_t * b);
 	Network_manager *net;/*!< Network service */
 	ACQ_handler *acq;/*!< Acquisition service */
 	MPU_Handler *imu;/*!< IMU Service */
-        uint8_t acq_system;
+    uint8_t acq_system;
+	int acq_x;
+	int acq_y;
+	int acq_g;
 
 	unsigned long time;/*!< Time save */
 	unsigned long last_time;/*!< Save last time */
@@ -141,8 +157,21 @@ void Process_Com(uint8_t id, uint8_t * b);
 	boolean scaner_last_set;/*!< Is scanner on ? */
 	uint8_t scaner_off_cpt;/*!< Scanner on since. */
 
-        State lastState;
-
+    State lastState;
+		
+	// Position coef :
+	int gridsize; /* !< Taille d'une case */
+	float coef_di_cos;
+	float coef_di_sin;
+	int delta_angle;
+	int deltaX;
+	int deltaY;
+	int precX;
+	int precY;
+	int precT;
+	int actualT;
+	int actualX;
+	int actualY;
 };
 
 

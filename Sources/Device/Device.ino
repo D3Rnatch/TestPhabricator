@@ -62,6 +62,7 @@ void loop()
         }
         
         controller->acq->run_the_magic();
+		controller->Process_Acq();
         ind++;
         
         // Run the Serial Manager : Gets the computer's entries.

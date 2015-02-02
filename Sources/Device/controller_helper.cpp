@@ -3,13 +3,30 @@
 
 Controller :: Controller()
 {
-         int start = millis();
-         int actual = 0;
-  	 motor_last_set = false;
-	 motor_off_cpt = 0;
-	 scaner_last_set = false;
-	 scaner_off_cpt = 0;
+    int start = millis();
+    int actual = 0;
+  	motor_last_set = false;
+	motor_off_cpt = 0;
+	scaner_last_set = false;
+	scaner_off_cpt = 0;
   
+    gridsize = 10; // 10 cm
+	coef_di_cos = 1;
+	coef_di_sin = 1;
+	this-> delta_angle = 0;
+	this-> deltaX = 0;
+	this-> deltaY = 0;
+	this-> precX = 0;
+	this-> precY = 0;
+	this-> actualX = 0;
+	this-> actualY = 0;
+	this-> precT = 0;
+	this-> actualT = 0;
+
+	this->acq_x = 0;
+	this->acq_y = 0;
+	this->acq_g = 0;
+	
 	this->net = new Network_manager(115200);
         
 	this->escenter[0].attach(3);
@@ -213,9 +230,13 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
 						break;
 					case 7 : // Request for acquisition
 						// Rechange the data :
-						x = this->acq->get_MoveX();
-						y = this->acq->get_MoveY();
-                                                g = this->imu->getGValue();
+						// x = this->acq->get_MoveX();
+						// y = this->acq->get_MoveY();
+						// g = this->imu->getGValue();
+						x = this->acq_x;
+						y = this->acq_y;
+						g = this->acq_g;
+						
 						if (x < 0) x = 255-x;
 						if (y < 0) y = 255 - y;
 						// Send packet ...
@@ -249,5 +270,72 @@ void Controller ::  Process_Acq()
         // this->imu->run_the_magic();
 	this->acq_system++;
 	// Process PID
+	
+	// Update ACQuisition
+	this->delta_angle = this->imu->getGValue() - this->acq_g; // Delta Theta
+	this->acq_g = this->imu->getGValue();
+	this->acq_x = this->acq->get_MoveX();
+	this->acq_y = this->acq->get_MoveY();
+}
+
+
+void Controller :: calculate_Position(int angle)
+{
+	int grid = gridsize; // 10 cm
+	float dicos = coef_di_cos;
+	float disin = coef_di_sin;
+	int dx = deltaX;
+	int dy = deltaY;
+	int px = precX;
+	int py = precY;
+	int pt = precT;
+	int ax = actualX;
+	int ay = actualY;
+	int at = actualT;
+	
+	// calculation of delta-distance :
+	int alt = (int)((disin * ( angle - this->acq_y )) << 5);
+	alt = alt/1000;
+	int alt2 = (int)((dicos * this->acq_x) << 5);
+	alt2 = alt2/1000;
+	dx = alt + alt2;
+	alt = dicos * ( this->acq_y - angle );
+	alt2 = this->acq_x * disin;
+	dy = alt + alt2;
+	
+	// calculation of position :
+	alt = (int)(cos(pt) << 5);
+	alt = alt/1000;
+	alt2 = (int)(sin(pt) << 5);
+	alt2 = alt2/1000;
+	ax = px + dx*alt - dy*alt2;
+	ay = py + dx*alt2 + dy*alt;
+	at = pt + angle;
+	
+	// Setting up inner data :
+	this->actualX = ax;
+	this->actualY = ay;
+	this->actualT = at;
+}
+
+int Controller :: getXCoord()
+{
+	int t = this->actualX;
+	this->precX = this->actualX;
+	return t;
+}
+
+int Controller :: getYCoord()
+{
+	int t = this->actualY;
+	this->precY = this->actualY;
+	return t;
+}
+
+int Controller :: getTCoord()
+{
+	int t = this->actualT;
+	this->precT = this->actualT;
+	return t;
 }
 

@@ -110,10 +110,8 @@ int ACQ_handler::get_MoveY()
 	this->last_y = 0;
     return y;
 }
-
-
-		void ACQ_handler :: position_calculation()
-		{
+void ACQ_handler :: position_calculation()
+{
 			/*
 				// POSITION VECTOR INWORLD
 			   tab[0] = X;
@@ -124,11 +122,11 @@ int ACQ_handler::get_MoveY()
    Y = Yt + DxSTheta - DyCTheta
   Theta =  Thetat + DTheta			
 			*/
-		}
+}
 				
-		void ACQ_handler :: speed_calculation(){
+void ACQ_handler :: speed_calculation(){
 			// to be implemented
-		}
+}
 
 ///////////////////////////////////////////////////////
 // ADNS ZONE
