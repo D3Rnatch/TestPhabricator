@@ -334,8 +334,8 @@ class Robot:
     def send_to_arduino(self, frame):
         self.logs_arduino.write_log("Send: " + str(frame))
         self.serial_manager.send(str(frame))
-        #frame = self.serial_manager.read()
-        #self.logs_arduino.write_log("Received: " + str(frame) + "\n")
+        frame = self.serial_manager.read()
+        self.logs_arduino.write_log("Received: " + str(frame) + "\n")
         return frame
 
     ## Read data from the arduino.
