@@ -54,6 +54,9 @@ void ACQ_handler::update_values()
 	this->last_x += this->delta_x_adns;
 	this->last_y += this->delta_y_adns;
 
+        /*this->last_x *= 0,0172;
+        this->last_y *= 0,0172;*/
+
     /* Distance calculation */
     // Source is : 
     	//Calculate x,y,omega
@@ -99,30 +102,45 @@ double ACQ_handler::get_MoveAngle()
 }
 
 int ACQ_handler::get_MoveX()
-{
-	int x = this->last_x;
-	this->last_x = 0;
-    return x;
+{      
+    float f_x = this->last_x * MAGIC_TO_CM;
+
+
+        this->last_x = 0;
+
+
+    this->real_x = f_x;
+
+    return (int)this->real_x;
 }
 
 int ACQ_handler::get_MoveY()
 {
-	int y = this->last_y;
-	this->last_y = 0;
-    return y;
+        float f_y = this->last_y * MAGIC_TO_CM;
+
+        this->last_y = 0;
+                
+        this->real_y = f_y;
+        
+        return (int)this->real_y;
 }
 void ACQ_handler :: position_calculation()
 {
-			/*
-				// POSITION VECTOR INWORLD
-			   tab[0] = X;
-			   tab[1] = Y;
-			   tab[2] = Theta;
- 
-   X = Xt + DxCTheta - DySTheta
-   Y = Yt + DxSTheta - DyCTheta
-  Theta =  Thetat + DTheta			
-			*/
+	/*
+        float f_x = this->last_x * MAGIC_TO_CM;
+        float f_y = this->last_y * MAGIC_TO_CM;
+        
+        // reset of last_x et last_y
+        this->last_x = 0;
+        this->last_y = 0;
+        
+        this->real_x = f_x;
+        this->real_y = f_y;
+        
+        //Serial.print("DIST;");
+        Serial.print(this->f_x,DEC);
+        Serial.print(";");
+        Serial.println(this->f_y,DEC);*/
 }
 				
 void ACQ_handler :: speed_calculation(){

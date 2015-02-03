@@ -234,10 +234,18 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
 						// x = this->acq->get_MoveX();
 						// y = this->acq->get_MoveY();
 						// g = this->imu->getGValue();
-						x = this->acq_x;
-						y = this->acq_y;
-						g = this->acq_g;
 						
+                                                // Calculate World Coodinates
+                                                this->Process_Acq();
+                                                this->calculate_Position();
+                                                /*
+                                                x = this->acq_x;
+						y = this->acq_y;*/
+						// g = this->acq_g;
+						x = this->actualX;
+                                                y = this->actualY;
+                                                g = this->actualT;
+
 						if (x < 0) x = 255-x;
 						if (y < 0) y = 255 - y;
 						// Send packet ...

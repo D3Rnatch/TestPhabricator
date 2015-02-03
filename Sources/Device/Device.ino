@@ -63,9 +63,24 @@ void loop()
         
         controller->acq->run_the_magic();
        /* if(ind%4 == 0){
-	controller->Process_Acq();
-        controller->calculate_Position(); }*/
+	    controller->Process_Acq();
+            controller->calculate_Position(); }*/
         ind++;
+        
+        /*
+        if(ind%15 == 0) {
+        controller->Process_Acq();
+        controller->calculate_Position();
+        }*/
+        /*
+        Serial.print("POS(x,y,g);");
+        Serial.print(controller->actualX,DEC);
+        Serial.print(";");
+        Serial.print(controller->actualY,DEC);
+        Serial.print(";");
+        Serial.println(controller->actualT,DEC);*/
+        
+        
         
         // Run the Serial Manager : Gets the computer's entries.
         controller->net->run_the_magic();

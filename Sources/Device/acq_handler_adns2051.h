@@ -26,6 +26,10 @@
 
 #define ALPHA 0.00000359 /*!< ALPHA value. */
 
+#define MAGIC_TO_INCH 0.00068
+#define MAGIC_INCH_TO_CM 2.54
+#define MAGIC_TO_CM 0.001727
+
 #define SDIO 50 /*!< SPI protocol wire SDIO Arduino pin. */
 #define SCLK 52 /*!< SPI protocol wire SCLK Arduino pin. */
 //#define SDIO 3
@@ -69,7 +73,8 @@ class ACQ_handler
                 * \brief Returns the actual stack of reading of the optical sensor.
                 *     Returns the actual stack of reading of the optical sensor. Empties the register on reading.
                 * \return stacked register value read (NEXT IMPLEMENTED : distance made by mobile).
-                */int get_MoveY();
+                */
+                int get_MoveY();
 
 		/**
                 * \fn int get_MoveXY()
@@ -130,6 +135,8 @@ class ACQ_handler
 		double actual_theta; // deg
 		int last_x;
 		int last_y;
+                float real_x;
+                float real_y;
 
 
 };
