@@ -145,7 +145,7 @@ void MPU_Handler :: checkStabilization()
    this->prec = this->actual;
    int g = this->getGValue();
    this->actual = g;
-   if(prec == actual && nb <50)
+   if(prec == actual && nb <100)
           nb++;
    else if (prec != actual)
          nb = 0;

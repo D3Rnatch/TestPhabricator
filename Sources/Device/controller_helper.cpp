@@ -256,7 +256,14 @@ void Controller ::  Process_Com(uint8_t id, uint8_t * b)
                                                   g2 = g-255; // on sature à 255 et on enlève le reste que l'on stocke dans g2
                                                   g  = g-g2; // ici : on récupère la prmeière partie
                                                 }
-                                                
+                                                Serial.print("ACQ request : ");
+                                                Serial.print(x,DEC);
+                                                Serial.print(";");
+                                                Serial.print(y,DEC);
+                                                Serial.print(";");
+                                                Serial.print(g,DEC);
+                                                Serial.print(";");
+                                                Serial.println(this->acq_g,DEC);
                                                 //Serial.print("ACQ request : ");
                                                 //Serial.println(x,DEC);
                                                 //Serial.println(y,DEC);
