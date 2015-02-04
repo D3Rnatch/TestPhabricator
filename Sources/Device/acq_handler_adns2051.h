@@ -30,8 +30,10 @@
 #define MAGIC_INCH_TO_CM 2.54
 #define MAGIC_TO_CM 0.001727
 
-#define SDIO 50 /*!< SPI protocol wire SDIO Arduino pin. */
-#define SCLK 52 /*!< SPI protocol wire SCLK Arduino pin. */
+#define SDIO 44
+#define SCLK 45
+//#define SDIO 50 /*!< SPI protocol wire SDIO Arduino pin. */
+//#define SCLK 52 /*!< SPI protocol wire SCLK Arduino pin. */
 //#define SDIO 3
 //#define SCLK 2
 
