@@ -324,16 +324,16 @@ void Controller :: calculate_Position()
         
         // Etape une changement de repère :
         float angle = this->delta_angle * (3,14/180);
-        angle = 3,14/2 - angle;
+        // angle = 3,14/2 - angle;
         // new x and y calculation :
-        float dxm = this->acq_x*cos(angle) + this->acq_y*sin(angle);
+        float dxm = this->acq_x*cos(-angle) + this->acq_y*sin(-angle);
         dxm /= 10000;
-        float dym = this->acq_y*cos(angle) - this->acq_x*sin(angle);
+        float dym = this->acq_y*cos(-angle) - this->acq_x*sin(-angle);
         dym /= 10000;
         // In world coefficients are :
         float dTheta = dxm/20; // 20cm is the distance from center to optical mouse
         float dxWorld = dym*(dTheta/2);
-        float dyWorld = dym*(1-(dTheta/6));
+        float dyWorld = dym*(1-((dTheta*dTheta)/6));
         
         // updating actual X,Y and T :
         this->actualX = this->precX + dxWorld;
