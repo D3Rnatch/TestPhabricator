@@ -62,10 +62,11 @@ void loop()
         }
         
         controller->acq->run_the_magic();
-       /* if(ind%4 == 0){
+     /*  if(ind%10 == 0){
 	    controller->Process_Acq();
-            controller->calculate_Position(); }*/
-        ind++;
+            controller->calculate_Position(); }
+       */
+       ind++;
         
         /*
         if(ind%15 == 0) {
@@ -126,8 +127,10 @@ void loop()
 		// TO BE IMPLEMENTED
 	}
 // */
-        prec = actual;
-        actual = millis();
+   
+    //    prec = actual;
+    //    actual = millis();
+  //      delay(3);
        // Serial.print (" TIME IS : ");
        // Serial.println(actual-prec, DEC);
      /*   Serial.print (" Position is : ");

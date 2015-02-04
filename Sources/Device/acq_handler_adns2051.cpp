@@ -103,6 +103,7 @@ double ACQ_handler::get_MoveAngle()
 
 int ACQ_handler::get_MoveX()
 {      
+  /*
     float f_x = this->last_x * MAGIC_TO_CM;
 
 
@@ -111,18 +112,28 @@ int ACQ_handler::get_MoveX()
 
     this->real_x = f_x;
 
-    return (int)this->real_x;
+    return (int)this->real_x; */
+
+  int x = this->last_x;
+  this->last_x = 0;
+  return x;
 }
 
 int ACQ_handler::get_MoveY()
 {
+  /*
         float f_y = this->last_y * MAGIC_TO_CM;
 
         this->last_y = 0;
                 
         this->real_y = f_y;
+        Serial.println(real_y,DEC);
+        return (int)this->real_y;*/
         
-        return (int)this->real_y;
+        
+  int x = this->last_y;
+  this->last_y = 0;
+  return x;
 }
 void ACQ_handler :: position_calculation()
 {

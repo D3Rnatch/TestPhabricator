@@ -305,6 +305,7 @@ void Controller ::  Process_Acq()
 
 void Controller :: calculate_Position()
 {
+
 	int grid = gridsize; // 10 cm
 	int dicos = (int)coef_di_cos;
 	int disin = (int)coef_di_sin;
@@ -316,7 +317,49 @@ void Controller :: calculate_Position()
 	int ax;
 	int ay;
 	int at;
-	
+
+        // trasnform mouse data to cm data :
+        this->acq_x *= (0.001727*10000);
+        this->acq_y *= (0.001727*10000);
+        
+        // Etape une changement de repère :
+        float angle = this->delta_angle * (3,14/180);
+        angle = 3,14/2 - angle;
+        // new x and y calculation :
+        float dxm = this->acq_x*cos(angle) + this->acq_y*sin(angle);
+        dxm /= 10000;
+        float dym = this->acq_y*cos(angle) - this->acq_x*sin(angle);
+        dym /= 10000;
+        // In world coefficients are :
+        float dTheta = dxm/20; // 20cm is the distance from center to optical mouse
+        float dxWorld = dym*(dTheta/2);
+        float dyWorld = dym*(1-(dTheta/6));
+        
+        // updating actual X,Y and T :
+        this->actualX = this->precX + dxWorld;
+        this->actualY = this->precY + dyWorld;
+        this->actualT = this->precT + dTheta;
+        /*
+        Serial.print("ACQ;");
+        Serial.print(dxWorld,DEC);
+        Serial.print(";");
+        Serial.print(dxWorld,DEC);
+        Serial.print(";");
+        Serial.print(dTheta,DEC);
+        Serial.print(";");
+        Serial.print(actualX,DEC);
+        Serial.print(";");
+        Serial.print(actualY,DEC);
+        Serial.print(";");
+        Serial.print(actualT,DEC);
+        Serial.print(";");
+        Serial.print(this->acq_x,DEC);
+        Serial.print(";");
+        Serial.print(this->acq_y,DEC);
+        Serial.print(";");
+        Serial.println(this->acq_g,DEC);*/
+        
+/*	
 	// calculation of delta-distance :
 	int alt = (disin * ( delta_angle - this->acq_y ))/1024;
 	int alt2 = (dicos * this->acq_x)/1024;
@@ -340,11 +383,11 @@ void Controller :: calculate_Position()
         Serial.print(":");
         Serial.print(delta_angle);
         Serial.print(":");
-        */
+        
 	// Setting up inner data :
 	this->actualX = ax;///this->gridsize;
 	this->actualY = ay;///this->gridsize;
-	this->actualT = at;
+	this->actualT = at;*/
         //Serial.print("DX,DY,DO :");
         //Serial.print(ax,DEC);
         //Serial.print(":");

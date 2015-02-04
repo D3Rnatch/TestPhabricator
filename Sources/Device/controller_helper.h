@@ -166,12 +166,12 @@ int getTCoord();
 	int delta_angle;
 	int deltaX;
 	int deltaY;
-	int precX;
-	int precY;
-	int precT;
-	int actualT;
-	int actualX;
-	int actualY;
+	float precX;
+	float precY;
+	float precT;
+	float actualT;
+	float actualX;
+	float actualY;
 };
 
 
