@@ -53,14 +53,15 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         void creationLogs();
         void ajoutLogs();
         void recuperationCoordonnees();
-        void timer();
-        void envoie_coordonnees();
-        void stopTimer();
+       void timer();
+       void envoie_coordonnees();
+       void stopTimer();
         void creationMapLogs();
         void ajoutMapLogs();
 
         void fonction_joystick();
-        void pause();
+        void affichage();
+
 
     signals:
         void signal_parse();
@@ -72,6 +73,9 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         void signal_sdl_quitter();
         void signal_sdl_mode_auto();
 
+        void signal_coord();
+
+
 
     private:
         QTcpSocket *socket; // Représente le serveur
@@ -80,6 +84,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 
         Map *carte;
 
+        SDL_Event event;
 
         bool ok;
         QString messageRecu;
@@ -93,12 +98,14 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         QString nomLog;
         QString mapLog;
         QTime heure;
-        int joystick_x=0;
-        int joystick_y=0;
-        int joystick_t=0;
+        int joystick_x;
+        int joystick_y;
+        int joystick_t;
 
         int scanner_obstacle_X;
         int scanner_obstacle_Y;
+
+        int a=0;
 
         float x;
         float y;
@@ -111,7 +118,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
         int Coord_Y;
         int R_value_1;
 
-        QTimer *timer1 ;
+       QTimer *timer1 ;
 
 };
 

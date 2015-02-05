@@ -1,5 +1,8 @@
 #include "libraries.h"
 #include <QGridLayout>
+#include <QScrollBar>
+#include <QScrollArea>
+//#include <QWidget>
 
 #include "map.h"
 
@@ -17,7 +20,22 @@ Map::Map(QWidget *parent)
         {
            Coord[i][j]= new QLabel(this);
             Coord[i][j]->setText("-");
+            Coord[i][j]->setFixedSize(200,200);
             a->addWidget(Coord[i][j],i,j);
         }
     }
+
+
+    /*QScrollArea *area = new QScrollArea(this);
+    area->setWidget(this);
+
+    area->horizontalScrollBar(50);
+    area->verticalScrollBar(20);
+
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(new QLabel("something else",this));
+    layout->addWidget(area);
+
+    setLayout(layout);*/
+
 }

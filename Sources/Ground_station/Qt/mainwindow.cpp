@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setupUi(this); //initialision de l'IHM
 
     //Map
-    this-> carte= new Map(this);
+    this-> carte = new Map(this);
     carte->move(30,50);
     carte->setVisible(true);
 
@@ -83,11 +83,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
    //----------------------------------COORDONNEES DRONE----------------------------------
 
-     QObject::connect(bouton_coord_refresh,SIGNAL(clicked()),this,SLOT(recuperationCoordonnees())); //Rafraichissement Coordonnées par le bouton
-         connect(this,SIGNAL(signal_deconnecte()), this, SLOT(stopTimer()));
+    //QObject::connect(bouton_coord_refresh,SIGNAL(clicked()),this,SLOT(recuperationCoordonnees())); //Rafraichissement Coordonnées par le bouton
+    QObject::connect(this,SIGNAL(signal_deconnecte()), this, SLOT(stopTimer()));
+    //QObject::connect(this,SIGNAL(signal_coord()), this, SLOT(envoie_coordonnees()));
 
    //-------------------------------------SDL-------------------------------------------
-   SDL_Init(SDL_INIT_VIDEO|SDL_INIT_JOYSTICK);
+
+   SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) == -1)
+        {
+         qDebug()<<"\nErreur Initialisation";
+        }
    //int SDL_NumJoysticks();
    Joystick = SDL_JoystickOpen(0); // assignation au numéro 0
    qDebug() << " nb de joystick :" << SDL_NumJoysticks() << " \n ";
@@ -95,6 +101,9 @@ MainWindow::MainWindow(QWidget *parent) :
    qDebug() << " nb d'axe' : " << SDL_JoystickNumAxes(Joystick) << " \n";   
    SDL_JoystickEventState(SDL_ENABLE);
    qDebug()<<"\n initialisation de x y t : "<<joystick_x << joystick_y <<joystick_t <<"\n";
+
+   //connect(this, SIGNAL(signal_sdl()),this, SLOT(fonction_joystick()));
+
 }
 
 
@@ -117,7 +126,7 @@ void MainWindow::quitterApp()
 //Ce slot est envoyé lorsqu'on clique sur Se Connecter
 void MainWindow::connexion()
 {
-
+    qDebug()<<"\nconnexion...\n";
     socket->abort();//On désactive les connexions précédentes s'il y en a
     socket->connectToHost(adr_ip->text(), numero_port_serveur->value());//On se connecte au serveur demandé
 
@@ -130,6 +139,8 @@ void MainWindow::connexion()
 // Ce slot est appelé lorsque la connexion au serveur a réussi
  void MainWindow::connecte()
 {
+     qDebug()<<"connecte";
+
       //On affiche l'état de la connexion
      etat_connexion->setText("Connecté");
 
@@ -139,8 +150,13 @@ void MainWindow::connexion()
      //On nettoie la zone de reception
      message_envoie->clear();
 
+     qDebug()<<"dans connecté";
+
      //On lance le timer pour l'envoie des coordonnées
      timer();
+
+     //fonction_joystick();
+
 
      //Emission des logs
      messageLogs = QDateTime::currentDateTime().toString()+" : connecté au serveur "+adr_ip->text()+"\r\n";
@@ -151,7 +167,7 @@ void MainWindow::connexion()
 //Envoie d'un messsage au serveur
 void MainWindow::on_boutonEnvoyer_clicked()
 {
-
+    qDebug()<<"\nboutton envoyé clické\n";
     message_envoie->clear();
 
     QByteArray paquet;
@@ -176,9 +192,12 @@ void MainWindow::on_boutonEnvoyer_clicked()
 //Reception d'un message provenant du serveur
 void MainWindow::donneesRecues()
 {
+    qDebug()<<"données reçues";
     //Reception du Message
     QDataStream in(socket);
     int size = socket->bytesAvailable();
+    SDL_JoystickClose(Joystick);
+    SDL_Quit();
     char* temp = new char[size];
     int buff_size = in.readRawData(temp, size);
 
@@ -214,9 +233,13 @@ void MainWindow::donneesRecues()
     emit signal_parse();//Lancement du signal d'execution du parse
 }
 
+
+
+
 //Ce slot demande le déconexion du serveur
 void MainWindow::deconnexion()
 {
+    qDebug()<<"Déconnexion...";
     socket->close();
 
     //On affiche l'information Deconnecté
@@ -236,9 +259,15 @@ void MainWindow::deconnexion()
 }
 
 
+
+
+
 //Ce slot est appelé lorsqu'on est déconnecté du serveur
  void MainWindow::deconnecte()
 {
+
+    qDebug()<<"\nDéconnecté\n";
+
       //On affiche l'état de la connexion
      etat_connexion->setText("Déconnecté");
 
@@ -261,6 +290,8 @@ void MainWindow::deconnexion()
          }
      }
 }
+
+
 
 
 
@@ -298,6 +329,7 @@ void MainWindow::erreurSocket(QAbstractSocket::SocketError problem)
 //Ce slot est envoyé des qu'on clique sur le bouton d'arret d'urgence
 void MainWindow::envoie_arret_urgence()
 {
+    qDebug()<<"\narret d'urgence demandé\n";
 
     QByteArray paquet_urgence;
     QDataStream out(&paquet_urgence, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
@@ -346,7 +378,7 @@ void MainWindow::messageErreur()
 //Slot envoyé systematiquement à chaque nouvelle connexion
 void MainWindow::envoie_message_hello()
 {
-
+    qDebug()<<"\nEnvoie du message hello";
     message_envoie->clear();
 
     QByteArray packet;
@@ -401,7 +433,6 @@ void MainWindow::stop()
     //Emission des logs
     messageLogs = QDateTime::currentDateTime().toString()+" : demande d'arrêt du drone \r\n";
     emit signal_ajoutLogs();
-
 }
 
 
@@ -435,9 +466,9 @@ void MainWindow::parserReception()
 
     //Informations Batteries
     int batterie_index_1 = JsonObj_1["batteries"].toObject()["batterie"].toInt();
-    qDebug() << "\nindex batterie="<<batterie_index_1;
+    //qDebug() << "\nindex batterie="<<batterie_index_1;
     int batterie_value_1 = JsonObj_1["batteries"].toObject()["value"].toInt();//Inutile car le serveur ne renvoie pas la valeur de la batterie
-    qDebug() << "\nvalue_batterie="<<batterie_value_1;
+    //qDebug() << "\nvalue_batterie="<<batterie_value_1;
 
     //Informations obstacles
     scanner_obstacle_X = JsonObj_1["scanner"].toObject()["X"].toInt();
@@ -546,6 +577,7 @@ void MainWindow::envoieModeManuel()
 //Ce slot est appelé à chaque fois que l'on désire creer de nouveaux logs
 void MainWindow::creationLogs()
 {
+    qDebug()<<"\nCréation de Log\n";
 
     //Création d'un nom de log
     nomLog = "Logs.txt";
@@ -577,7 +609,7 @@ void MainWindow::creationLogs()
 //Ce slot en envoyé systematique lorsqu'il y a un evenement
 void MainWindow::ajoutLogs()
 {
-    //qDebug()<<"\nAjout d'un nouveau log\n";
+    qDebug()<<"\nAjout d'un nouveau log\n";
 
     file.setFileName("Logs.txt");
     file.open(QIODevice::WriteOnly | QIODevice::Append);
@@ -593,6 +625,8 @@ void MainWindow::ajoutLogs()
 //Ce slot est envoyé lorsqu'on désire récupérer les coordonéees du robot
 void MainWindow::recuperationCoordonnees()
 {
+
+    qDebug()<<"\nRécupération des coordonnées\n";
 
 void donneesRecues();
 
@@ -633,12 +667,14 @@ void MainWindow::timer()
     timer1 = new QTimer(this);
     //connect(timer1, SIGNAL(timeout()), this, SLOT(envoie_coordonnees()));
     connect(timer1, SIGNAL(timeout()), this, SLOT(fonction_joystick()));
-    timer1->start(1);
-
+    timer1->start(1000);
 }
+
+
 //Ce slot est envoyé lorsqu'on se déconnecte du robot
 void MainWindow::stopTimer()
 {
+    qDebug()<<"\nStop Timer\n";
     //On stop le timer
     timer1->stop();
     qDebug()<<"\nTimer arreté\n";
@@ -648,11 +684,10 @@ void MainWindow::stopTimer()
 
 void MainWindow::envoie_coordonnees()
 {
-    qDebug()<<"\nenvoie coodonnees()\n";
-    fonction_joystick();
-    //qDebug()<<"on sort de joystick()";
+   qDebug()<<"\nenvoie coodonnees()\0n";
 
-    QByteArray packet;
+   //qDebug()<<" creation paquet\n";
+   QByteArray packet;
     QDataStream out(&packet, QIODevice::WriteOnly); //Message a envoyer. Nom de l'auteur et le texte la meme string
 
     //On prépare le paquet à envoyer
@@ -662,8 +697,24 @@ void MainWindow::envoie_coordonnees()
 
     int envoie = socket->write(messageCoordonnees.toStdString().c_str()); // On envoie le paquet converti
 
+    //Test Erreur
+    if(envoie == -1){
+       QMessageBox::critical(this,"Erreur","Message non envoyé");
+       message_envoie->clear();}
+
     //on afiche le message envoyé dans la zone d'Emission Texte
     message_envoie->setText(messageCoordonnees);
+
+    affichage();
+
+
+}
+
+void MainWindow::affichage()
+{
+
+    qDebug()<<"affichage du message sur l'ihm\n";
+
 
     //On affiche les Coordonnées du robot dans l'IHM en temps réel
     box_x->setValue(Coord_X);
@@ -681,169 +732,203 @@ void MainWindow::envoie_coordonnees()
     //joystick_y = joystick_y+1;
     //joystick_t = joystick_t+1;
 
-   carte->Coord[x_old][y_old]->setText("x"); //on affiche les coordonnées anciennes
-   carte->Coord[this->getCoord_X()][this->getCoord_Y()]->setText("o"); //on affiche les coordonnées actuelles
+  // qDebug()<<"affichage de la map\n";
+   //carte->Coord[x_old][y_old]->setText("x"); //on affiche les coordonnées anciennes
+   //carte->Coord[this->getCoord_X()][this->getCoord_Y()]->setText("o"); //on affiche les coordonnées actuelles
 
-   carte->Coord[scanner_obstacle_X][scanner_obstacle_Y]->setText("@");//Onaffiche les obstables
+   //carte->Coord[scanner_obstacle_X][scanner_obstacle_Y]->setText("@");//Onaffiche les obstables
 
-   x_old = Coord_X;
-   y_old = Coord_Y;
+   //x_old = Coord_X;
+   //y_old = Coord_Y;
 
-    //Test Erreur
-    if(envoie == -1){
-       QMessageBox::critical(this,"Erreur","Message non envoyé");
-       message_envoie->clear();}
 
+
+    qDebug()<<"emission des logs\n";
     //Emission des logs
     messageLogs = QDateTime::currentDateTime().toString()+" : Emission des coordonnées au serveur "+adr_ip->text()+"\r\n";
     emit signal_ajoutLogs();
 
     //Emission des MapLogs
     messageMapLogs = QDateTime::currentDateTime().toString()+" : X: "+QString::number(Coord_X)+"; Y: +"+QString::number(Coord_Y)+"\r\n";
-
 }
 
 
 void MainWindow::fonction_joystick()
 {
-    static SDL_Event evenements;
-    //void SDL_JoystickUpdate();
-    qDebug()<<"fonction_joystick\n";
-    //On ignore le clavier et la souris
-    //SDL_EventState(SDL_KEYDOWN,SDL_IGNORE);
-    //SDL_EventState(SDL_KEYUP,SDL_IGNORE);
+    SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) == -1)
+         {
+          qDebug()<<"\nErreur Initialisation";
+         }
+    //int SDL_NumJoysticks();
+    Joystick = SDL_JoystickOpen(0); // assignation au numéro 0
+    qDebug() << " nb de joystick :" << SDL_NumJoysticks() << " \n ";
+    qDebug() << " nb de boutons : " << SDL_JoystickNumButtons(Joystick) << " \n";
+    qDebug() << " nb d'axe' : " << SDL_JoystickNumAxes(Joystick) << " \n";
+    SDL_JoystickEventState(SDL_ENABLE);
+
+
+    qDebug()<<"\nfonction_joystick\n";
+
     float coeff = 0.0003518509476;
     float coeff_t = 0.0015259254738;
 
-    //SDL_WaitEventTimeout(&evenements, 4);
-    if(SDL_PollEvent(&evenements) == 1)
+  // qDebug()<<"\nevenement.type : "<<event.type<<"\n";
+
+    while(SDL_PollEvent(&event))
     {
         //if (Joystick != NULL)
         //{
-            switch (evenements.type)
+        qDebug() << "Event !\n";
+            switch (event.type)
             {
-
-                case SDL_JOYBUTTONDOWN:
-                    switch(evenements.jbutton.button){
+                case SDL_JOYBUTTONUP:
+                    switch(event.jbutton.button){
                             case 0: // Quitter l'IHM
-                            qDebug ()<<"\nQuitter l'IHM \n";
                             emit signal_sdl_quitter();
+                            qDebug ()<<"\nQuitter l'IHM \n";
                                 break;
 
                             case 1: // quitter le robot (trame quit)
-                            qDebug ()<<"Envoyer le message quitter\n";
                             emit signal_sdl_quitter();
+                            qDebug ()<<"Envoyer le message quitter\n";
                                 break;
 
                             case 2: // change etat robot (set_state)
-                            qDebug ()<<"\nchange etat\n";
                             emit signal_sdl_mode_manuel();
+                            qDebug ()<<"\nchange etat\n";
                                 break;
 
                             case 3: // change l'etat de l'IA (set_ai)
-                            qDebug ()<<"\nChange l'IA\n";
                             emit signal_sdl_mode_auto();
+                            qDebug ()<<"\nChange l'IA\n";
                                 break;
-                    }
+
+                            default:
+                                break;
+                   }
                  break;
 
                 case SDL_JOYAXISMOTION:
 
-                        if(evenements.jaxis.axis == 0) //axe des absisses
+                        if(event.jaxis.axis == 0) //axe des absisses
                         {
-                            x = evenements.jaxis.value;
-                            qDebug()<<"\nValeur de x :"<< x <<"\n";
+                            x = event.jaxis.value;
+                           qDebug()<<"\nValeur de x :"<< x <<"\n";
 
                             //Calcule de la conversion 32767 to 20
                             joystick_x = coeff*float(x)+10;
 
-                            qDebug()<<"\nValeur de joystick_x :"<<joystick_x<<"\n";
-                            qDebug()<<"\nValeur de joystick_y :"<<joystick_y<<"\n";
-                            qDebug()<<"\nValeur de joystick_x :"<<joystick_t<<"\n";
+                            //joystick_x compris entre 0 et 20
+                            if (joystick_x<0)
+                              joystick_x = 0;
 
-                            if(evenements.jaxis.value < 0)
-                                    qDebug()<<"\nA gauche !: "<<evenements.jaxis.value<<"\n";
+                            if(joystick_x>20)
+                                joystick_x = 20;
 
-                                else if(evenements.jaxis.value >0)
-                                    qDebug()<<"\nA droite !: "<<evenements.jaxis.value<<"\n";
+                           // qDebug()<<"\nValeur de joystick_x :"<<joystick_x<<"\n";
+                           // qDebug()<<"\nValeur de joystick_y :"<<joystick_y<<"\n";
+                           // qDebug()<<"\nValeur de joystick_x :"<<joystick_t<<"\n";
 
-                                else
-                                   qDebug()<<"\ntout droit: "<<evenements.jaxis.value<<"\n";
+                            if(event.jaxis.value < 0){
+                                a = 0;//test : a retirer par la suite
+                              qDebug()<<"\nA gauche !: "<<event.jaxis.value<<"\n";}
+
+                            else if(event.jaxis.value >0){
+                                 a = 1; //test : a retirer par la suite
+                              qDebug()<<"\nA droite !: "<<event.jaxis.value<<"\n";}
+
+                            else{
+                                 a = 2; //test : a retirer par la suite
+                               qDebug()<<"\ntout droit: "<<event.jaxis.value<<"\n";}
                           }
 
-                        else if(evenements.jaxis.axis == 1) //axe des ordonnées
+                        else if(event.jaxis.axis == 1) //axe des ordonnées
                         {
 
-                            y = evenements.jaxis.value;
+                            y = event.jaxis.value;
                             qDebug()<<"\nValeur de y :"<<y<<"\n";
 
                             //Calcule de la conversion 32767 to 20
                             joystick_y = coeff*float(y)+10;
 
-                            qDebug()<<"\nValeur de joystick_x :"<<joystick_x<<"\n";
-                            qDebug()<<"\nValeur de joystick_y :"<<joystick_y<<"\n";
-                            qDebug()<<"\nValeur de joystick_t :"<<joystick_t<<"\n";
+                            //joystick_y compris entre 0 et 20
+                            if (joystick_y<0)
+                                 joystick_y = 0;
 
-                                if(evenements.jaxis.value < 0)
+                            if(joystick_y>20)
+                                joystick_y = 20;
 
-                                    qDebug()<<"\nEn avant !"<<evenements.jaxis.value<<"\n";
+                           // qDebug()<<"\nValeur de joystick_x :"<<joystick_x<<"\n";
+                            //qDebug()<<"\nValeur de joystick_y :"<<joystick_y<<"\n";
+                          //qDebug()<<"\nValeur de joystick_t :"<<joystick_t<<"\n";
 
-                                else if(evenements.jaxis.value >0)
-                                    qDebug()<<"\nEn arrière !"<<evenements.jaxis.value<<"\n";
+                                if(event.jaxis.value < 0){
+                                    a =4;//test : a retirer par la suite
+                                    qDebug()<<"\nEn avant !"<<event.jaxis.value<<"\n";}
 
-                                else
-                                   qDebug()<<"\ntout droit: "<<evenements.jaxis.value<<"\n";
+                                else if(event.jaxis.value >0){
+                                    a = 5;//test : a retirer par la suite
+                                    qDebug()<<"\nEn arrière !"<<event.jaxis.value<<"\n";}
+                                else{
+                                    a = 6;//test : a retirer par la suite
+                                   qDebug()<<"\ntout droit: "<<event.jaxis.value<<"\n";}
                         }
 
-                        else if(evenements.jaxis.axis == 3) //axe de lévitation
+                        else if(event.jaxis.axis == 3) //axe de lévitation
                         {
-                            t = evenements.jaxis.value;
+                            t = event.jaxis.value;
                             qDebug()<<"\nValeur de t :"<<t<<"\n";
 
 
                             //Calcule de la conversion 32767 to 100
 
                             joystick_t = coeff_t*float(-t)+50;
-                            qDebug()<<"\nValeur de joystick_t :"<<joystick_t<<"\n";
-                            qDebug()<<"\nValeur de joystick_x :"<<joystick_x<<"\n";
-                            qDebug()<<"\nValeur de joystick_y :"<<joystick_y<<"\n";
+
+                            //joystick_t compris entre 0 et 100
+                            if (joystick_t<0)
+                                joystick_t = 0;
+
+                            if(joystick_x>100)
+                                joystick_x = 100;
+
+                            //qDebug()<<"\nValeur de joystick_t :"<<joystick_t<<"\n";
+                            //qDebug()<<"\nValeur de joystick_x :"<<joystick_x<<"\n";
+                            //qDebug()<<"\nValeur de joystick_y :"<<joystick_y<<"\n";
                         }
 
                       break;
 
                     default :
-                            qDebug()<<"\nTouche non connue : " << evenements.type << "\n";
-                            qDebug()<<"SDL_JOYAXIS : " << SDL_JOYAXISMOTION << "\n";
-                            qDebug()<<"SDL_JOYBUTTONDOWN : " << SDL_JOYBUTTONDOWN << "\n";
+
+                        int g = 5;
+                           qDebug()<<"\nTouche non connue : " << event.type << "\n";
+                           qDebug()<<"SDL_JOYAXIS : " << SDL_JOYAXISMOTION << "\n";
+                           qDebug()<<"SDL_JOYBUTTONDOWN : " << SDL_JOYBUTTONDOWN << "\n";
                     break;
             }
       //}
     }
-    else{
-        qDebug() << "Pas d'event :( \n";
-    }
+    /*
+    joystick_x = joystick_x+1;
+    joystick_y = joystick_y+1;
+    joystick_t = joystick_t+1;*/
+    qDebug()<<"\nValeur de joystick_t :"<<joystick_t<<"\n";
+    qDebug()<<"Valeur de joystick_x :"<<joystick_x<<"\n";
+    qDebug()<<"Valeur de joystick_y :"<<joystick_y<<"\n";
+    qDebug()<<"a = "<< a <<"\n";
 
-}
-
-void MainWindow::pause()
-{
-    int continuer = 1;
-    SDL_Event event;
-
-    while (continuer)
-    {
-        SDL_WaitEvent(&event);
-        switch(event.type)
-        {
-            case SDL_QUIT:
-                continuer = 0;
-        }
-    }
+    //On envoie les coordonnées
+    //emit signal_coord();
+    envoie_coordonnees();
+    //affichage();
 }
 
 
 void MainWindow::creationMapLogs()
 {
+    qDebug()<<"\nCréation de la Map Log\n";
+
     mapLog = "LogMap.txt";
 
     //création d'un object QFile
@@ -872,7 +957,7 @@ void MainWindow::creationMapLogs()
 
 void MainWindow::ajoutMapLogs()
 {
-    //qDebug()<<"\nAjout d'un nouveau Maplog\n";
+    qDebug()<<"\nAjout d'un nouveau Maplog\n";
 
     file.setFileName("LogMap.txt");
     file.open(QIODevice::WriteOnly | QIODevice::Append);
