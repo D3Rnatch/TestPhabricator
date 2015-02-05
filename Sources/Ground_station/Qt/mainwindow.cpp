@@ -667,7 +667,7 @@ void MainWindow::timer()
     timer1 = new QTimer(this);
     //connect(timer1, SIGNAL(timeout()), this, SLOT(envoie_coordonnees()));
     connect(timer1, SIGNAL(timeout()), this, SLOT(fonction_joystick()));
-    timer1->start(1000);
+    timer1->start(500);
 }
 
 
@@ -732,11 +732,12 @@ void MainWindow::affichage()
     //joystick_y = joystick_y+1;
     //joystick_t = joystick_t+1;
 
-  // qDebug()<<"affichage de la map\n";
+    qDebug()<<"affichage de la map\n";
    //carte->Coord[x_old][y_old]->setText("x"); //on affiche les coordonnées anciennes
-   //carte->Coord[this->getCoord_X()][this->getCoord_Y()]->setText("o"); //on affiche les coordonnées actuelles
+   carte->Coord[Coord_X][Coord_Y]->setText("o"); //on affiche les coordonnées actuelles
 
-   //carte->Coord[scanner_obstacle_X][scanner_obstacle_Y]->setText("@");//Onaffiche les obstables
+
+   carte->Coord[scanner_obstacle_X][scanner_obstacle_Y]->setText("@");//Onaffiche les obstables
 
    //x_old = Coord_X;
    //y_old = Coord_Y;
