@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # this is a comment useless to create a dumb diff.
-
+# more modification uhuhuhu this is crazzyyyyyyyy
 if [ "$1" = "computer" ]; then
 	echo "*****************************"
 	echo "**  Run onboard computer.  **"
